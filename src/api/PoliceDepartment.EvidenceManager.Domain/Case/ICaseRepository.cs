@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace PoliceDepartment.EvidenceManager.Domain.Case
+﻿namespace PoliceDepartment.EvidenceManager.Domain.Case
 {
-    public interface ICaseRepository
+    public interface ICaseRepository : IDisposable
     {
 
     }

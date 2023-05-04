@@ -1,4 +1,5 @@
-﻿using PoliceDepartment.EvidenceManager.Domain.Officer;
+﻿using PoliceDepartment.EvidenceManager.Domain.Evidence;
+using PoliceDepartment.EvidenceManager.Domain.Officer;
 
 namespace PoliceDepartment.EvidenceManager.Domain.Case
 {
@@ -12,5 +13,6 @@ namespace PoliceDepartment.EvidenceManager.Domain.Case
 
         public Guid OfficerId { get; set; }
         public OfficerEntity Officer { get; set; }
+        public ICollection<EvidenceEntity> Evidences { get; set; }
     }
 }

@@ -1,6 +1,6 @@
 ﻿namespace PoliceDepartment.EvidenceManager.Domain.Evidence
 {
-    public interface IEvidenceRepository
+    public interface IEvidenceRepository : IDisposable
     {
         Task Create(EvidenceEntity evidence);
         Task<EvidenceEntity> GetBy(Guid id);

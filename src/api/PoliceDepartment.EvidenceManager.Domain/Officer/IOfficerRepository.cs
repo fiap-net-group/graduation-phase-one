@@ -1,6 +1,6 @@
 ﻿namespace PoliceDepartment.EvidenceManager.Domain.Officer
 {
-    public interface IOfficerRepository
+    public interface IOfficerRepository : IDisposable
     {
 
     }
