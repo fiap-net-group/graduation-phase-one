@@ -6,4 +6,9 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\shared-kernel\PoliceDepartment.EvidenceManager.SharedKernel\PoliceDepartment.EvidenceManager.SharedKernel.csproj" />
+    <ProjectReference Include="..\PoliceDepartment.EvidenceManager.Domain\PoliceDepartment.EvidenceManager.Domain.csproj" />
+  </ItemGroup>
+
 </Project>
