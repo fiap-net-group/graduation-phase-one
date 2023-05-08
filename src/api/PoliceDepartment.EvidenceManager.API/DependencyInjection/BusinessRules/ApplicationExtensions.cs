@@ -3,7 +3,7 @@
 namespace PoliceDepartment.EvidenceManager.API.DependencyInjection.BusinessRules
 {
     [ExcludeFromCodeCoverage]
-    internal class ApplicationExtensions
+    internal static class ApplicationExtensions
     {
 
     }
