@@ -8,6 +8,7 @@ using PoliceDepartment.EvidenceManager.Infra.Database;
 using PoliceDepartment.EvidenceManager.Infra.Database.Mappings;
 using PoliceDepartment.EvidenceManager.Infra.Database.Repositories;
 using PoliceDepartment.EvidenceManager.Infra.FileManager;
+using PoliceDepartment.EvidenceManager.Infra.Identity;
 using PoliceDepartment.EvidenceManager.Infra.Logger;
 using System.Data.SqlClient;
 using System.Diagnostics.CodeAnalysis;
@@ -19,20 +20,18 @@ namespace PoliceDepartment.EvidenceManager.API.DependencyInjection.BusinessRules
     {
         internal static IServiceCollection AddInfraConfiguration(this IServiceCollection services, IConfiguration configuration, bool isDevelopment)
         {
-            services.AddScoped<IDatabaseContext, SqlServerContext>();
+            services.AddScoped<IAppDatabaseContext, SqlServerContext>();
+            services.AddScoped<IIdentityContext, IdentityContext>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<IEvidenceRepository, EvidenceRepository>();
             services.AddScoped<ICaseRepository, CaseRepository>();
             services.AddScoped<IOfficerRepository, OfficerRepository>();
 
             services.AddTransient(o => new SqlConnection(configuration.GetConnectionString("SqlServerConnection")));
-            services.AddDbContext<SqlServerContext>(options =>
-            {
-                options.UseSqlServer(configuration.GetConnectionString("SqlServerConnection"));
-            });
+            services.AddDbContext<SqlServerContext>(options => options.UseSqlServer(configuration.GetConnectionString("SqlServerConnection")));
+            services.AddDbContext<IdentityContext>(options => options.UseSqlServer(configuration.GetConnectionString("SqlServerConnection")));
 
-
-            if(isDevelopment)
+            if (isDevelopment)
             {
                 services.AddScoped<IEvidenceFileServer, EvidenceLocalServer>();
                 services.AddScoped<ILoggerManager, ConsoleLogger>();
@@ -41,7 +40,7 @@ namespace PoliceDepartment.EvidenceManager.API.DependencyInjection.BusinessRules
             {
                 //ADD PROD DI
             }
-            
+
 
             return services;
         }
@@ -50,12 +49,14 @@ namespace PoliceDepartment.EvidenceManager.API.DependencyInjection.BusinessRules
         {
             using var serviceScope = app.Services.GetService<IServiceScopeFactory>().CreateScope();
 
-            var context = serviceScope.ServiceProvider.GetRequiredService<IDatabaseContext>();
+            using var databaseContext = serviceScope.ServiceProvider.GetRequiredService<IAppDatabaseContext>();
+            using var identityContext = serviceScope.ServiceProvider.GetRequiredService<IIdentityContext>();
 
-            if (context.AnyPendingMigrationsAsync().Result)
-            {
-                context.MigrateAsync();
-            }
+            if (databaseContext.AnyPendingMigrationsAsync().Result)
+                databaseContext.MigrateAsync();
+
+            if (identityContext.AnyPendingMigrationsAsync().Result)
+                identityContext.MigrateAsync();
 
             return app;
         }

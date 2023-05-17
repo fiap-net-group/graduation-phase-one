@@ -19,6 +19,5 @@ namespace PoliceDepartment.EvidenceManager.Domain.Officer
         }
 
         public ICollection<CaseEntity> Cases { get; set; }
-        public ICollection<EvidenceEntity> Evidences { get; set; }
     }
 }

@@ -10,12 +10,12 @@ namespace PoliceDepartment.EvidenceManager.Infra.Database
     [ExcludeFromCodeCoverage]
     public class UnitOfWork : IUnitOfWork
     {
-        private readonly IDatabaseContext _context;
+        private readonly IAppDatabaseContext _context;
         public ICaseRepository Case { get; }
         public IEvidenceRepository Evidence { get; }
         public IOfficerRepository Officer { get; }
 
-        public UnitOfWork(SqlServerContext context,
+        public UnitOfWork(IAppDatabaseContext context,
                           ICaseRepository caseRepository, 
                           IEvidenceRepository evidenceRepository, 
                           IOfficerRepository officerRepository)

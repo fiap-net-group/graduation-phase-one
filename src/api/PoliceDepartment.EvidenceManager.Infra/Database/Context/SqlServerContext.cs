@@ -9,7 +9,7 @@ using System.Diagnostics.CodeAnalysis;
 namespace PoliceDepartment.EvidenceManager.Infra.Database
 {
     [ExcludeFromCodeCoverage]
-    public class SqlServerContext : DbContext, IDatabaseContext
+    public class SqlServerContext : DbContext, IAppDatabaseContext
     {
         public DbSet<CaseEntity> Cases { get; set; }
         public DbSet<EvidenceEntity> Evidences { get; set; }
@@ -19,6 +19,16 @@ namespace PoliceDepartment.EvidenceManager.Infra.Database
         {
             ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
             ChangeTracker.AutoDetectChangesEnabled = false;
+        }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.ApplyConfigurationsFromAssembly(typeof(SqlServerContext).Assembly);
+
+            foreach (var relationship in modelBuilder.Model.GetEntityTypes().SelectMany(e => e.GetForeignKeys()))
+                relationship.DeleteBehavior = DeleteBehavior.ClientSetNull;
+
+            base.OnModelCreating(modelBuilder);
         }
 
         public async Task<bool> SaveChangesAsync()

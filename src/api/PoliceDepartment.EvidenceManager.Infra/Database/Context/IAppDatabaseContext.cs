@@ -1,13 +1,13 @@
 ﻿using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.EntityFrameworkCore;
-using System;
 using PoliceDepartment.EvidenceManager.Domain.Case;
 using PoliceDepartment.EvidenceManager.Domain.Evidence;
 using PoliceDepartment.EvidenceManager.Domain.Officer;
+using PoliceDepartment.EvidenceManager.Domain.Database;
 
 namespace PoliceDepartment.EvidenceManager.Infra.Database.Mappings
 {
-    public interface IDatabaseContext : IDisposable
+    public interface IAppDatabaseContext : IDatabaseContext
     {
         public DbSet<CaseEntity> Cases { get; }
         public DbSet<EvidenceEntity> Evidences { get; }
@@ -15,7 +15,5 @@ namespace PoliceDepartment.EvidenceManager.Infra.Database.Mappings
 
         Task<bool> SaveChangesAsync();
         Task<IDbContextTransaction> BeginTransactionAsync();
-        Task<bool> AnyPendingMigrationsAsync();
-        Task MigrateAsync();
     }
 }
