@@ -23,13 +23,10 @@ namespace PoliceDepartment.EvidenceManager.Infra.Database.Mappings
 
             builder.Property(e => e.Description).IsRequired();
 
-            builder.HasOne(e => e.Officer)
-                   .WithMany(o => o.Evidences)
-                   .HasForeignKey(e => e.OfficerId);
-
             builder.HasOne(e => e.Case)
                    .WithMany(c => c.Evidences)
-                   .HasForeignKey(e => e.CaseId);
+                   .HasForeignKey(e => e.CaseId)
+                   .OnDelete(DeleteBehavior.ClientSetNull);
 
             builder.ToTable("Evidences");
         }

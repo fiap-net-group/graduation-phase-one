@@ -24,11 +24,8 @@ namespace PoliceDepartment.EvidenceManager.Infra.Database.Mappings
 
             builder.HasOne(c => c.Officer)
                    .WithMany(o => o.Cases)
-                   .HasForeignKey(c => c.OfficerId);
-
-            builder.HasMany(c => c.Evidences)
-                   .WithOne(e => e.Case)
-                   .HasForeignKey(c => c.CaseId);
+                   .HasForeignKey(c => c.OfficerId)
+                   .OnDelete(DeleteBehavior.ClientSetNull);
 
             builder.ToTable("Cases");
         }
