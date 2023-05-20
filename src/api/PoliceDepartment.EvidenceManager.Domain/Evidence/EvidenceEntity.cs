@@ -1,4 +1,7 @@
-﻿namespace PoliceDepartment.EvidenceManager.Domain.Evidence
+﻿using PoliceDepartment.EvidenceManager.Domain.Case;
+using PoliceDepartment.EvidenceManager.Domain.Officer;
+
+namespace PoliceDepartment.EvidenceManager.Domain.Evidence
 {
     public class EvidenceEntity
     {
@@ -8,5 +11,8 @@
         public Guid ImageId { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
+
+        public Guid CaseId { get; set; }
+        public CaseEntity Case { get; set; }
     }
 }
