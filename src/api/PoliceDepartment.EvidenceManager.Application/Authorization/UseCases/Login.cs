@@ -1,12 +1,8 @@
-﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Configuration;
-using PoliceDepartment.EvidenceManager.Domain.Authorization;
+﻿using PoliceDepartment.EvidenceManager.Domain.Authorization;
 using PoliceDepartment.EvidenceManager.Domain.Authorization.UseCases;
 using PoliceDepartment.EvidenceManager.Domain.Exceptions;
 using PoliceDepartment.EvidenceManager.Domain.Logger;
 using PoliceDepartment.EvidenceManager.SharedKernel.Responses;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
 
 namespace PoliceDepartment.EvidenceManager.Application.Authorization.UseCases
 {
