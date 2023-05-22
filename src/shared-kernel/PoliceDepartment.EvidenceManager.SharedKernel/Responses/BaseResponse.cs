@@ -1,4 +1,6 @@
-﻿namespace PoliceDepartment.EvidenceManager.SharedKernel.Responses
+﻿using System.Runtime.Serialization;
+
+namespace PoliceDepartment.EvidenceManager.SharedKernel.Responses
 {
     public class BaseResponse
     {
@@ -38,6 +40,13 @@
             errors ??= Array.Empty<string>();
             AsError(errors);
             Value = value;
+            return this;
+        }
+
+        public new BaseResponse<T> AsError(params string[] errors)
+        {
+            errors ??= Array.Empty<string>();
+            AsError(errors);
             return this;
         }
 
