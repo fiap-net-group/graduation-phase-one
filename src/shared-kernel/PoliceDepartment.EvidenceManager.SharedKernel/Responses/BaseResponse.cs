@@ -30,31 +30,4 @@ namespace PoliceDepartment.EvidenceManager.SharedKernel.Responses
             return this;
         }
     }
-
-    public class BaseResponse<T> : BaseResponse
-    {
-        public T Value { get; set; }
-
-        public BaseResponse<T> AsError(T value, params string[] errors)
-        {
-            errors ??= Array.Empty<string>();
-            AsError(errors);
-            Value = value;
-            return this;
-        }
-
-        public new BaseResponse<T> AsError(params string[] errors)
-        {
-            errors ??= Array.Empty<string>();
-            AsError(errors);
-            return this;
-        }
-
-        public BaseResponse<T> AsSuccess(T value)
-        {
-            AsSuccess();
-            Value = value;
-            return this;
-        }
-    }
 }
