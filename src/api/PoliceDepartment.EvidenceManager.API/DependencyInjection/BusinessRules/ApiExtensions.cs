@@ -1,4 +1,5 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using PoliceDepartment.EvidenceManager.API.Middlewares;
+using System.Diagnostics.CodeAnalysis;
 
 namespace PoliceDepartment.EvidenceManager.API.DependencyInjection.BusinessRules
 {
@@ -19,6 +20,8 @@ namespace PoliceDepartment.EvidenceManager.API.DependencyInjection.BusinessRules
             app.UseAuthorization();
 
             app.MapControllers();
+
+            app.UseMiddleware<ErrorHandlerMiddleware>();
 
             return app;
         }

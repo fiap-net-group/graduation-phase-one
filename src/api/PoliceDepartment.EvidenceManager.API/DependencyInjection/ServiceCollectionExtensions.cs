@@ -14,6 +14,8 @@ namespace PoliceDepartment.EvidenceManager.API.DependencyInjection
 
             services.AddInfraConfiguration(configuration, isDevelopment);
 
+            services.AddIdentityConfiguration(configuration);
+
             services.AddApiVersioningConfiguration();
 
             services.AddSwaggerConfiguration();
