@@ -12,6 +12,8 @@ namespace PoliceDepartment.EvidenceManager.API.DependencyInjection
         {
             services.AddApiConfiguration();
 
+            services.AddApplicationConfiguration();
+
             services.AddInfraConfiguration(configuration, isDevelopment);
 
             services.AddIdentityConfiguration(configuration);
