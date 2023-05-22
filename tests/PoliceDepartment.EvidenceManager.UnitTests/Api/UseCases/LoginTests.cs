@@ -8,7 +8,7 @@ using PoliceDepartment.EvidenceManager.Application.Authorization.UseCases;
 using PoliceDepartment.EvidenceManager.Domain.Authorization;
 using PoliceDepartment.EvidenceManager.Domain.Exceptions;
 using PoliceDepartment.EvidenceManager.Domain.Logger;
-using PoliceDepartment.EvidenceManager.UnitTests.Fixtures;
+using PoliceDepartment.EvidenceManager.UnitTests.Fixtures.Api;
 
 namespace PoliceDepartment.EvidenceManager.UnitTests.Api.UseCases
 {
