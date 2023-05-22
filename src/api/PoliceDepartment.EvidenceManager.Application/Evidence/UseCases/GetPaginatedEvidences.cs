@@ -4,9 +4,9 @@ using PoliceDepartment.EvidenceManager.SharedKernel.ViewModels;
 
 namespace PoliceDepartment.EvidenceManager.API.Application.Evidence.UseCases
 {
-    public class GetPaginatedEvidences : IGetPaginatedEvidences<BaseResponse<IEnumerable<EvidenceViewModel>>>
+    public class GetPaginatedEvidences : IGetPaginatedEvidences<BaseResponseWithValue<IEnumerable<EvidenceViewModel>>>
     {
-        public Task<BaseResponse<IEnumerable<EvidenceViewModel>>> RunAsync(int page, int rows, CancellationToken cancellationToken)
+        public Task<BaseResponseWithValue<IEnumerable<EvidenceViewModel>>> RunAsync(int page, int rows, CancellationToken cancellationToken)
         {
             throw new NotImplementedException();
         }
