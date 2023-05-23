@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using PoliceDepartment.EvidenceManager.Domain.Authorization;
 using PoliceDepartment.EvidenceManager.Domain.Case;
 using PoliceDepartment.EvidenceManager.Domain.Database;
 using PoliceDepartment.EvidenceManager.Domain.Evidence;
@@ -29,12 +31,11 @@ namespace PoliceDepartment.EvidenceManager.API.DependencyInjection.BusinessRules
 
             services.AddTransient(o => new SqlConnection(configuration.GetConnectionString("SqlServerConnection")));
             services.AddDbContext<SqlServerContext>(options => options.UseSqlServer(configuration.GetConnectionString("SqlServerConnection")));
-            services.AddDbContext<IdentityContext>(options => options.UseSqlServer(configuration.GetConnectionString("SqlServerConnection")));
 
             if (isDevelopment)
             {
                 services.AddScoped<IEvidenceFileServer, EvidenceLocalServer>();
-                services.AddScoped<ILoggerManager, ConsoleLogger>();
+                services.AddSingleton<ILoggerManager, ConsoleLogger>();
             }
             else
             {

@@ -4,9 +4,9 @@ using PoliceDepartment.EvidenceManager.SharedKernel.ViewModels;
 
 namespace PoliceDepartment.EvidenceManager.API.Application.Evidence.UseCases
 {
-    public class GetEvidenceById : IGetEvidenceById<BaseResponse<EvidenceViewModel>>
+    public class GetEvidenceById : IGetEvidenceById<BaseResponseWithValue<EvidenceViewModel>>
     {
-        public Task<BaseResponse<EvidenceViewModel>> RunAsync(Guid id, CancellationToken cancellationToken)
+        public Task<BaseResponseWithValue<EvidenceViewModel>> RunAsync(Guid id, CancellationToken cancellationToken)
         {
             throw new NotImplementedException();
         }
