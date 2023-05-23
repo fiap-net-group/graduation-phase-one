@@ -47,7 +47,7 @@ namespace PoliceDepartment.EvidenceManager.API.DependencyInjection.ApiDocumentat
 
         private static string SchemaIdStrategy(Type currentClass)
         {
-            return currentClass.Name.Replace("ViewModel", string.Empty);
+            return currentClass.Name.Replace("ViewModel", string.Empty).Replace("Model", string.Empty);
         }
 
         internal static IApplicationBuilder UseSwaggerConfiguration(this IApplicationBuilder app)
