@@ -1,4 +1,6 @@
-﻿using PoliceDepartment.EvidenceManager.Domain.Evidence;
+﻿using Microsoft.EntityFrameworkCore;
+using PoliceDepartment.EvidenceManager.Domain.Evidence;
+using PoliceDepartment.EvidenceManager.Infra.Database.Mappings;
 using System.Diagnostics.CodeAnalysis;
 
 namespace PoliceDepartment.EvidenceManager.Infra.Database.Repositories
@@ -6,6 +8,13 @@ namespace PoliceDepartment.EvidenceManager.Infra.Database.Repositories
     [ExcludeFromCodeCoverage]
     public class EvidenceRepository : IEvidenceRepository
     {
+        private readonly IAppDatabaseContext _context;
+
+        public EvidenceRepository(IAppDatabaseContext context)
+        {
+            _context = context;
+        }
+
         public Task Create(EvidenceEntity evidence)
         {
             throw new NotImplementedException();
@@ -33,7 +42,14 @@ namespace PoliceDepartment.EvidenceManager.Infra.Database.Repositories
 
         public void Dispose()
         {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
 
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+                _context.Dispose();
         }
     }
 }
