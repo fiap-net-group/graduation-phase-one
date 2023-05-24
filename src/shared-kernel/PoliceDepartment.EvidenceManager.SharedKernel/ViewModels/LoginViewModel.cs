@@ -1,4 +1,4 @@
-﻿namespace PoliceDepartment.EvidenceManager.Application.Authorization
+﻿namespace PoliceDepartment.EvidenceManager.SharedKernel.ViewModels
 {
     public sealed record LoginViewModel(string Username, string Password);
 }
