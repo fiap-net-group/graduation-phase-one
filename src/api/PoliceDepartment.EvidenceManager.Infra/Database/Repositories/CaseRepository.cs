@@ -25,7 +25,7 @@ namespace PoliceDepartment.EvidenceManager.Infra.Database.Repositories
             return cases is null ? Enumerable.Empty<CaseEntity>() : cases;
         }
 
-        public async Task<CaseEntity> GetId(Guid id, CancellationToken cancellationToken)
+        public async Task<CaseEntity> GetById(Guid id, CancellationToken cancellationToken)
         {
             var entity = await _context.Cases.Where(c => c.Id == id)
                                              .Include(c => c.Officer)

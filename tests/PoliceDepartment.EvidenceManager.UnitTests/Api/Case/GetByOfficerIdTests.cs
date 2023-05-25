@@ -32,7 +32,7 @@ namespace PoliceDepartment.EvidenceManager.UnitTests.Api.Case
 
             var officerId = Guid.NewGuid();
             var entities = caseQuantity > 0 ? _fixture.Case.GenerateEntityCollection(caseQuantity, officerId) : Enumerable.Empty<CaseEntity>();
-            var viewModels = caseQuantity > 0 ? _fixture.Case.GenerateViewModelByEntity(entities) : Enumerable.Empty<CaseViewModel>();
+            var viewModels = caseQuantity > 0 ? _fixture.Case.GenerateViewModelsByEntityCollection(entities) : Enumerable.Empty<CaseViewModel>();
 
             uow.Case.GetByOfficerId(Arg.Any<Guid>(), Arg.Any<CancellationToken>()).Returns(Task.FromResult(entities));
             mapper.Map<IEnumerable<CaseViewModel>>(Arg.Any<IEnumerable<CaseEntity>>()).Returns(viewModels);

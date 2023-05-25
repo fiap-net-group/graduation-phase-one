@@ -26,7 +26,7 @@ namespace PoliceDepartment.EvidenceManager.Application.Case.UseCases
         {
             _logger.LogDebug("Begin Get case by id", ("id", id));
 
-            var entity = await _uow.Case.GetId(id, cancellationToken);
+            var entity = await _uow.Case.GetById(id, cancellationToken);
 
             if(!entity.Exists())
             {
