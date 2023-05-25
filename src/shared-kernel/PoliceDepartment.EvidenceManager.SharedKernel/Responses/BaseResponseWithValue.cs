@@ -4,17 +4,17 @@
     {
         public T Value { get; set; }
 
-        public BaseResponseWithValue<T> AsError(T value, params string[] errors)
+        public BaseResponseWithValue<T> AsError(T value, ResponseMessage? message = null, params string[] errors)
         {
-            AsError(errors);
+            AsError(message, errors);
             Value = value;
             return this;
         }
 
-        public new BaseResponseWithValue<T> AsError(params string[] errors)
+        public new BaseResponseWithValue<T> AsError(ResponseMessage? message = null, params string[] errors)
         {
             errors ??= Array.Empty<string>();
-            base.AsError(errors);
+            base.AsError(message,errors);
             return this;
         }
 

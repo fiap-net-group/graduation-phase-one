@@ -11,6 +11,8 @@ namespace PoliceDepartment.EvidenceManager.SharedKernel.Responses
         [Description("Case does't exists")]
         CaseDontExists = 2,
         [Description("Invalid case")]
-        InvalidCase = 3
+        InvalidCase = 3,
+        [Description("Invalid credentials")]
+        InvalidCredentials = 4
     }
 }

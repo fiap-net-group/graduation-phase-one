@@ -1,10 +1,23 @@
-﻿namespace PoliceDepartment.EvidenceManager.SharedKernel.Extensions
+﻿using System.ComponentModel;
+
+namespace PoliceDepartment.EvidenceManager.SharedKernel.Extensions
 {
     public static class EnumExtensions
     {
-        public static string GetDescription(this Enum generic)
+        public static string GetDescription(this Enum enumValue)
         {
-            return string.Empty;
+            var description = enumValue.ToString();
+            var fieldInfo = enumValue.GetType().GetField(enumValue.ToString());
+
+            if (fieldInfo == null)            
+                return description;
+            
+            var attrs = fieldInfo.GetCustomAttributes(typeof(DescriptionAttribute), true);
+
+            if (attrs != null && attrs.Length > 0)            
+                description = ((DescriptionAttribute)attrs[0]).Description;
+            
+            return description;
         }
     }
 }

@@ -12,14 +12,17 @@ namespace PoliceDepartment.EvidenceManager.API.Features.V1.Controllers
     [Produces("application/json")]
     public class CasesController : ControllerBase
     {
-        private readonly IGetCasesByOfficerId<BaseResponseWithValue<IEnumerable<CaseViewModel>>> _getByOfficerId;
         private readonly IUpdateCase<CaseViewModel, BaseResponse> _updateCase;
+        private readonly IGetById<BaseResponseWithValue<CaseViewModel>> _getById;
+        private readonly IGetCasesByOfficerId<BaseResponseWithValue<IEnumerable<CaseViewModel>>> _getByOfficerId;
 
         public CasesController(
             IGetCasesByOfficerId<BaseResponseWithValue<IEnumerable<CaseViewModel>>> getByOfficerId,
+            IGetById<BaseResponseWithValue<CaseViewModel>> getById,
             IUpdateCase<CaseViewModel, BaseResponse> updateCase)
         {
             _getByOfficerId = getByOfficerId;
+            _getById = getById;
             _updateCase = updateCase;
         }
 
@@ -27,7 +30,7 @@ namespace PoliceDepartment.EvidenceManager.API.Features.V1.Controllers
         /// Get all cases of a police officer
         /// </summary>
         /// <param name="officerId">The police officer id</param>
-        /// <param name="cancellationToken"></param>]
+        /// <param name="cancellationToken"></param>
         /// <response code="200">The list of cases</response>
         [HttpGet("officer/{officerId:guid}")]
         [ProducesResponseType(StatusCodes.Status200OK, StatusCode = StatusCodes.Status200OK, Type = typeof(IEnumerable<CaseViewModel>))]
@@ -62,6 +65,26 @@ namespace PoliceDepartment.EvidenceManager.API.Features.V1.Controllers
                 return NotFound(response);
 
             return BadRequest(response);
+        }
+        
+        /// <summary>
+        /// Get case by id
+        /// </summary>
+        /// <param name="id">The case id</param>
+        /// <param name="cancellationToken"></param>
+        /// <response code="200">The respective case</response>
+        /// <response code="404">Case not found</response>
+        [HttpGet("{id:guid}")]
+        [ProducesResponseType(StatusCodes.Status200OK, StatusCode = StatusCodes.Status200OK, Type = typeof(IEnumerable<CaseViewModel>))]
+        [ProducesResponseType(StatusCodes.Status404NotFound, StatusCode = StatusCodes.Status404NotFound, Type = typeof(BaseResponse))]
+        public async Task<IActionResult> GetById(Guid id, CancellationToken cancellationToken)
+        {
+            var response = await _getById.RunAsync(id, cancellationToken);
+
+            if (!response.Success)
+                return BadRequest(response);
+
+            return Ok(response);
         }
     }
 }

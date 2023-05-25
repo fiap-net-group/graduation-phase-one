@@ -17,7 +17,8 @@ namespace PoliceDepartment.EvidenceManager.API.DependencyInjection.BusinessRules
         internal static IServiceCollection AddApplicationConfiguration(this IServiceCollection services)
         {
             services.AddScoped<ILogin<LoginViewModel, BaseResponseWithValue<AccessTokenModel>>, Login>();
-            services.AddScoped<IGetCasesByOfficerId<BaseResponseWithValue<IEnumerable<CaseViewModel>>>, GetByOfficerId>();
+            services.AddScoped<IGetCasesByOfficerId<BaseResponseWithValue<IEnumerable<CaseViewModel>>>, GetCaseByOfficerId>();
+            services.AddScoped<IGetById<BaseResponseWithValue<CaseViewModel>>, GetCaseById>();
 
             services.AddAutoMapper(typeof(EvidenceMapperProfile));
 

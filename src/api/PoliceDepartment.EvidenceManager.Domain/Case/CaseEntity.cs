@@ -17,7 +17,7 @@ namespace PoliceDepartment.EvidenceManager.Domain.Case
 
         public bool Exists()
         {
-            return Id == Guid.Empty;
+            return Id != Guid.Empty;
         }
 
         public bool Update()
