@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using PoliceDepartment.EvidenceManager.Domain.Case;
-using PoliceDepartment.EvidenceManager.Domain.Evidence;
 
 namespace PoliceDepartment.EvidenceManager.Domain.Officer
 {

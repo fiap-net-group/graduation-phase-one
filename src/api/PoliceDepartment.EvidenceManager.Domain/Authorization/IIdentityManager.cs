@@ -1,4 +1,6 @@
-﻿namespace PoliceDepartment.EvidenceManager.Domain.Authorization
+﻿using Microsoft.AspNetCore.Identity;
+
+namespace PoliceDepartment.EvidenceManager.Domain.Authorization
 {
     public interface IIdentityManager
     {
