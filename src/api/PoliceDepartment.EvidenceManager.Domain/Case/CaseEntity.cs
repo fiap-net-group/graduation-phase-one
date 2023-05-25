@@ -14,5 +14,15 @@ namespace PoliceDepartment.EvidenceManager.Domain.Case
         public Guid OfficerId { get; set; }
         public OfficerEntity Officer { get; set; }
         public ICollection<EvidenceEntity> Evidences { get; set; }
+
+        public bool Exists()
+        {
+            return Id == Guid.Empty;
+        }
+
+        public bool Update()
+        {
+            return true;
+        }
     }
 }

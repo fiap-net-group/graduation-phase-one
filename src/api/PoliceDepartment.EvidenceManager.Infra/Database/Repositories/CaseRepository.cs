@@ -22,6 +22,16 @@ namespace PoliceDepartment.EvidenceManager.Infra.Database.Repositories
             return cases is null ? Enumerable.Empty<CaseEntity>() : cases;
         }
 
+        public Task<CaseEntity> GetByIdAsync(Guid id, CancellationToken cancellationToken)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task UpdateAsync(CaseEntity entity, CancellationToken cancellationToken)
+        {
+            await Task.Run(() => _context.Cases.Update(entity), cancellationToken);
+        }
+
         public void Dispose()
         {
             Dispose(true);
