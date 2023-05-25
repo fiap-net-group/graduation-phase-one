@@ -8,9 +8,15 @@ namespace PoliceDepartment.EvidenceManager.API.DependencyInjection
     [ExcludeFromCodeCoverage]
     internal static class ServiceCollectionExtensions
     {
-        internal static IServiceCollection AddDependencyInjection(this IServiceCollection services, IConfiguration configuration)
+        internal static IServiceCollection AddDependencyInjection(this IServiceCollection services, IConfiguration configuration, bool isDevelopment)
         {
             services.AddApiConfiguration();
+
+            services.AddApplicationConfiguration();
+
+            services.AddInfraConfiguration(configuration, isDevelopment);
+
+            services.AddIdentityConfiguration(configuration);
 
             services.AddApiVersioningConfiguration();
 

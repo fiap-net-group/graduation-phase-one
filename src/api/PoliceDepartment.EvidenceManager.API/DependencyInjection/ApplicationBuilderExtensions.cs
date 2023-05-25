@@ -9,6 +9,10 @@ namespace PoliceDepartment.EvidenceManager.API.DependencyInjection
     {
         internal static IApplicationBuilder UseDependencyInjection(this WebApplication app)
         {
+            app.UseInfrastructureConfiguration();
+
+            app.UseIdentityConfiguration();
+
             app.UseApiConfiguration();
 
             app.UseSwaggerConfiguration();

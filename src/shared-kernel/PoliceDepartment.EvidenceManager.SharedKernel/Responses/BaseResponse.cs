@@ -1,4 +1,6 @@
-﻿namespace PoliceDepartment.EvidenceManager.SharedKernel.Responses
+﻿using System.Runtime.Serialization;
+
+namespace PoliceDepartment.EvidenceManager.SharedKernel.Responses
 {
     public class BaseResponse
     {
@@ -25,26 +27,6 @@
                 Message = "Success",
                 Errors = default
             };
-            return this;
-        }
-    }
-
-    public class BaseResponse<T> : BaseResponse
-    {
-        public T Value { get; set; }
-
-        public BaseResponse<T> AsError(T value, params string[] errors)
-        {
-            errors ??= Array.Empty<string>();
-            AsError(errors);
-            Value = value;
-            return this;
-        }
-
-        public BaseResponse<T> AsSuccess(T value)
-        {
-            AsSuccess();
-            Value = value;
             return this;
         }
     }
