@@ -1,16 +1,13 @@
 ﻿using FluentAssertions;
-using Microsoft.IdentityModel.Tokens;
-using Newtonsoft.Json.Linq;
 using NSubstitute;
-using NSubstitute.ExceptionExtensions;
-using PoliceDepartment.EvidenceManager.Application.Authorization;
 using PoliceDepartment.EvidenceManager.Application.Authorization.UseCases;
 using PoliceDepartment.EvidenceManager.Domain.Authorization;
 using PoliceDepartment.EvidenceManager.Domain.Exceptions;
 using PoliceDepartment.EvidenceManager.Domain.Logger;
+using PoliceDepartment.EvidenceManager.SharedKernel.ViewModels;
 using PoliceDepartment.EvidenceManager.UnitTests.Fixtures.Api;
 
-namespace PoliceDepartment.EvidenceManager.UnitTests.Api.UseCases
+namespace PoliceDepartment.EvidenceManager.UnitTests.Api.Authorization
 {
     [Collection(nameof(ApiFixtureCollection))]
     public class LoginTests
@@ -23,7 +20,7 @@ namespace PoliceDepartment.EvidenceManager.UnitTests.Api.UseCases
         }
 
         [Theory]
-        [InlineData("","")]
+        [InlineData("", "")]
         [InlineData(null, null)]
         [InlineData("", null)]
         [InlineData(null, "")]

@@ -2,6 +2,7 @@
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 
 namespace PoliceDepartment.EvidenceManager.API.DependencyInjection.ApiDocumentation.Swagger
 {
@@ -19,14 +20,12 @@ namespace PoliceDepartment.EvidenceManager.API.DependencyInjection.ApiDocumentat
                 var responseKey = responseType.IsDefaultResponse ? "default" : responseType.StatusCode.ToString();
                 var response = operation.Responses[responseKey];
 
-                foreach (var contentType in response.Content.Keys)
+                foreach (var contentType in from contentType in response.Content.Keys
+                                            where responseType.ApiResponseFormats.All(x => x.MediaType != contentType)
+                                            select contentType)
                 {
-                    if (responseType.ApiResponseFormats.All(x => x.MediaType != contentType))
-                    {
-                        response.Content.Remove(contentType);
-                    }
+                    response.Content.Remove(contentType);
                 }
-                    
             }
 
             if (operation.Parameters == null)

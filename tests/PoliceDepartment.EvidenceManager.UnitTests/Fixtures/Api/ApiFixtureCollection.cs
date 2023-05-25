@@ -6,10 +6,12 @@
     public class ApiFixture
     {
         public AuthorizationFixture Authorization { get; set; }
+        public CaseFixture Case { get; set; }
 
         public ApiFixture()
         {
             Authorization = new();
+            Case = new();
         }
     }
 }

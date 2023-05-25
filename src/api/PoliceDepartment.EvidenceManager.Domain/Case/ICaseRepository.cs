@@ -2,6 +2,7 @@
 {
     public interface ICaseRepository : IDisposable
     {
-
+        Task<IEnumerable<CaseEntity>> GetByOfficerId(Guid officerId, CancellationToken cancellationToken);
+        Task<CaseEntity> GetById(Guid id, CancellationToken cancellationToken);
     }
 }

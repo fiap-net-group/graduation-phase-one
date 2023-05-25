@@ -31,8 +31,9 @@ namespace PoliceDepartment.EvidenceManager.API.DependencyInjection.ApiDocumentat
             {
                 options.TryIncludeCommentsToApiDocumentation();
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                Console.WriteLine(ex.Message);
             }
         }
 
