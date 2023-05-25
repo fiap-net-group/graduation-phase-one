@@ -37,7 +37,11 @@ namespace PoliceDepartment.EvidenceManager.Infra.Database.Repositories
 
         public async Task UpdateAsync(CaseEntity entity, CancellationToken cancellationToken)
         {
-            await Task.Run(() => _context.Cases.Update(entity), cancellationToken);
+            await Task.Run(() =>
+            {
+                entity.UpdatedAt = DateTime.Now;
+                _context.Cases.Update(entity);
+            }, cancellationToken);
         }
 
         public void Dispose()
@@ -48,8 +52,8 @@ namespace PoliceDepartment.EvidenceManager.Infra.Database.Repositories
 
         protected virtual void Dispose(bool disposing)
         {
-            if (disposing)            
-                _context.Dispose();            
+            if (disposing)
+                _context.Dispose();
         }
     }
 }

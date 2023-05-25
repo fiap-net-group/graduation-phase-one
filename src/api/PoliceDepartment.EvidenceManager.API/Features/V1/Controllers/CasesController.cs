@@ -53,7 +53,7 @@ namespace PoliceDepartment.EvidenceManager.API.Features.V1.Controllers
         [HttpPatch("{id:guid}")]
         [ProducesResponseType(StatusCodes.Status204NoContent, StatusCode = StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest, StatusCode = StatusCodes.Status400BadRequest, Type = typeof(BaseResponse))]
-        [ProducesResponseType(StatusCodes.Status200OK, StatusCode = StatusCodes.Status200OK, Type = typeof(BaseResponse))]
+        [ProducesResponseType(StatusCodes.Status404NotFound, StatusCode = StatusCodes.Status404NotFound, Type = typeof(BaseResponse))]
         public async Task<IActionResult> Patch(Guid id, CaseViewModel caseViewModel, CancellationToken cancellationToken)
         {
             var response = await _updateCase.RunAsync(id, caseViewModel, cancellationToken);
