@@ -37,7 +37,7 @@ namespace PoliceDepartment.EvidenceManager.UnitTests.Api.Case
             uow.Case.GetByOfficerId(Arg.Any<Guid>(), Arg.Any<CancellationToken>()).Returns(Task.FromResult(entities));
             mapper.Map<IEnumerable<CaseViewModel>>(Arg.Any<IEnumerable<CaseEntity>>()).Returns(viewModels);
 
-            var sut = new GetByOfficerId(logger, uow, mapper);
+            var sut = new GetCaseByOfficerId(logger, uow, mapper);
 
             //Act
             var response = await sut.RunAsync(officerId, CancellationToken.None);
