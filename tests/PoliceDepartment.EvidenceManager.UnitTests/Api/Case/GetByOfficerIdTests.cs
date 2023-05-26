@@ -45,8 +45,8 @@ namespace PoliceDepartment.EvidenceManager.UnitTests.Api.Case
             //Assert
             response.Success.Should().BeTrue();
             response.Value.Count().Should().Be(caseQuantity);
-            if(caseQuantity>0)
-            response.Value.Select(c => c.OfficerId).First().Should().Be(officerId);
+            if (caseQuantity > 0)
+                response.Value.Select(c => c.OfficerId).First().Should().Be(officerId);
         }
     }
 }

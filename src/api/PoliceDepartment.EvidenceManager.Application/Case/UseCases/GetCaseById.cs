@@ -26,13 +26,13 @@ namespace PoliceDepartment.EvidenceManager.Application.Case.UseCases
         {
             _logger.LogDebug("Begin Get case by id", ("id", id));
 
-            var entity = await _uow.Case.GetById(id, cancellationToken);
+            var entity = await _uow.Case.GetByIdAsync(id, cancellationToken);
 
             if(!entity.Exists())
             {
                 _logger.LogWarning("Case doesn't exists", ("id", id));
 
-                return _response.AsError("Case doesn't exists");
+                return _response.AsError(ResponseMessage.CaseDontExists);
             }
 
             _logger.LogDebug("Begin Get case by id", ("id", id), ("case",entity));

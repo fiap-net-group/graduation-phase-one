@@ -2,7 +2,8 @@
 {
     public interface ICaseRepository : IDisposable
     {
+        Task UpdateAsync(CaseEntity entity, CancellationToken cancellationToken);
         Task<IEnumerable<CaseEntity>> GetByOfficerId(Guid officerId, CancellationToken cancellationToken);
-        Task<CaseEntity> GetById(Guid id, CancellationToken cancellationToken);
+        Task<CaseEntity> GetByIdAsync(Guid id, CancellationToken cancellationToken);
     }
 }

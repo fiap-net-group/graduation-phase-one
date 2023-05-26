@@ -25,7 +25,7 @@ namespace PoliceDepartment.EvidenceManager.Infra.Database.Repositories
             return cases is null ? Enumerable.Empty<CaseEntity>() : cases;
         }
 
-        public async Task<CaseEntity> GetById(Guid id, CancellationToken cancellationToken)
+        public async Task<CaseEntity> GetByIdAsync(Guid id, CancellationToken cancellationToken)
         {
             var entity = await _context.Cases.Where(c => c.Id == id)
                                              .Include(c => c.Officer)
@@ -33,6 +33,15 @@ namespace PoliceDepartment.EvidenceManager.Infra.Database.Repositories
                                              .FirstOrDefaultAsync(cancellationToken);
 
             return entity ?? new CaseEntity();
+        }
+
+        public async Task UpdateAsync(CaseEntity entity, CancellationToken cancellationToken)
+        {
+            await Task.Run(() =>
+            {
+                entity.UpdatedAt = DateTime.Now;
+                _context.Cases.Update(entity);
+            }, cancellationToken);
         }
 
         public void Dispose()
@@ -43,8 +52,8 @@ namespace PoliceDepartment.EvidenceManager.Infra.Database.Repositories
 
         protected virtual void Dispose(bool disposing)
         {
-            if (disposing)            
-                _context.Dispose();            
+            if (disposing)
+                _context.Dispose();
         }
     }
 }

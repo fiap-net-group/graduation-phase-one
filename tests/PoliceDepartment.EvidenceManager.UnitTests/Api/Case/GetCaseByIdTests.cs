@@ -30,7 +30,7 @@ namespace PoliceDepartment.EvidenceManager.UnitTests.Api.Case
 
             var entity = new CaseEntity();
 
-            uow.Case.GetById(Arg.Any<Guid>(), Arg.Any<CancellationToken>()).Returns(Task.FromResult(entity));
+            uow.Case.GetByIdAsync(Arg.Any<Guid>(), Arg.Any<CancellationToken>()).Returns(Task.FromResult(entity));
             
             var sut = new GetCaseById(logger, uow, mapper);
 
@@ -52,7 +52,7 @@ namespace PoliceDepartment.EvidenceManager.UnitTests.Api.Case
             var entity = _fixture.Case.GenerateSingleEntity();
             var viewModel = _fixture.Case.GenerateViewModelByEntity(entity);
 
-            uow.Case.GetById(Arg.Any<Guid>(), Arg.Any<CancellationToken>()).Returns(Task.FromResult(entity));
+            uow.Case.GetByIdAsync(Arg.Any<Guid>(), Arg.Any<CancellationToken>()).Returns(Task.FromResult(entity));
             mapper.Map<CaseViewModel>(Arg.Any<CaseEntity>()).Returns(viewModel);
 
             var sut = new GetCaseById(logger, uow, mapper);

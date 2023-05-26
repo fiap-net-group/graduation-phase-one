@@ -12,15 +12,18 @@ namespace PoliceDepartment.EvidenceManager.API.Features.V1.Controllers
     [Produces("application/json")]
     public class CasesController : ControllerBase
     {
-        private readonly IGetCasesByOfficerId<BaseResponseWithValue<IEnumerable<CaseViewModel>>> _getByOfficerId;
+        private readonly IUpdateCase<CaseViewModel, BaseResponse> _updateCase;
         private readonly IGetById<BaseResponseWithValue<CaseViewModel>> _getById;
+        private readonly IGetCasesByOfficerId<BaseResponseWithValue<IEnumerable<CaseViewModel>>> _getByOfficerId;
 
         public CasesController(
-            IGetCasesByOfficerId<BaseResponseWithValue<IEnumerable<CaseViewModel>>> getByOfficerId, 
-            IGetById<BaseResponseWithValue<CaseViewModel>> getById)
+            IGetCasesByOfficerId<BaseResponseWithValue<IEnumerable<CaseViewModel>>> getByOfficerId,
+            IGetById<BaseResponseWithValue<CaseViewModel>> getById,
+            IUpdateCase<CaseViewModel, BaseResponse> updateCase)
         {
             _getByOfficerId = getByOfficerId;
             _getById = getById;
+            _updateCase = updateCase;
         }
 
         /// <summary>
@@ -38,6 +41,32 @@ namespace PoliceDepartment.EvidenceManager.API.Features.V1.Controllers
             return Ok(cases);
         }
 
+        /// <summary>
+        /// Update case
+        /// </summary>
+        /// <param name="id">The case id</param>
+        /// <param name="caseViewModel">The new case properties</param>
+        /// <param name="cancellationToken"></param>
+        /// <response code="204">Success updating the case</response>
+        /// <response code="400">Invalid case properties</response>
+        /// <response code="404">The case does't exists</response>
+        [HttpPatch("{id:guid}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent, StatusCode = StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, StatusCode = StatusCodes.Status400BadRequest, Type = typeof(BaseResponse))]
+        [ProducesResponseType(StatusCodes.Status404NotFound, StatusCode = StatusCodes.Status404NotFound, Type = typeof(BaseResponse))]
+        public async Task<IActionResult> Patch(Guid id, CaseViewModel caseViewModel, CancellationToken cancellationToken)
+        {
+            var response = await _updateCase.RunAsync(id, caseViewModel, cancellationToken);
+
+            if (response.Success)
+                return NoContent();
+
+            if (response.ResponseMessageEqual(ResponseMessage.CaseDontExists))
+                return NotFound(response);
+
+            return BadRequest(response);
+        }
+        
         /// <summary>
         /// Get case by id
         /// </summary>
