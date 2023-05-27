@@ -3,7 +3,7 @@ using PoliceDepartment.EvidenceManager.SharedKernel.ViewModels;
 
 namespace PoliceDepartment.EvidenceManager.Application.Case
 {
-    public class CaseValidator : AbstractValidator<CaseViewModel>
+    public class CaseValidator : AbstractValidator<CreateCaseViewModel>
     {
         public CaseValidator()
         {

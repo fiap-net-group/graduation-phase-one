@@ -10,15 +10,15 @@ using PoliceDepartment.EvidenceManager.SharedKernel.ViewModels;
 
 namespace PoliceDepartment.EvidenceManager.Application.Case.UseCases
 {
-    public class CreateCase : ICreateCase<CaseViewModel, BaseResponse>
+    public class CreateCase : ICreateCase<CreateCaseViewModel, BaseResponse>
     {
         private readonly ILoggerManager _logger;
         private readonly IUnitOfWork _uow;
         private readonly BaseResponse _response;
         private readonly IMapper _mapper;
-        private readonly IValidator<CaseViewModel> _validator;
+        private readonly IValidator<CreateCaseViewModel> _validator;
 
-        public CreateCase(ILoggerManager logger, IUnitOfWork uow, IMapper mapper, IValidator<CaseViewModel> validator)
+        public CreateCase(ILoggerManager logger, IUnitOfWork uow, IMapper mapper, IValidator<CreateCaseViewModel> validator)
         {
             _logger = logger;
             _uow = uow;
@@ -27,7 +27,7 @@ namespace PoliceDepartment.EvidenceManager.Application.Case.UseCases
             _validator = validator;
         }
 
-        public async Task<BaseResponse> RunAsync(CaseViewModel @case, CancellationToken cancellationToken)
+        public async Task<BaseResponse> RunAsync(CreateCaseViewModel @case, CancellationToken cancellationToken)
         {
 
             _logger.LogDebug("Validating case properties");
@@ -41,7 +41,6 @@ namespace PoliceDepartment.EvidenceManager.Application.Case.UseCases
 
                 return _response.AsError(ResponseMessage.InvalidCase, errorMessages);
             }
-
 
             _logger.LogDebug("Begin Create case");
 

@@ -23,9 +23,9 @@ namespace PoliceDepartment.EvidenceManager.API.DependencyInjection.BusinessRules
             services.AddScoped<IGetCasesByOfficerId<BaseResponseWithValue<IEnumerable<CaseViewModel>>>, GetCaseByOfficerId>();
             services.AddScoped<IGetById<BaseResponseWithValue<CaseViewModel>>, GetCaseById>();
             services.AddScoped<IUpdateCase<CaseViewModel, BaseResponse>, UpdateCase>();
-            services.AddScoped<ICreateCase<CaseViewModel, BaseResponse>, CreateCase>();
+            services.AddScoped<ICreateCase<CreateCaseViewModel, BaseResponse>, CreateCase>();
 
-            services.AddScoped<IValidator<CaseViewModel>, CaseValidator>();
+            services.AddScoped<IValidator<CreateCaseViewModel>, CaseValidator>();
 
             services.AddAutoMapper(typeof(EvidenceMapperProfile));
 
