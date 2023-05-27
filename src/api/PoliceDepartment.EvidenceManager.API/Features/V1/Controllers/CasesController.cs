@@ -15,15 +15,18 @@ namespace PoliceDepartment.EvidenceManager.API.Features.V1.Controllers
         private readonly IUpdateCase<CaseViewModel, BaseResponse> _updateCase;
         private readonly IGetById<BaseResponseWithValue<CaseViewModel>> _getById;
         private readonly IGetCasesByOfficerId<BaseResponseWithValue<IEnumerable<CaseViewModel>>> _getByOfficerId;
+        private readonly ICreateCase<CaseViewModel, BaseResponse> _createCase;
 
         public CasesController(
             IGetCasesByOfficerId<BaseResponseWithValue<IEnumerable<CaseViewModel>>> getByOfficerId,
             IGetById<BaseResponseWithValue<CaseViewModel>> getById,
-            IUpdateCase<CaseViewModel, BaseResponse> updateCase)
+            IUpdateCase<CaseViewModel, BaseResponse> updateCase,
+            ICreateCase<CaseViewModel, BaseResponse> createCase)
         {
             _getByOfficerId = getByOfficerId;
             _getById = getById;
             _updateCase = updateCase;
+            _createCase = createCase;
         }
 
         /// <summary>
@@ -85,6 +88,19 @@ namespace PoliceDepartment.EvidenceManager.API.Features.V1.Controllers
                 return BadRequest(response);
 
             return Ok(response);
+        }
+
+        [HttpPost]
+        [ProducesResponseType(StatusCodes.Status201Created, StatusCode = StatusCodes.Status201Created, Type = typeof(CaseViewModel))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, StatusCode = StatusCodes.Status400BadRequest, Type = typeof(BaseResponse))]
+        public async Task<IActionResult> CreateCase(CaseViewModel caseViewModel, CancellationToken cancellationToken)
+        {
+            var response = await _createCase.RunAsync(caseViewModel, cancellationToken);
+
+            if (!response.Success)
+                return BadRequest(response);
+
+            return CreatedAtAction(nameof(GetById), null, response);
         }
     }
 }
