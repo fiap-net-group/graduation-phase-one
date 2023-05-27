@@ -47,5 +47,14 @@ namespace PoliceDepartment.EvidenceManager.UnitTests.Fixtures.Api
                 Evidences = new List<EvidenceViewModel>()
             };
         }
+
+        public CreateCaseViewModel GenerateViewModel()
+        {
+            return new Faker<CreateCaseViewModel>()
+                .RuleFor(c => c.Name, $"Fake name {Guid.NewGuid()}")
+                .RuleFor(c => c.Description, "Description fake")
+                .RuleFor(c => c.OfficerId, Guid.NewGuid())
+                .Generate();
+        }
     }
 }
