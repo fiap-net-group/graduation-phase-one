@@ -20,7 +20,7 @@ namespace PoliceDepartment.EvidenceManager.UnitTests.Api.Case
         private readonly ApiFixture _fixture;
         private readonly IUnitOfWork _uow;
         private readonly IMapper _mapper;
-        private readonly IValidator<CaseViewModel> _validator;
+        private readonly IValidator<CreateCaseViewModel> _validator;
         private readonly ILoggerManager _logger;
 
         public CreateCaseTests(ApiFixture fixture)
@@ -28,7 +28,7 @@ namespace PoliceDepartment.EvidenceManager.UnitTests.Api.Case
             _fixture = fixture;
             _uow = Substitute.For<IUnitOfWork>();
             _mapper = Substitute.For<IMapper>();
-            _validator = Substitute.For<IValidator<CaseViewModel>>();
+            _validator = Substitute.For<IValidator<CreateCaseViewModel>>();
             _logger = Substitute.For<ILoggerManager>();
         }
 
@@ -38,7 +38,7 @@ namespace PoliceDepartment.EvidenceManager.UnitTests.Api.Case
         public async Task RunAsync_ValidRequest_ShoudlReturnSuccess()
         {
             // Arrange
-            CaseViewModel caseViewModel = _fixture.Case.GenerateViewModel();
+            CreateCaseViewModel caseViewModel = _fixture.Case.GenerateViewModel();
             var validationResult = new ValidationResult();
             _validator.ValidateAsync(caseViewModel, CancellationToken.None).Returns(validationResult);
 
@@ -70,7 +70,7 @@ namespace PoliceDepartment.EvidenceManager.UnitTests.Api.Case
         public async Task RunAsync_InvalidRequest_ShouldReturnError(string name, string description, ResponseMessage expectedResponse)
         {
             // Arrange
-            var viewModel = new CaseViewModel { Name = name, Description = description };
+            var viewModel = new CreateCaseViewModel { Name = name, Description = description };
 
             var validationResult = new ValidationResult();
             validationResult.Errors.Add(new ValidationFailure("Name", "Name is required"));
@@ -94,7 +94,7 @@ namespace PoliceDepartment.EvidenceManager.UnitTests.Api.Case
         public async Task RunAsync_DatabaseError_ShouldThrow()
         {
             // Arrange
-            CaseViewModel caseViewModel = _fixture.Case.GenerateViewModel();
+            CreateCaseViewModel caseViewModel = _fixture.Case.GenerateViewModel();
             var validationResult = new ValidationResult();
             _validator.ValidateAsync(caseViewModel, CancellationToken.None).Returns(validationResult);
 
