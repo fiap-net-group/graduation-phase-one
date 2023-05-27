@@ -44,6 +44,15 @@ namespace PoliceDepartment.EvidenceManager.Infra.Database.Repositories
             }, cancellationToken);
         }
 
+        public async Task DeleteAsync(CaseEntity entity, CancellationToken cancellationToken)
+        {
+            await Task.Run(() =>
+            {
+                entity.Evidences = null;
+                _context.Cases.Remove(entity);
+            }, cancellationToken);
+        }
+
         public void Dispose()
         {
             Dispose(true);

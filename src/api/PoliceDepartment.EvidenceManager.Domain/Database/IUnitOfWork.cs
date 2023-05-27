@@ -10,6 +10,8 @@ namespace PoliceDepartment.EvidenceManager.Domain.Database
         IEvidenceRepository Evidence { get; }
         IOfficerRepository Officer { get; }
 
-        Task<bool> SaveChangesAsync();
+        Task<bool> SaveChangesAsync(CancellationToken cancellationToken);
+        Task BeginTransactionAsync(CancellationToken cancellationToken);
+        Task<bool> CommmitAsync(CancellationToken cancellationToken);
     }
 }

@@ -1,4 +1,5 @@
-﻿using PoliceDepartment.EvidenceManager.Domain.Case;
+﻿using Microsoft.EntityFrameworkCore.Storage;
+using PoliceDepartment.EvidenceManager.Domain.Case;
 using PoliceDepartment.EvidenceManager.Domain.Database;
 using PoliceDepartment.EvidenceManager.Domain.Evidence;
 using PoliceDepartment.EvidenceManager.Domain.Officer;
@@ -11,6 +12,8 @@ namespace PoliceDepartment.EvidenceManager.Infra.Database
     public class UnitOfWork : IUnitOfWork
     {
         private readonly IAppDatabaseContext _context;
+        private IDbContextTransaction _transaction;
+
         public ICaseRepository Case { get; }
         public IEvidenceRepository Evidence { get; }
         public IOfficerRepository Officer { get; }
@@ -26,9 +29,29 @@ namespace PoliceDepartment.EvidenceManager.Infra.Database
             Officer = officerRepository;
         }
 
-        public async Task<bool> SaveChangesAsync()
+        public async Task BeginTransactionAsync(CancellationToken cancellationToken)
         {
-            return await _context.SaveChangesAsync();
+            if (_transaction is not null)
+                throw new InvalidOperationException("A transaction is already opened");
+
+            _transaction = await _context.BeginTransactionAsync(cancellationToken);
+        }
+
+        public async Task<bool> CommmitAsync(CancellationToken cancellationToken)
+        {
+            if(_transaction is null)
+                throw new InvalidOperationException("There is no transaction opened");
+
+            var response =  await _context.CommitAsync(_transaction, cancellationToken);
+
+            await _transaction.DisposeAsync();
+
+            return response;
+        }
+
+        public async Task<bool> SaveChangesAsync(CancellationToken cancellationToken)
+        {
+            return await _context.SaveChangesAsync(cancellationToken);
         }
 
         public void Dispose()
@@ -42,6 +65,7 @@ namespace PoliceDepartment.EvidenceManager.Infra.Database
             if (disposing)
             {
                 _context.Dispose();
+                _transaction.Dispose();
             }
         }
     }

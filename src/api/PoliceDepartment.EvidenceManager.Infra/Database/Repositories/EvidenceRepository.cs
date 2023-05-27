@@ -13,29 +13,39 @@ namespace PoliceDepartment.EvidenceManager.Infra.Database.Repositories
         public EvidenceRepository(IAppDatabaseContext context)
         {
             _context = context;
-        }
+        } 
 
-        public Task Create(EvidenceEntity evidence)
+        public Task CreateAsync(EvidenceEntity evidence)
         {
             throw new NotImplementedException();
         }
 
-        public Task DeleteBy(Guid id)
+        public Task DeleteByIdAsync(Guid id)
         {
             throw new NotImplementedException();
         }
 
-        public Task<EvidenceEntity> GetBy(Guid id)
+        public async Task DeleteByCaseAsync(Guid caseId, CancellationToken cancellationToken)
+        {
+            var evidences = await _context.Evidences.Where(e => e.CaseId == caseId).ToListAsync(cancellationToken);
+
+            if (!evidences.Any())
+                return;
+
+            _context.Evidences.RemoveRange(evidences);
+        }
+
+        public Task<EvidenceEntity> GetByIdAsync(Guid id)
         {
             throw new NotImplementedException();
         }
 
-        public Task<IEnumerable<EvidenceEntity>> GetPaginated(int page, int rows)
+        public Task<IEnumerable<EvidenceEntity>> GetPaginatedAsync(int page, int rows)
         {
             throw new NotImplementedException();
         }
 
-        public Task Update(EvidenceEntity evidence)
+        public Task UpdateAsync(EvidenceEntity evidence)
         {
             throw new NotImplementedException();
         }

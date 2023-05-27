@@ -15,15 +15,18 @@ namespace PoliceDepartment.EvidenceManager.API.Features.V1.Controllers
         private readonly IUpdateCase<CaseViewModel, BaseResponse> _updateCase;
         private readonly IGetById<BaseResponseWithValue<CaseViewModel>> _getById;
         private readonly IGetCasesByOfficerId<BaseResponseWithValue<IEnumerable<CaseViewModel>>> _getByOfficerId;
+        private readonly IDeleteCase<BaseResponse> _deleteCase;
 
         public CasesController(
             IGetCasesByOfficerId<BaseResponseWithValue<IEnumerable<CaseViewModel>>> getByOfficerId,
             IGetById<BaseResponseWithValue<CaseViewModel>> getById,
-            IUpdateCase<CaseViewModel, BaseResponse> updateCase)
+            IUpdateCase<CaseViewModel, BaseResponse> updateCase,
+            IDeleteCase<BaseResponse> deleteCase)
         {
             _getByOfficerId = getByOfficerId;
             _getById = getById;
             _updateCase = updateCase;
+            _deleteCase = deleteCase;
         }
 
         /// <summary>
@@ -66,7 +69,7 @@ namespace PoliceDepartment.EvidenceManager.API.Features.V1.Controllers
 
             return BadRequest(response);
         }
-        
+
         /// <summary>
         /// Get case by id
         /// </summary>
@@ -85,6 +88,33 @@ namespace PoliceDepartment.EvidenceManager.API.Features.V1.Controllers
                 return BadRequest(response);
 
             return Ok(response);
+        }
+
+        /// <summary>
+        /// Delete case and it evidences by id
+        /// </summary>
+        /// <param name="id">The case id</param>
+        /// <param name="cancellationToken"></param>
+        /// <response code="204">Success deleting the case and it evidences</response>
+        /// <response code="403">Case is not from the officer</response>
+        /// <response code="404">Case not found</response>
+        [HttpDelete("{id:guid}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent, StatusCode = StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden, StatusCode = StatusCodes.Status403Forbidden, Type = typeof(string))]
+        [ProducesResponseType(StatusCodes.Status404NotFound, StatusCode = StatusCodes.Status404NotFound, Type = typeof(BaseResponse))]
+        public async Task<IActionResult> Delete(Guid id, CancellationToken cancellationToken)
+        {
+            var officerId = Guid.Empty; //TODO: Implement auth
+
+            var response = await _deleteCase.RunAsync(id, officerId, cancellationToken);
+
+            if (response.Success)
+                return NoContent();
+
+            if (response.ResponseMessageEqual(ResponseMessage.CaseDontExists))
+                return NotFound(response);
+
+            return Forbid();
         }
     }
 }
