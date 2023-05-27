@@ -7,9 +7,9 @@ namespace PoliceDepartment.EvidenceManager.UnitTests.Fixtures.Api
 {
     public class CaseFixture
     {
-        public CaseEntity GenerateSingleEntity()
+        public CaseEntity GenerateSingleEntity(Guid officerId = default)
         {
-            return GenerateEntityCollection(1).First();
+            return GenerateEntityCollection(1, officerId).First();
         }
 
         public IEnumerable<CaseEntity> GenerateEntityCollection(int quantity, Guid officerId = default)
