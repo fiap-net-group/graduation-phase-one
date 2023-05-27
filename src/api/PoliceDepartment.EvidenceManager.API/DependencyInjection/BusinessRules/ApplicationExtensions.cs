@@ -1,5 +1,7 @@
-﻿using PoliceDepartment.EvidenceManager.Application.Authorization;
+﻿using FluentValidation;
+using PoliceDepartment.EvidenceManager.Application.Authorization;
 using PoliceDepartment.EvidenceManager.Application.Authorization.UseCases;
+using PoliceDepartment.EvidenceManager.Application.Case;
 using PoliceDepartment.EvidenceManager.Application.Case.UseCases;
 using PoliceDepartment.EvidenceManager.Application.Evidence;
 using PoliceDepartment.EvidenceManager.Domain.Authorization;
@@ -22,6 +24,9 @@ namespace PoliceDepartment.EvidenceManager.API.DependencyInjection.BusinessRules
             services.AddScoped<IGetById<BaseResponseWithValue<CaseViewModel>>, GetCaseById>();
             services.AddScoped<IUpdateCase<CaseViewModel, BaseResponse>, UpdateCase>();
             services.AddScoped<IDeleteCase<BaseResponse>, DeleteCase>();
+            services.AddScoped<ICreateCase<CreateCaseViewModel, BaseResponse>, CreateCase>();
+
+            services.AddScoped<IValidator<CreateCaseViewModel>, CaseValidator>();
 
             services.AddAutoMapper(typeof(EvidenceMapperProfile));
 

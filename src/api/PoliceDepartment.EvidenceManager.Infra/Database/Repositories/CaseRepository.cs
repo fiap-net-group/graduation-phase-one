@@ -43,6 +43,10 @@ namespace PoliceDepartment.EvidenceManager.Infra.Database.Repositories
                 _context.Cases.Update(entity);
             }, cancellationToken);
         }
+        public async Task AddAsync(CaseEntity entity, CancellationToken cancellationToken)
+        {
+            await _context.Cases.AddAsync(entity, cancellationToken);
+        }
 
         public async Task DeleteAsync(CaseEntity entity, CancellationToken cancellationToken)
         {

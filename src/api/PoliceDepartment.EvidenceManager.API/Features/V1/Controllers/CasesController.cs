@@ -16,17 +16,20 @@ namespace PoliceDepartment.EvidenceManager.API.Features.V1.Controllers
         private readonly IGetById<BaseResponseWithValue<CaseViewModel>> _getById;
         private readonly IGetCasesByOfficerId<BaseResponseWithValue<IEnumerable<CaseViewModel>>> _getByOfficerId;
         private readonly IDeleteCase<BaseResponse> _deleteCase;
+        private readonly ICreateCase<CreateCaseViewModel, BaseResponse> _createCase;
 
         public CasesController(
             IGetCasesByOfficerId<BaseResponseWithValue<IEnumerable<CaseViewModel>>> getByOfficerId,
             IGetById<BaseResponseWithValue<CaseViewModel>> getById,
             IUpdateCase<CaseViewModel, BaseResponse> updateCase,
-            IDeleteCase<BaseResponse> deleteCase)
+            IDeleteCase<BaseResponse> deleteCase,
+            ICreateCase<CreateCaseViewModel, BaseResponse> createCase)
         {
             _getByOfficerId = getByOfficerId;
             _getById = getById;
             _updateCase = updateCase;
             _deleteCase = deleteCase;
+            _createCase = createCase;
         }
 
         /// <summary>
@@ -115,6 +118,26 @@ namespace PoliceDepartment.EvidenceManager.API.Features.V1.Controllers
                 return NotFound(response);
 
             return Forbid();
+        }
+
+        ///<summary>
+        /// Create case
+        /// </summary>
+        /// <param name="createCaseViewModel">The case body</param>
+        /// <param name="cancellationToken"></param>
+        /// <response code="201">The created case</response>
+        /// <response code="400">Invalid case properties</response>
+        [HttpPost]
+        [ProducesResponseType(StatusCodes.Status201Created, StatusCode = StatusCodes.Status201Created, Type = typeof(BaseResponse))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, StatusCode = StatusCodes.Status400BadRequest, Type = typeof(BaseResponse))]
+        public async Task<IActionResult> CreateCase(CreateCaseViewModel createCaseViewModel, CancellationToken cancellationToken)
+        {
+            var response = await _createCase.RunAsync(createCaseViewModel, cancellationToken);
+
+            if (!response.Success)
+                return BadRequest(response);
+
+            return CreatedAtAction(null, null, response);
         }
     }
 }
