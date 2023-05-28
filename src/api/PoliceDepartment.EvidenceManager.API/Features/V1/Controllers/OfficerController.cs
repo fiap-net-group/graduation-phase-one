@@ -18,13 +18,22 @@ namespace PoliceDepartment.EvidenceManager.API.Features.V1.Controllers
             _createOfficer = createOfficer;
         }
 
+        ///<summary>
+        /// Create officer
+        /// </summary>
+        /// <param name="officer">The officer body</param>
+        /// <param name="cancellationToken"></param>
+        /// <response code="201">Officer has been created</response>
+        /// <response code="400">Invalid case properties</response>
         [HttpPost]
-        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status201Created, StatusCode = StatusCodes.Status201Created, Type = typeof(BaseResponse))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, StatusCode = StatusCodes.Status400BadRequest, Type = typeof(BaseResponse))]
         public async Task<IActionResult> Create(CreateOfficerViewModel officer, CancellationToken cancellationToken)
         {
             var response = await _createOfficer.RunAsync(officer,cancellationToken);
+            
             if(response.Success)
-                return Created(new Uri("http://UrlToLogin.com.br"), response);
+                return CreatedAtAction(nameof(Create), response);
 
             return BadRequest(response);
         }
