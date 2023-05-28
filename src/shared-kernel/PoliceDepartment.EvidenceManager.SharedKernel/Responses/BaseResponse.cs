@@ -1,13 +1,11 @@
-﻿using System.Runtime.Serialization;
-
-namespace PoliceDepartment.EvidenceManager.SharedKernel.Responses
+﻿namespace PoliceDepartment.EvidenceManager.SharedKernel.Responses
 {
     public class BaseResponse
     {
         public bool Success { get; set; }
         public ResponseDetails ResponseDetails { get; set; }
 
-        public BaseResponse AsError(params string[] errors)
+        public BaseResponse AsError(ResponseMessage? message = null,params string[] errors)
         {
             errors ??= Array.Empty<string>();
             Success = false;

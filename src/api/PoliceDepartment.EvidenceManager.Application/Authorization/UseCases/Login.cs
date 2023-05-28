@@ -32,7 +32,7 @@ namespace PoliceDepartment.EvidenceManager.Application.Authorization.UseCases
             {
                 _logger.LogWarning("Invalid credentials", ("username", login.Username));
 
-                return _response.AsError("Invalid credentials");
+                return _response.AsError(ResponseMessage.InvalidCredentials);
             }
 
             _logger.LogDebug("Success Login", ("username", login.Username));

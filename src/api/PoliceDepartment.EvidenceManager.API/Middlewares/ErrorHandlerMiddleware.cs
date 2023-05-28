@@ -42,7 +42,7 @@ namespace PoliceDepartment.EvidenceManager.API.Middlewares
         {
             var code = HttpStatusCode.BadRequest;
 
-            var result = JsonConvert.SerializeObject(new BaseResponse().AsError(exception.Message));
+            var result = JsonConvert.SerializeObject(new BaseResponse().AsError(null,exception.Message));
 
             return ErrorResponse(context, result, code);
         }
@@ -56,7 +56,7 @@ namespace PoliceDepartment.EvidenceManager.API.Middlewares
 
         private static Task ErrorResponse(HttpContext context, HttpStatusCode code)
         {
-            var result = JsonConvert.SerializeObject(new BaseResponse().AsError("Unexpected error"));
+            var result = JsonConvert.SerializeObject(new BaseResponse().AsError());
 
             return ErrorResponse(context, result, code);
         }

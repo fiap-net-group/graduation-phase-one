@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
-using PoliceDepartment.EvidenceManager.Application.Officer;
 using PoliceDepartment.EvidenceManager.Domain.Officer.UseCases;
 using PoliceDepartment.EvidenceManager.SharedKernel.Responses;
+using PoliceDepartment.EvidenceManager.SharedKernel.ViewModels;
 
 namespace PoliceDepartment.EvidenceManager.API.Features.V1.Controllers
 {
@@ -11,20 +11,20 @@ namespace PoliceDepartment.EvidenceManager.API.Features.V1.Controllers
     [Produces("application/json")]
     public sealed class OfficerController : ControllerBase
     {
-        private readonly ICreateOfficer<OfficerViewModel,BaseResponse> _createOfficer;
+        private readonly ICreateOfficer<CreateOfficerViewModel,BaseResponse> _createOfficer;
 
-        public OfficerController(ICreateOfficer<OfficerViewModel,BaseResponse> createOfficer)
+        public OfficerController(ICreateOfficer<CreateOfficerViewModel,BaseResponse> createOfficer)
         {
             _createOfficer = createOfficer;
         }
 
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<IActionResult> Create(OfficerViewModel officer, CancellationToken cancellationToken)
+        public async Task<IActionResult> Create(CreateOfficerViewModel officer, CancellationToken cancellationToken)
         {
             var response = await _createOfficer.RunAsync(officer,cancellationToken);
             if(response.Success)
-                return Created(new Uri("http://teste.com.br"), response);
+                return Created(new Uri("http://UrlToLogin.com.br"), response);
 
             return BadRequest(response);
         }
