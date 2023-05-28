@@ -12,6 +12,7 @@ using PoliceDepartment.EvidenceManager.Domain.Case.UseCases;
 using PoliceDepartment.EvidenceManager.SharedKernel.Responses;
 using PoliceDepartment.EvidenceManager.SharedKernel.ViewModels;
 using System.Diagnostics.CodeAnalysis;
+using PoliceDepartment.EvidenceManager.Domain.Officer.UseCases;
 
 namespace PoliceDepartment.EvidenceManager.API.DependencyInjection.BusinessRules
 {
