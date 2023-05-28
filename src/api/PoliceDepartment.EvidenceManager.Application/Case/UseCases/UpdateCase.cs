@@ -42,7 +42,7 @@ namespace PoliceDepartment.EvidenceManager.Application.Case.UseCases
 
             await _uow.Case.UpdateAsync(entity, cancellationToken);
 
-            if (!await _uow.SaveChangesAsync())
+            if (!await _uow.SaveChangesAsync(cancellationToken))
             {
                 _logger.LogError("An error ocurred at the database", default, ("id", id));
 

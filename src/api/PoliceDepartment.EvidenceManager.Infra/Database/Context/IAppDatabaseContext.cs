@@ -13,7 +13,8 @@ namespace PoliceDepartment.EvidenceManager.Infra.Database.Mappings
         public DbSet<EvidenceEntity> Evidences { get; }
         public DbSet<OfficerEntity> Officers { get; }
 
-        Task<bool> SaveChangesAsync();
-        Task<IDbContextTransaction> BeginTransactionAsync();
+        Task<bool> SaveChangesAsync(CancellationToken cancellationToken);
+        Task<IDbContextTransaction> BeginTransactionAsync(CancellationToken cancellationToken);
+        Task<bool> CommitAsync(IDbContextTransaction transaction, CancellationToken cancellationToken);
     }
 }

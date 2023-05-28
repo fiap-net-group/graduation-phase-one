@@ -47,7 +47,7 @@ namespace PoliceDepartment.EvidenceManager.UnitTests.Api.Case
 
             var _uow = Substitute.For<IUnitOfWork>();
             _uow.Case.AddAsync(caseEntity, CancellationToken.None).Returns(Task.CompletedTask);
-            _uow.SaveChangesAsync().Returns(true);
+            _uow.SaveChangesAsync(Arg.Any<CancellationToken>()).Returns(true);
 
             var sut = new CreateCase(_logger, _uow, _mapper, _validator);
 
@@ -58,7 +58,7 @@ namespace PoliceDepartment.EvidenceManager.UnitTests.Api.Case
             response.Success.Should().BeTrue();
             _mapper.Received(1).Map<CaseEntity>(caseViewModel);
             await _uow.Case.Received(1).AddAsync(caseEntity, CancellationToken.None);
-            await _uow.Received(1).SaveChangesAsync();
+            await _uow.Received(1).SaveChangesAsync(CancellationToken.None);
         }
 
 
@@ -103,7 +103,7 @@ namespace PoliceDepartment.EvidenceManager.UnitTests.Api.Case
 
             var _uow = Substitute.For<IUnitOfWork>();
             _uow.Case.AddAsync(caseEntity, CancellationToken.None).Returns(Task.CompletedTask);
-            _uow.SaveChangesAsync().Returns(false);
+            _uow.SaveChangesAsync(Arg.Any<CancellationToken>()).Returns(false);
 
             var sut = new CreateCase(_logger, _uow, _mapper, _validator);
 

@@ -23,6 +23,7 @@ namespace PoliceDepartment.EvidenceManager.API.DependencyInjection.BusinessRules
             services.AddScoped<IGetCasesByOfficerId<BaseResponseWithValue<IEnumerable<CaseViewModel>>>, GetCaseByOfficerId>();
             services.AddScoped<IGetById<BaseResponseWithValue<CaseViewModel>>, GetCaseById>();
             services.AddScoped<IUpdateCase<CaseViewModel, BaseResponse>, UpdateCase>();
+            services.AddScoped<IDeleteCase<BaseResponse>, DeleteCase>();
             services.AddScoped<ICreateCase<CreateCaseViewModel, BaseResponse>, CreateCase>();
 
             services.AddScoped<IValidator<CreateCaseViewModel>, CaseValidator>();

@@ -56,7 +56,7 @@ namespace PoliceDepartment.EvidenceManager.Application.Case.UseCases
 
             await _uow.Case.AddAsync(caseEntity, cancellationToken);
 
-            if (!await _uow.SaveChangesAsync())
+            if (!await _uow.SaveChangesAsync(cancellationToken))
             {
                 _logger.LogError("An error ocurred at the database");
 

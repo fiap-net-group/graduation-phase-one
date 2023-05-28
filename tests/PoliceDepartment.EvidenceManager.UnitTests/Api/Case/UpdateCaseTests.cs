@@ -60,7 +60,7 @@ namespace PoliceDepartment.EvidenceManager.UnitTests.Api.Case
             var viewModel = new CaseViewModel { Name = "name", Description = "description" };
             var entity = _fixture.Case.GenerateSingleEntity();
             uow.Case.GetByIdAsync(Arg.Any<Guid>(), Arg.Any<CancellationToken>()).Returns(Task.FromResult(entity));
-            uow.SaveChangesAsync().Returns(Task.FromResult(false));
+            uow.SaveChangesAsync(Arg.Any<CancellationToken>()).Returns(Task.FromResult(false));
             
             var sut = new UpdateCase(logger, uow);
 
@@ -87,7 +87,7 @@ namespace PoliceDepartment.EvidenceManager.UnitTests.Api.Case
             var viewModel = new CaseViewModel { Name = name, Description = description };
             var entity = _fixture.Case.GenerateSingleEntity();
             uow.Case.GetByIdAsync(Arg.Any<Guid>(), Arg.Any<CancellationToken>()).Returns(Task.FromResult(entity));
-            uow.SaveChangesAsync().Returns(Task.FromResult(true));
+            uow.SaveChangesAsync(Arg.Any<CancellationToken>()).Returns(Task.FromResult(true));
 
             var sut = new UpdateCase(logger, uow);
 
