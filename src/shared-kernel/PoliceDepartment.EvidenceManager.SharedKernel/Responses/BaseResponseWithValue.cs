@@ -6,7 +6,7 @@
 
         public BaseResponseWithValue<T> AsError(T value, ResponseMessage? message = null, params string[] errors)
         {
-            AsError(message,errors);
+            AsError(message, errors);
             Value = value;
             return this;
         }

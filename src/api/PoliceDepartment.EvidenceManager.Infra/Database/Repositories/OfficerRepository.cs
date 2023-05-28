@@ -1,5 +1,7 @@
-﻿using PoliceDepartment.EvidenceManager.Domain.Logger;
+using Microsoft.EntityFrameworkCore;
+using PoliceDepartment.EvidenceManager.Domain.Logger;
 using PoliceDepartment.EvidenceManager.Domain.Officer;
+using PoliceDepartment.EvidenceManager.Infra.Database.Mappings;
 using System.Diagnostics.CodeAnalysis;
 
 namespace PoliceDepartment.EvidenceManager.Infra.Database.Repositories
@@ -15,6 +17,7 @@ namespace PoliceDepartment.EvidenceManager.Infra.Database.Repositories
             _logger = logger;
             _DbContext = dbContext;
         }
+        
         public async Task CreateAsync(OfficerEntity officer, CancellationToken cancellationToken)
         {            
             await _DbContext.Officers.AddAsync(officer, cancellationToken);
@@ -28,7 +31,14 @@ namespace PoliceDepartment.EvidenceManager.Infra.Database.Repositories
 
         public void Dispose()
         {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
 
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+                _context.Dispose();
         }
     }
 }

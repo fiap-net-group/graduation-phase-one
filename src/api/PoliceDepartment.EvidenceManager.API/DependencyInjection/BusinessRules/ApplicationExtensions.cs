@@ -3,9 +3,12 @@ using PoliceDepartment.EvidenceManager.Application.Authorization;
 using PoliceDepartment.EvidenceManager.Application.Authorization.UseCases;
 using PoliceDepartment.EvidenceManager.Application.Officer;
 using PoliceDepartment.EvidenceManager.Application.Officer.UseCases;
+using PoliceDepartment.EvidenceManager.Application.Case;
+using PoliceDepartment.EvidenceManager.Application.Case.UseCases;
+using PoliceDepartment.EvidenceManager.Application.Evidence;
 using PoliceDepartment.EvidenceManager.Domain.Authorization;
 using PoliceDepartment.EvidenceManager.Domain.Authorization.UseCases;
-using PoliceDepartment.EvidenceManager.Domain.Officer.UseCases;
+using PoliceDepartment.EvidenceManager.Domain.Case.UseCases;
 using PoliceDepartment.EvidenceManager.SharedKernel.Responses;
 using PoliceDepartment.EvidenceManager.SharedKernel.ViewModels;
 using System.Diagnostics.CodeAnalysis;
@@ -23,6 +26,16 @@ namespace PoliceDepartment.EvidenceManager.API.DependencyInjection.BusinessRules
             services.AddScoped<IValidator<CreateOfficerViewModel>, OfficerValidator>();
 
             services.AddAutoMapper(typeof(OfficerMapperProfile));
+
+            services.AddScoped<IGetCasesByOfficerId<BaseResponseWithValue<IEnumerable<CaseViewModel>>>, GetCaseByOfficerId>();
+            services.AddScoped<IGetById<BaseResponseWithValue<CaseViewModel>>, GetCaseById>();
+            services.AddScoped<IUpdateCase<CaseViewModel, BaseResponse>, UpdateCase>();
+            services.AddScoped<IDeleteCase<BaseResponse>, DeleteCase>();
+            services.AddScoped<ICreateCase<CreateCaseViewModel, BaseResponse>, CreateCase>();
+
+            services.AddScoped<IValidator<CreateCaseViewModel>, CaseValidator>();
+
+            services.AddAutoMapper(typeof(EvidenceMapperProfile));
 
             return services;
         }

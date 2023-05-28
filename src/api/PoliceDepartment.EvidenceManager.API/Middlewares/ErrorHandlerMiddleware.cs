@@ -42,7 +42,7 @@ namespace PoliceDepartment.EvidenceManager.API.Middlewares
         {
             var code = HttpStatusCode.BadRequest;
 
-            var result = JsonConvert.SerializeObject(new BaseResponse().AsError(null,exception.Message));
+            var result = JsonConvert.SerializeObject(new BaseResponse().AsError(null, exception.Message));
 
             return ErrorResponse(context, result, code);
         }

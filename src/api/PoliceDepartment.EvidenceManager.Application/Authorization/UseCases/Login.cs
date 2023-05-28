@@ -3,6 +3,7 @@ using PoliceDepartment.EvidenceManager.Domain.Authorization.UseCases;
 using PoliceDepartment.EvidenceManager.Domain.Exceptions;
 using PoliceDepartment.EvidenceManager.Domain.Logger;
 using PoliceDepartment.EvidenceManager.SharedKernel.Responses;
+using PoliceDepartment.EvidenceManager.SharedKernel.ViewModels;
 
 namespace PoliceDepartment.EvidenceManager.Application.Authorization.UseCases
 {

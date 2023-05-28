@@ -1,4 +1,6 @@
-﻿using PoliceDepartment.EvidenceManager.Domain.Evidence;
+﻿using Microsoft.EntityFrameworkCore;
+using PoliceDepartment.EvidenceManager.Domain.Evidence;
+using PoliceDepartment.EvidenceManager.Infra.Database.Mappings;
 using System.Diagnostics.CodeAnalysis;
 
 namespace PoliceDepartment.EvidenceManager.Infra.Database.Repositories
@@ -6,34 +8,58 @@ namespace PoliceDepartment.EvidenceManager.Infra.Database.Repositories
     [ExcludeFromCodeCoverage]
     public class EvidenceRepository : IEvidenceRepository
     {
-        public Task Create(EvidenceEntity evidence)
+        private readonly IAppDatabaseContext _context;
+
+        public EvidenceRepository(IAppDatabaseContext context)
+        {
+            _context = context;
+        } 
+
+        public Task CreateAsync(EvidenceEntity evidence)
         {
             throw new NotImplementedException();
         }
 
-        public Task DeleteBy(Guid id)
+        public Task DeleteByIdAsync(Guid id)
         {
             throw new NotImplementedException();
         }
 
-        public Task<EvidenceEntity> GetBy(Guid id)
+        public async Task DeleteByCaseAsync(Guid caseId, CancellationToken cancellationToken)
+        {
+            var evidences = await _context.Evidences.Where(e => e.CaseId == caseId).ToListAsync(cancellationToken);
+
+            if (!evidences.Any())
+                return;
+
+            _context.Evidences.RemoveRange(evidences);
+        }
+
+        public Task<EvidenceEntity> GetByIdAsync(Guid id)
         {
             throw new NotImplementedException();
         }
 
-        public Task<IEnumerable<EvidenceEntity>> GetPaginated(int page, int rows)
+        public Task<IEnumerable<EvidenceEntity>> GetPaginatedAsync(int page, int rows)
         {
             throw new NotImplementedException();
         }
 
-        public Task Update(EvidenceEntity evidence)
+        public Task UpdateAsync(EvidenceEntity evidence)
         {
             throw new NotImplementedException();
         }
 
         public void Dispose()
         {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
 
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+                _context.Dispose();
         }
     }
 }
