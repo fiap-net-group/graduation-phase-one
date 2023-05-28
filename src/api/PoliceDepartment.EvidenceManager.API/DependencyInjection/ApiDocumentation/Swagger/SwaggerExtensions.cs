@@ -16,6 +16,8 @@ namespace PoliceDepartment.EvidenceManager.API.DependencyInjection.ApiDocumentat
             {
                 options.OperationFilter<SwaggerDefaultValues>();
 
+                options.OperationFilter<ApiKeyHeaderParameter>();
+
                 options.CustomSchemaIds(SchemaIdStrategy);
 
                 options.AddSecurity();

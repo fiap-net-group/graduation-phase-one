@@ -26,7 +26,13 @@ namespace PoliceDepartment.EvidenceManager.API.Middlewares
             }
             catch (BusinessException ex)
             {
-                _logger.LogWarning("Businness error caught by exception", ("exception", ex));
+                _logger.LogWarning("Business error caught by middleware", ("exception", ex));
+
+                await HandleExceptionAsync(context, ex);
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                _logger.LogWarning("Unauthorized error caught by middleware", ("exception", ex));
 
                 await HandleExceptionAsync(context, ex);
             }
@@ -41,6 +47,15 @@ namespace PoliceDepartment.EvidenceManager.API.Middlewares
         private static Task HandleExceptionAsync(HttpContext context, BusinessException exception)
         {
             var code = HttpStatusCode.BadRequest;
+
+            var result = JsonConvert.SerializeObject(new BaseResponse().AsError(null, exception.Message));
+
+            return ErrorResponse(context, result, code);
+        }
+
+        private static Task HandleExceptionAsync(HttpContext context, UnauthorizedAccessException exception)
+        {
+            var code = HttpStatusCode.Unauthorized;
 
             var result = JsonConvert.SerializeObject(new BaseResponse().AsError(null, exception.Message));
 
