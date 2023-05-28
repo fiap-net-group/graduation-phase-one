@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
+using PoliceDepartment.EvidenceManager.Domain.Logger;
 using PoliceDepartment.EvidenceManager.Domain.Officer;
 using PoliceDepartment.EvidenceManager.Infra.Database.Mappings;
 using System.Diagnostics.CodeAnalysis;
@@ -8,11 +9,24 @@ namespace PoliceDepartment.EvidenceManager.Infra.Database.Repositories
     [ExcludeFromCodeCoverage]
     public class OfficerRepository : IOfficerRepository
     {
-        private readonly IAppDatabaseContext _context;
+        private readonly ILoggerManager _logger;
+        public SqlServerContext _DbContext { get; set; }
 
-        public OfficerRepository(IAppDatabaseContext context)
+        public OfficerRepository(ILoggerManager logger,SqlServerContext dbContext)
         {
-            _context = context;
+            _logger = logger;
+            _DbContext = dbContext;
+        }
+        
+        public async Task CreateAsync(OfficerEntity officer, CancellationToken cancellationToken)
+        {            
+            await _DbContext.Officers.AddAsync(officer, cancellationToken);
+            var success = await _DbContext.SaveChangesAsync(cancellationToken);
+
+            if(success == 0){
+                _logger.LogError("An error ocurred at the database");
+                throw new Exception("Error on create officer");
+            }            
         }
 
         public void Dispose()

@@ -1,4 +1,4 @@
-﻿using PoliceDepartment.EvidenceManager.SharedKernel.Extensions;
+using PoliceDepartment.EvidenceManager.SharedKernel.Extensions;
 using System.Runtime.Serialization;
 
 namespace PoliceDepartment.EvidenceManager.SharedKernel.Responses

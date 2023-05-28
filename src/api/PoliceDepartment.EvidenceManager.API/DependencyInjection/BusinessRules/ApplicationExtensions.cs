@@ -1,6 +1,8 @@
 ﻿using FluentValidation;
 using PoliceDepartment.EvidenceManager.Application.Authorization;
 using PoliceDepartment.EvidenceManager.Application.Authorization.UseCases;
+using PoliceDepartment.EvidenceManager.Application.Officer;
+using PoliceDepartment.EvidenceManager.Application.Officer.UseCases;
 using PoliceDepartment.EvidenceManager.Application.Case;
 using PoliceDepartment.EvidenceManager.Application.Case.UseCases;
 using PoliceDepartment.EvidenceManager.Application.Evidence;
@@ -19,6 +21,11 @@ namespace PoliceDepartment.EvidenceManager.API.DependencyInjection.BusinessRules
         internal static IServiceCollection AddApplicationConfiguration(this IServiceCollection services)
         {
             services.AddScoped<ILogin<LoginViewModel, BaseResponseWithValue<AccessTokenModel>>, Login>();
+            services.AddScoped<ICreateOfficer<CreateOfficerViewModel, BaseResponse>, Officer>();
+
+            services.AddScoped<IValidator<CreateOfficerViewModel>, OfficerValidator>();
+
+            services.AddAutoMapper(typeof(OfficerMapperProfile));
 
             services.AddScoped<IGetCasesByOfficerId<BaseResponseWithValue<IEnumerable<CaseViewModel>>>, GetCaseByOfficerId>();
             services.AddScoped<IGetById<BaseResponseWithValue<CaseViewModel>>, GetCaseById>();
