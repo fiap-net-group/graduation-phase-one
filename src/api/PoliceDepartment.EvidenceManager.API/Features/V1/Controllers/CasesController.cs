@@ -115,17 +115,18 @@ namespace PoliceDepartment.EvidenceManager.API.Features.V1.Controllers
         /// <param name="id">The case id</param>
         /// <param name="cancellationToken"></param>
         /// <response code="204">Success deleting the case and it evidences</response>
+        /// <response code="401">Invalid access code or API-TOKEN</response>
         /// <response code="403">Case is not from the officer</response>
         /// <response code="404">Case not found</response>
         [HttpDelete("{id:guid}")]
+        [Authorize(AuthorizationPolicies.IsPoliceOfficer)]
         [ProducesResponseType(StatusCodes.Status204NoContent, StatusCode = StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized, StatusCode = StatusCodes.Status401Unauthorized, Type = typeof(BaseResponse))]
         [ProducesResponseType(StatusCodes.Status403Forbidden, StatusCode = StatusCodes.Status403Forbidden, Type = typeof(string))]
         [ProducesResponseType(StatusCodes.Status404NotFound, StatusCode = StatusCodes.Status404NotFound, Type = typeof(BaseResponse))]
         public async Task<IActionResult> Delete(Guid id, CancellationToken cancellationToken)
         {
-            var officerId = Guid.Empty; //TODO: Implement auth
-
-            var response = await _deleteCase.RunAsync(id, officerId, cancellationToken);
+            var response = await _deleteCase.RunAsync(id, User.GetUserId(), cancellationToken);
 
             if (response.Success)
                 return NoContent();
