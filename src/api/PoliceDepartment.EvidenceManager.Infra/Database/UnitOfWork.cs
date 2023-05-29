@@ -19,8 +19,8 @@ namespace PoliceDepartment.EvidenceManager.Infra.Database
         public IOfficerRepository Officer { get; }
 
         public UnitOfWork(IAppDatabaseContext context,
-                          ICaseRepository caseRepository, 
-                          IEvidenceRepository evidenceRepository, 
+                          ICaseRepository caseRepository,
+                          IEvidenceRepository evidenceRepository,
                           IOfficerRepository officerRepository)
         {
             _context = context;
@@ -39,10 +39,10 @@ namespace PoliceDepartment.EvidenceManager.Infra.Database
 
         public async Task<bool> CommmitAsync(CancellationToken cancellationToken)
         {
-            if(_transaction is null)
+            if (_transaction is null)
                 throw new InvalidOperationException("There is no transaction opened");
 
-            var response =  await _context.CommitAsync(_transaction, cancellationToken);
+            var response = await _context.CommitAsync(_transaction, cancellationToken);
 
             await _transaction.DisposeAsync();
 
@@ -64,8 +64,8 @@ namespace PoliceDepartment.EvidenceManager.Infra.Database
         {
             if (disposing)
             {
-                _context.Dispose();
-                _transaction.Dispose();
+                _context?.Dispose();
+                _transaction?.Dispose();
             }
         }
     }

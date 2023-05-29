@@ -6,7 +6,7 @@ namespace PoliceDepartment.EvidenceManager.Domain.Authorization
     {
         Task<AccessTokenModel> AuthenticateAsync(string email, string password);
 
-        Task<IdentityResult> CreateAsync(string email, string userName, string password);
+        Task<IdentityResult> CreateAsync(string email, string userName, string password, string officerType);
 
         Task<IdentityUser> FindByEmailAsync(string email);
     }

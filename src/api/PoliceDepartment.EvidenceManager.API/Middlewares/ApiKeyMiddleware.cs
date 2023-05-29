@@ -17,7 +17,7 @@
             if (!context.Request.Path.ToString().ToLower().Contains("swagger") &&
                 context.Request.Headers["X-API-KEY"] != _apiKey)
             {
-                throw new UnauthorizedAccessException("Access not permited");
+                throw new UnauthorizedAccessException("Access not permited: Invalid API-KEY");
             }
 
             await _next(context);

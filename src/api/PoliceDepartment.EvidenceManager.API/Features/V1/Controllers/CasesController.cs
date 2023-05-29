@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using PoliceDepartment.EvidenceManager.Domain.Authorization;
 using PoliceDepartment.EvidenceManager.Domain.Case.UseCases;
 using PoliceDepartment.EvidenceManager.SharedKernel.Responses;
@@ -38,8 +39,11 @@ namespace PoliceDepartment.EvidenceManager.API.Features.V1.Controllers
         /// <param name="officerId">The police officer id</param>
         /// <param name="cancellationToken"></param>
         /// <response code="200">The list of cases</response>
+        /// <response code="401">Invalid access code or API-TOKEN</response>
         [HttpGet("officer/{officerId:guid}")]
+        [Authorize(AuthorizationPolicies.IsPoliceOfficer)]
         [ProducesResponseType(StatusCodes.Status200OK, StatusCode = StatusCodes.Status200OK, Type = typeof(IEnumerable<CaseViewModel>))]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<IActionResult> GetByOfficerId(Guid officerId, CancellationToken cancellationToken)
         {
             var cases = await _getByOfficerId.RunAsync(officerId, cancellationToken);
