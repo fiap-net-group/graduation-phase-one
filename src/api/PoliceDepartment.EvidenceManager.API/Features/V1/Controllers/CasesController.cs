@@ -144,11 +144,16 @@ namespace PoliceDepartment.EvidenceManager.API.Features.V1.Controllers
         /// <param name="cancellationToken"></param>
         /// <response code="201">The created case</response>
         /// <response code="400">Invalid case properties</response>
+        /// <response code="401">Invalid access code or API-TOKEN</response>
         [HttpPost]
+        [Authorize(AuthorizationPolicies.IsPoliceOfficer)]
         [ProducesResponseType(StatusCodes.Status201Created, StatusCode = StatusCodes.Status201Created, Type = typeof(BaseResponse))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, StatusCode = StatusCodes.Status400BadRequest, Type = typeof(BaseResponse))]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized, StatusCode = StatusCodes.Status401Unauthorized, Type = typeof(BaseResponse))]
         public async Task<IActionResult> CreateCase(CreateCaseViewModel createCaseViewModel, CancellationToken cancellationToken)
         {
+            createCaseViewModel.OfficerId = User.GetUserId();
+
             var response = await _createCase.RunAsync(createCaseViewModel, cancellationToken);
 
             if (!response.Success)
