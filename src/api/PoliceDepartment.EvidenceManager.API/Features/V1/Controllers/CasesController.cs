@@ -92,9 +92,12 @@ namespace PoliceDepartment.EvidenceManager.API.Features.V1.Controllers
         /// <param name="id">The case id</param>
         /// <param name="cancellationToken"></param>
         /// <response code="200">The respective case</response>
+        /// <response code="401">Invalid access code or API-TOKEN</response>
         /// <response code="404">Case not found</response>
         [HttpGet("{id:guid}")]
+        [Authorize(AuthorizationPolicies.IsPoliceOfficer)]
         [ProducesResponseType(StatusCodes.Status200OK, StatusCode = StatusCodes.Status200OK, Type = typeof(IEnumerable<CaseViewModel>))]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized, StatusCode = StatusCodes.Status401Unauthorized, Type = typeof(BaseResponse))]
         [ProducesResponseType(StatusCodes.Status404NotFound, StatusCode = StatusCodes.Status404NotFound, Type = typeof(BaseResponse))]
         public async Task<IActionResult> GetById(Guid id, CancellationToken cancellationToken)
         {
