@@ -20,7 +20,7 @@ namespace PoliceDepartment.EvidenceManager.Application.Case.UseCases
             _response = new();
         }
 
-        public async Task<BaseResponse> RunAsync(Guid id, CaseViewModel parameter, CancellationToken cancellationToken)
+        public async Task<BaseResponse> RunAsync(Guid id, Guid officerId, CaseViewModel parameter, CancellationToken cancellationToken)
         {
             _logger.LogDebug("Begin Update case", ("id", id));
 
@@ -31,6 +31,13 @@ namespace PoliceDepartment.EvidenceManager.Application.Case.UseCases
                 _logger.LogWarning("Case doesn't exists to update", ("id", id));
 
                 return _response.AsError(ResponseMessage.CaseDontExists);
+            }
+
+            if (entity.OfficerId != officerId)
+            {
+                _logger.LogWarning("Officer is not the case owner", ("id", id), ("officerId", officerId));
+
+                return _response.AsError(ResponseMessage.Forbidden);
             }
 
             if (!entity.Update(parameter.Name, parameter.Description))
