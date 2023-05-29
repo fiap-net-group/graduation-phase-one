@@ -152,7 +152,7 @@ namespace PoliceDepartment.EvidenceManager.API.Features.V1.Controllers
         [ProducesResponseType(StatusCodes.Status401Unauthorized, StatusCode = StatusCodes.Status401Unauthorized, Type = typeof(BaseResponse))]
         public async Task<IActionResult> CreateCase(CreateCaseViewModel createCaseViewModel, CancellationToken cancellationToken)
         {
-            createCaseViewModel.OfficerId = User.GetUserId();
+            createCaseViewModel.OfficerId = User.GetUserId(); 
 
             var response = await _createCase.RunAsync(createCaseViewModel, cancellationToken);
 
