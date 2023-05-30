@@ -2,6 +2,6 @@
 {
     public interface IUpdateCase<TViewModel, TResponse>
     {
-        Task<TResponse> RunAsync(Guid id, TViewModel parameter, CancellationToken cancellationToken);
+        Task<TResponse> RunAsync(Guid id, Guid officerId, TViewModel parameter, CancellationToken cancellationToken);
     }
 }

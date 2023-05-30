@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using PoliceDepartment.EvidenceManager.Domain.Authorization;
 using PoliceDepartment.EvidenceManager.Infra.Identity;
+using PoliceDepartment.EvidenceManager.SharedKernel.Extensions;
 using System.Text;
 
 namespace PoliceDepartment.EvidenceManager.API.DependencyInjection.BusinessRules
@@ -58,6 +59,12 @@ namespace PoliceDepartment.EvidenceManager.API.DependencyInjection.BusinessRules
 
         private static AuthorizationOptions AddPolicys(this AuthorizationOptions options)
         {
+            options.AddPolicy(AuthorizationPolicies.IsAdmin, p =>
+                        p.RequireAuthenticatedUser().RequireClaim("OfficerType", Enum.GetName(OfficerType.Administrator)));
+
+            options.AddPolicy(AuthorizationPolicies.IsPoliceOfficer, p =>
+                        p.RequireAuthenticatedUser().RequireClaim("OfficerType", Enum.GetName(OfficerType.Officer)));
+
             return options;
         }
 

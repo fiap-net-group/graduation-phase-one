@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using PoliceDepartment.EvidenceManager.Application.Authorization;
 using PoliceDepartment.EvidenceManager.Domain.Authorization;
 using PoliceDepartment.EvidenceManager.Domain.Case.UseCases;
 using PoliceDepartment.EvidenceManager.SharedKernel.Responses;
@@ -38,8 +40,11 @@ namespace PoliceDepartment.EvidenceManager.API.Features.V1.Controllers
         /// <param name="officerId">The police officer id</param>
         /// <param name="cancellationToken"></param>
         /// <response code="200">The list of cases</response>
+        /// <response code="401">Invalid access code or API-TOKEN</response>
         [HttpGet("officer/{officerId:guid}")]
+        [Authorize(AuthorizationPolicies.IsPoliceOfficer)]
         [ProducesResponseType(StatusCodes.Status200OK, StatusCode = StatusCodes.Status200OK, Type = typeof(IEnumerable<CaseViewModel>))]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized, StatusCode = StatusCodes.Status401Unauthorized, Type = typeof(BaseResponse))]
         public async Task<IActionResult> GetByOfficerId(Guid officerId, CancellationToken cancellationToken)
         {
             var cases = await _getByOfficerId.RunAsync(officerId, cancellationToken);
@@ -55,17 +60,25 @@ namespace PoliceDepartment.EvidenceManager.API.Features.V1.Controllers
         /// <param name="cancellationToken"></param>
         /// <response code="204">Success updating the case</response>
         /// <response code="400">Invalid case properties</response>
+        /// <response code="401">Invalid access code or API-TOKEN</response>
+        /// <response code="403">Case is not from the officer</response>
         /// <response code="404">The case does't exists</response>
         [HttpPatch("{id:guid}")]
+        [Authorize(AuthorizationPolicies.IsPoliceOfficer)]
         [ProducesResponseType(StatusCodes.Status204NoContent, StatusCode = StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest, StatusCode = StatusCodes.Status400BadRequest, Type = typeof(BaseResponse))]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized, StatusCode = StatusCodes.Status401Unauthorized, Type = typeof(BaseResponse))]
+        [ProducesResponseType(StatusCodes.Status403Forbidden, StatusCode = StatusCodes.Status403Forbidden, Type = typeof(string))]
         [ProducesResponseType(StatusCodes.Status404NotFound, StatusCode = StatusCodes.Status404NotFound, Type = typeof(BaseResponse))]
         public async Task<IActionResult> Patch(Guid id, CaseViewModel caseViewModel, CancellationToken cancellationToken)
         {
-            var response = await _updateCase.RunAsync(id, caseViewModel, cancellationToken);
+            var response = await _updateCase.RunAsync(id, User.GetUserId(), caseViewModel, cancellationToken);
 
             if (response.Success)
                 return NoContent();
+
+            if (response.ResponseMessageEqual(ResponseMessage.Forbidden))
+                return Forbid();
 
             if (response.ResponseMessageEqual(ResponseMessage.CaseDontExists))
                 return NotFound(response);
@@ -79,9 +92,12 @@ namespace PoliceDepartment.EvidenceManager.API.Features.V1.Controllers
         /// <param name="id">The case id</param>
         /// <param name="cancellationToken"></param>
         /// <response code="200">The respective case</response>
+        /// <response code="401">Invalid access code or API-TOKEN</response>
         /// <response code="404">Case not found</response>
         [HttpGet("{id:guid}")]
+        [Authorize(AuthorizationPolicies.IsPoliceOfficer)]
         [ProducesResponseType(StatusCodes.Status200OK, StatusCode = StatusCodes.Status200OK, Type = typeof(IEnumerable<CaseViewModel>))]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized, StatusCode = StatusCodes.Status401Unauthorized, Type = typeof(BaseResponse))]
         [ProducesResponseType(StatusCodes.Status404NotFound, StatusCode = StatusCodes.Status404NotFound, Type = typeof(BaseResponse))]
         public async Task<IActionResult> GetById(Guid id, CancellationToken cancellationToken)
         {
@@ -99,17 +115,18 @@ namespace PoliceDepartment.EvidenceManager.API.Features.V1.Controllers
         /// <param name="id">The case id</param>
         /// <param name="cancellationToken"></param>
         /// <response code="204">Success deleting the case and it evidences</response>
+        /// <response code="401">Invalid access code or API-TOKEN</response>
         /// <response code="403">Case is not from the officer</response>
         /// <response code="404">Case not found</response>
         [HttpDelete("{id:guid}")]
+        [Authorize(AuthorizationPolicies.IsPoliceOfficer)]
         [ProducesResponseType(StatusCodes.Status204NoContent, StatusCode = StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized, StatusCode = StatusCodes.Status401Unauthorized, Type = typeof(BaseResponse))]
         [ProducesResponseType(StatusCodes.Status403Forbidden, StatusCode = StatusCodes.Status403Forbidden, Type = typeof(string))]
         [ProducesResponseType(StatusCodes.Status404NotFound, StatusCode = StatusCodes.Status404NotFound, Type = typeof(BaseResponse))]
         public async Task<IActionResult> Delete(Guid id, CancellationToken cancellationToken)
         {
-            var officerId = Guid.Empty; //TODO: Implement auth
-
-            var response = await _deleteCase.RunAsync(id, officerId, cancellationToken);
+            var response = await _deleteCase.RunAsync(id, User.GetUserId(), cancellationToken);
 
             if (response.Success)
                 return NoContent();
@@ -127,11 +144,16 @@ namespace PoliceDepartment.EvidenceManager.API.Features.V1.Controllers
         /// <param name="cancellationToken"></param>
         /// <response code="201">The created case</response>
         /// <response code="400">Invalid case properties</response>
+        /// <response code="401">Invalid access code or API-TOKEN</response>
         [HttpPost]
+        [Authorize(AuthorizationPolicies.IsPoliceOfficer)]
         [ProducesResponseType(StatusCodes.Status201Created, StatusCode = StatusCodes.Status201Created, Type = typeof(BaseResponse))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, StatusCode = StatusCodes.Status400BadRequest, Type = typeof(BaseResponse))]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized, StatusCode = StatusCodes.Status401Unauthorized, Type = typeof(BaseResponse))]
         public async Task<IActionResult> CreateCase(CreateCaseViewModel createCaseViewModel, CancellationToken cancellationToken)
         {
+            createCaseViewModel.OfficerId = User.GetUserId(); 
+
             var response = await _createCase.RunAsync(createCaseViewModel, cancellationToken);
 
             if (!response.Success)

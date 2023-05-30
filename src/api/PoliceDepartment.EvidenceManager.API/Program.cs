@@ -8,10 +8,12 @@ builder.Configuration
        .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", true, true)
        .AddEnvironmentVariables();
 
-builder.Services.AddDependencyInjection(builder.Configuration, builder.Environment.IsDevelopment());
+var isDevelopment = builder.Environment.IsDevelopment();
+
+builder.Services.AddDependencyInjection(builder.Configuration, isDevelopment);
 
 var app = builder.Build();
 
-app.UseDependencyInjection();
+app.UseDependencyInjection(isDevelopment);
 
 app.Run();
