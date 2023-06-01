@@ -114,5 +114,12 @@ namespace PoliceDepartment.EvidenceManager.Infra.Identity
         {
             return await _userManager.FindByEmailAsync(email);
         }
+
+        public async Task<IdentityResult> SignOutAsync(Guid userId)
+        {
+            var user = await _userManager.FindByIdAsync(userId.ToString());
+
+            return await _userManager.UpdateSecurityStampAsync(user);
+        }
     }
 }
