@@ -104,7 +104,7 @@ namespace PoliceDepartment.EvidenceManager.API.Features.V1.Controllers
             var response = await _getById.RunAsync(id, cancellationToken);
 
             if (!response.Success)
-                return BadRequest(response);
+                return NotFound(response);
 
             return Ok(response);
         }
