@@ -7,13 +7,13 @@ namespace PoliceDepartment.EvidenceManager.API.DependencyInjection
     [ExcludeFromCodeCoverage]
     internal static class ApplicationBuilderExtensions
     {
-        internal static IApplicationBuilder UseDependencyInjection(this WebApplication app)
+        internal static IApplicationBuilder UseDependencyInjection(this WebApplication app, bool isDevelopment)
         {
             app.UseInfrastructureConfiguration();
 
             app.UseIdentityConfiguration();
 
-            app.UseApiConfiguration();
+            app.UseApiConfiguration(isDevelopment);
 
             app.UseSwaggerConfiguration();
 

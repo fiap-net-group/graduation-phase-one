@@ -7,14 +7,14 @@ using PoliceDepartment.EvidenceManager.SharedKernel.ViewModels;
 
 namespace PoliceDepartment.EvidenceManager.Application.Case.UseCases
 {
-    public class GetByOfficerId : IGetCasesByOfficerId<BaseResponseWithValue<IEnumerable<CaseViewModel>>>
+    public class GetCaseByOfficerId : IGetCasesByOfficerId<BaseResponseWithValue<IEnumerable<CaseViewModel>>>
     {
         private readonly ILoggerManager _logger;
         private readonly IUnitOfWork _uow;
         private readonly IMapper _mapper;
         private readonly BaseResponseWithValue<IEnumerable<CaseViewModel>> _response;
 
-        public GetByOfficerId(ILoggerManager logger,
+        public GetCaseByOfficerId(ILoggerManager logger,
                               IUnitOfWork uow,
                               IMapper mapper)
         {

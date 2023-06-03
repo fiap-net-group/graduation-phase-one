@@ -2,7 +2,6 @@
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 
 namespace PoliceDepartment.EvidenceManager.API.DependencyInjection.ApiDocumentation.Swagger
 {

@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.Extensions.Options;
+using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
@@ -11,18 +12,55 @@ namespace PoliceDepartment.EvidenceManager.API.DependencyInjection.ApiDocumentat
     {
         internal static IServiceCollection AddSwaggerConfiguration(this IServiceCollection services)
         {
-            services.AddSwaggerGen(c =>
+            services.AddSwaggerGen(options =>
             {
-                c.OperationFilter<SwaggerDefaultValues>();
+                options.OperationFilter<SwaggerDefaultValues>();
 
-                c.CustomSchemaIds(SchemaIdStrategy);
+                options.OperationFilter<ApiKeyHeaderParameter>();
 
-                c.IncludeCommentsToApiDocumentation();
+                options.CustomSchemaIds(SchemaIdStrategy);
+
+                options.AddSecurity();
+
+                options.IncludeCommentsToApiDocumentation();
             });
 
             services.AddTransient<IConfigureOptions<SwaggerGenOptions>, ConfigureSwaggerOptions>();
 
             return services;
+        }
+
+        private static string SchemaIdStrategy(Type currentClass)
+        {
+            return currentClass.Name.Replace("ViewModel", string.Empty).Replace("Model", string.Empty);
+        }
+
+        private static void AddSecurity(this SwaggerGenOptions options)
+        {
+            options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+            {
+                In = ParameterLocation.Header,
+                Description = "Please enter a valid token",
+                Name = "Authorization",
+                Type = SecuritySchemeType.Http,
+                BearerFormat = "JWT",
+                Scheme = "Bearer"
+            });
+
+            options.AddSecurityRequirement(new OpenApiSecurityRequirement
+            {
+                {
+                    new OpenApiSecurityScheme
+                    {
+                        Reference = new OpenApiReference
+                        {
+                            Type=ReferenceType.SecurityScheme,
+                            Id="Bearer"
+                        }
+                    },
+                    Array.Empty<string>()
+                }
+            });
         }
 
         private static void IncludeCommentsToApiDocumentation(this SwaggerGenOptions options)
@@ -46,10 +84,6 @@ namespace PoliceDepartment.EvidenceManager.API.DependencyInjection.ApiDocumentat
             options.IncludeXmlComments(xmlPath);
         }
 
-        private static string SchemaIdStrategy(Type currentClass)
-        {
-            return currentClass.Name.Replace("ViewModel", string.Empty).Replace("Model", string.Empty);
-        }
 
         internal static IApplicationBuilder UseSwaggerConfiguration(this IApplicationBuilder app)
         {

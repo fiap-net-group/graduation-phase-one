@@ -13,7 +13,7 @@ namespace PoliceDepartment.EvidenceManager.API.DependencyInjection.BusinessRules
             return services;
         }
 
-        internal static IApplicationBuilder UseApiConfiguration(this WebApplication app)
+        internal static IApplicationBuilder UseApiConfiguration(this WebApplication app, bool isDevelopment)
         {
             app.UseHttpsRedirection();
 
@@ -22,6 +22,11 @@ namespace PoliceDepartment.EvidenceManager.API.DependencyInjection.BusinessRules
             app.MapControllers();
 
             app.UseMiddleware<ErrorHandlerMiddleware>();
+
+            if(!isDevelopment)
+            {
+                app.UseMiddleware<ApiKeyMiddleware>();
+            }
 
             return app;
         }

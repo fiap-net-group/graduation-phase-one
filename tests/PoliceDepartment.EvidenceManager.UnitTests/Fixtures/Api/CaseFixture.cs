@@ -7,9 +7,9 @@ namespace PoliceDepartment.EvidenceManager.UnitTests.Fixtures.Api
 {
     public class CaseFixture
     {
-        public CaseEntity GenerateSingleEntity()
+        public CaseEntity GenerateSingleEntity(Guid officerId = default)
         {
-            return GenerateEntityCollection(1).First();
+            return GenerateEntityCollection(1, officerId).First();
         }
 
         public IEnumerable<CaseEntity> GenerateEntityCollection(int quantity, Guid officerId = default)
@@ -25,22 +25,36 @@ namespace PoliceDepartment.EvidenceManager.UnitTests.Fixtures.Api
                 .Generate(quantity);
         }
 
-        public IEnumerable<CaseViewModel> GenerateViewModelByEntity(IEnumerable<CaseEntity> cases)
+        public IEnumerable<CaseViewModel> GenerateViewModelsByEntityCollection(IEnumerable<CaseEntity> cases)
         {
             var response = new List<CaseViewModel>();
-            foreach (var entity in cases)
-            {
-                response.Add(new CaseViewModel
-                {
-                    Id = entity.Id,
-                    Name = entity.Name,
-                    Description = entity.Description,
-                    CreatedAt = entity.CreatedAt,
-                    OfficerId = entity.OfficerId,
-                    Evidences = new List<EvidenceViewModel>()
-                });
-            }
+
+            foreach (var entity in cases)            
+                response.Add(GenerateViewModelByEntity(entity));
+            
             return response;
+        }
+
+        public CaseViewModel GenerateViewModelByEntity(CaseEntity entity)
+        {
+            return new CaseViewModel
+            {
+                Id = entity.Id,
+                Name = entity.Name,
+                Description = entity.Description,
+                CreatedAt = entity.CreatedAt,
+                OfficerId = entity.OfficerId,
+                Evidences = new List<EvidenceViewModel>()
+            };
+        }
+
+        public CreateCaseViewModel GenerateViewModel()
+        {
+            return new Faker<CreateCaseViewModel>()
+                .RuleFor(c => c.Name, $"Fake name {Guid.NewGuid()}")
+                .RuleFor(c => c.Description, "Description fake")
+                .RuleFor(c => c.OfficerId, Guid.NewGuid())
+                .Generate();
         }
     }
 }

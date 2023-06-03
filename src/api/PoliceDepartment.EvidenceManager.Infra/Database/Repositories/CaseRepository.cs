@@ -17,9 +17,44 @@ namespace PoliceDepartment.EvidenceManager.Infra.Database.Repositories
 
         public async Task<IEnumerable<CaseEntity>> GetByOfficerId(Guid officerId, CancellationToken cancellationToken)
         {
-            var cases = await _context.Cases.Where(c => c.OfficerId == officerId).ToListAsync(cancellationToken);
+            var cases = await _context.Cases.Where(c => c.OfficerId == officerId)
+                                            .Include(c => c.Officer)
+                                            .Include(c => c.Evidences)
+                                            .ToListAsync(cancellationToken);
 
             return cases is null ? Enumerable.Empty<CaseEntity>() : cases;
+        }
+
+        public async Task<CaseEntity> GetByIdAsync(Guid id, CancellationToken cancellationToken)
+        {
+            var entity = await _context.Cases.Where(c => c.Id == id)
+                                             .Include(c => c.Officer)
+                                             .Include(c => c.Evidences)
+                                             .FirstOrDefaultAsync(cancellationToken);
+
+            return entity ?? new CaseEntity();
+        }
+
+        public async Task UpdateAsync(CaseEntity entity, CancellationToken cancellationToken)
+        {
+            await Task.Run(() =>
+            {
+                entity.UpdatedAt = DateTime.Now;
+                _context.Cases.Update(entity);
+            }, cancellationToken);
+        }
+        public async Task AddAsync(CaseEntity entity, CancellationToken cancellationToken)
+        {
+            await _context.Cases.AddAsync(entity, cancellationToken);
+        }
+
+        public async Task DeleteAsync(CaseEntity entity, CancellationToken cancellationToken)
+        {
+            await Task.Run(() =>
+            {
+                entity.Evidences = null;
+                _context.Cases.Remove(entity);
+            }, cancellationToken);
         }
 
         public void Dispose()
@@ -30,8 +65,8 @@ namespace PoliceDepartment.EvidenceManager.Infra.Database.Repositories
 
         protected virtual void Dispose(bool disposing)
         {
-            if (disposing)            
-                _context.Dispose();            
+            if (disposing)
+                _context.Dispose();
         }
     }
 }
