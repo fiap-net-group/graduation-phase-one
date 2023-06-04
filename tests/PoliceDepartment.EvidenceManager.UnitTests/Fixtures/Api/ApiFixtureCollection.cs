@@ -7,11 +7,13 @@
     {
         public AuthorizationFixture Authorization { get; set; }
         public CaseFixture Case { get; set; }
+        public EvidenceFixture Evidence { get; set; }
 
         public ApiFixture()
         {
             Authorization = new();
             Case = new();
+            Evidence = new();
         }
     }
 }

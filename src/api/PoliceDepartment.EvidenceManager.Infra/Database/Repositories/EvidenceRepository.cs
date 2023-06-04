@@ -35,9 +35,11 @@ namespace PoliceDepartment.EvidenceManager.Infra.Database.Repositories
             _context.Evidences.RemoveRange(evidences);
         }
 
-        public Task<EvidenceEntity> GetByIdAsync(Guid id)
+        public async Task<EvidenceEntity> GetByIdAsync(Guid id, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            var entity = await _context.Evidences.FirstOrDefaultAsync(e => e.Id == id, cancellationToken);
+
+            return entity ?? new EvidenceEntity();
         }
 
         public Task<IEnumerable<EvidenceEntity>> GetPaginatedAsync(int page, int rows)
