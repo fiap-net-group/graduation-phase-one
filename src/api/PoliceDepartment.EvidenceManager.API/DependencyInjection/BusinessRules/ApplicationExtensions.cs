@@ -13,6 +13,8 @@ using PoliceDepartment.EvidenceManager.SharedKernel.Responses;
 using PoliceDepartment.EvidenceManager.SharedKernel.ViewModels;
 using System.Diagnostics.CodeAnalysis;
 using PoliceDepartment.EvidenceManager.Domain.Officer.UseCases;
+using PoliceDepartment.EvidenceManager.Domain.Evidence.UseCases;
+using PoliceDepartment.EvidenceManager.API.Application.Evidence.UseCases;
 
 namespace PoliceDepartment.EvidenceManager.API.DependencyInjection.BusinessRules
 {
@@ -33,6 +35,8 @@ namespace PoliceDepartment.EvidenceManager.API.DependencyInjection.BusinessRules
             services.AddScoped<IUpdateCase<CaseViewModel, BaseResponse>, UpdateCase>();
             services.AddScoped<IDeleteCase<BaseResponse>, DeleteCase>();
             services.AddScoped<ICreateCase<CreateCaseViewModel, BaseResponse>, CreateCase>();
+
+            services.AddScoped<IGetEvidenceById<BaseResponseWithValue<EvidenceViewModel>>, GetEvidenceById>();
 
             services.AddScoped<IValidator<CreateCaseViewModel>, CaseValidator>();
 
