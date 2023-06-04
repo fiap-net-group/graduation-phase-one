@@ -9,5 +9,7 @@ namespace PoliceDepartment.EvidenceManager.Domain.Authorization
         Task<IdentityResult> CreateAsync(string email, string userName, string password, string officerType);
 
         Task<IdentityUser> FindByEmailAsync(string email);
+
+        Task<IdentityResult> SignOutAsync(Guid userId);
     }
 }
