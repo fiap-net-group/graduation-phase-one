@@ -16,13 +16,11 @@ namespace PoliceDepartment.EvidenceManager.API.Features.V1.Controllers
     {
         private readonly ILogin<LoginViewModel, BaseResponseWithValue<AccessTokenModel>> _login;
         private readonly ILogOut<LogOutViewModel, BaseResponse> _logOut;
-        private readonly SignInManager<IdentityUser> _signInManager;
 
-        public AuthorizationController(ILogin<LoginViewModel, BaseResponseWithValue<AccessTokenModel>> login, ILogOut<LogOutViewModel, BaseResponse> logOut = null, SignInManager<IdentityUser> signInManager = null)
+        public AuthorizationController(ILogin<LoginViewModel, BaseResponseWithValue<AccessTokenModel>> login, ILogOut<LogOutViewModel, BaseResponse> logOut = null)
         {
             _login = login;
             _logOut = logOut;
-            _signInManager = signInManager;
         }
 
         /// <summary>
@@ -64,7 +62,7 @@ namespace PoliceDepartment.EvidenceManager.API.Features.V1.Controllers
         {
             var response = await _logOut.RunAsync(userId, cancellationToken);
             if (response.Success){
-                await _signInManager.SignOutAsync();
+                
                 return Ok(response);
             }
 
