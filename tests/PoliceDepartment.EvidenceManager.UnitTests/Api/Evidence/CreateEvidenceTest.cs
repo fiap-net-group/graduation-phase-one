@@ -62,10 +62,10 @@ namespace PoliceDepartment.EvidenceManager.UnitTests.Api.Evidence
         }
 
         [Theory]
-        [InlineData(null, null, "", "", ResponseMessage.InvalidEvidence)]
-        [InlineData("", null, "", "", ResponseMessage.InvalidEvidence)]
-        [InlineData(null, "", "", "", ResponseMessage.InvalidEvidence)]
-        [InlineData("", "", "", "", ResponseMessage.InvalidEvidence)]
+        [InlineData(null, null, "be2a3f88-e30f-4005-9412-9cc195a14476", "a31a1a7b-5c2d-42b7-aa4d-edfefad77bb9", ResponseMessage.InvalidEvidence)]
+        [InlineData("", null, "be2a3f88-e30f-4005-9412-9cc195a14476", "a31a1a7b-5c2d-42b7-aa4d-edfefad77bb9", ResponseMessage.InvalidEvidence)]
+        [InlineData(null, "", "be2a3f88-e30f-4005-9412-9cc195a14476", "a31a1a7b-5c2d-42b7-aa4d-edfefad77bb9", ResponseMessage.InvalidEvidence)]
+        [InlineData("", "", "be2a3f88-e30f-4005-9412-9cc195a14476", "a31a1a7b-5c2d-42b7-aa4d-edfefad77bb9", ResponseMessage.InvalidEvidence)]
         public async Task RunAsync_InvalidRequest_ShouldReturnError(string name, string description, Guid imageId, Guid caseId, ResponseMessage expectedResponse)
         {
             // Arrange
@@ -96,11 +96,11 @@ namespace PoliceDepartment.EvidenceManager.UnitTests.Api.Evidence
             var validationResult = new ValidationResult();
             _validator.ValidateAsync(caseViewModel, CancellationToken.None).Returns(validationResult);
 
-            var caseEntity = _fixture.Case.GenerateSingleEntity();
-            _mapper.Map<CaseEntity>(caseViewModel).Returns(caseEntity);
+            var caseEntity = _fixture.Evidence.GenerateSingleEntity();
+            _mapper.Map<EvidenceEntity>(caseViewModel).Returns(caseEntity);
 
             var _uow = Substitute.For<IUnitOfWork>();
-            _uow.Case.AddAsync(caseEntity, CancellationToken.None).Returns(Task.CompletedTask);
+            _uow.Evidence.CreateAsync(caseEntity, CancellationToken.None).Returns(Task.CompletedTask);
             _uow.SaveChangesAsync(Arg.Any<CancellationToken>()).Returns(false);
 
             var sut = new CreateEvidence(_logger, _uow, _mapper, _validator);
