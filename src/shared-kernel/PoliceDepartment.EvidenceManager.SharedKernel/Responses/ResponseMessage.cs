@@ -18,8 +18,7 @@ namespace PoliceDepartment.EvidenceManager.SharedKernel.Responses
         Forbidden = 5,
         [Description("Evidence does't exists")]	
         EvidenceDontExists = 6,
-        Forbidden = 5,
         [Description("Invalid evidence")]
-        InvalidEvidence = 6,
+        InvalidEvidence = 7,
     }
 }

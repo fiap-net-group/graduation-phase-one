@@ -58,7 +58,7 @@ namespace PoliceDepartment.EvidenceManager.API.Application.Evidence.UseCases
             if(!await _uow.SaveChangesAsync(cancellationToken))
             {
                 _logger.LogError("An error ocurred at the database");
-                throw new BusinessException("An unexpected error ocurred");
+                throw new InfrastructureException("An unexpected error ocurred");
             }
 
             _logger.LogDebug("End Create evidence");
