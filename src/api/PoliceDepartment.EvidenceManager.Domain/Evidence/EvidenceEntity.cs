@@ -13,5 +13,10 @@ namespace PoliceDepartment.EvidenceManager.Domain.Evidence
 
         public Guid CaseId { get; set; }
         public CaseEntity Case { get; set; }
+
+        public bool Exists()
+        {
+            return Id != Guid.Empty;
+        }
     }
 }

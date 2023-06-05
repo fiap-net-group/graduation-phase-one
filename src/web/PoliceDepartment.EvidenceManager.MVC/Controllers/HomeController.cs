@@ -23,10 +23,12 @@ namespace PoliceDepartment.EvidenceManager.MVC.Controllers
             return View();
         }
 
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
+        [Route("error/{statusCode:length(3,3)}")]
+        public IActionResult Errors(int statusCode)
         {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            var modelErro = new ErrorViewModel(statusCode);
+
+            return View("Error", modelErro);
         }
     }
 }

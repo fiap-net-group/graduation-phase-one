@@ -94,7 +94,10 @@ namespace PoliceDepartment.EvidenceManager.Infra.Identity
         private static long ToUnixEpochDate(DateTime date)
            => (long)Math.Round((date.ToUniversalTime() - new DateTimeOffset(1970, 1, 1, 0, 0, 0, TimeSpan.Zero)).TotalSeconds);
 
-        public async Task<IdentityResult> CreateAsync(string email, string userName, string password, string officerType){
+        public async Task<IdentityResult> CreateAsync(string email, 
+                                                      string userName, 
+                                                      string password, 
+                                                      string officerType){
             var user = new IdentityUser
             {
                 UserName = userName,
@@ -113,6 +116,13 @@ namespace PoliceDepartment.EvidenceManager.Infra.Identity
         public async Task<IdentityUser> FindByEmailAsync(string email)
         {
             return await _userManager.FindByEmailAsync(email);
+        }
+
+        public async Task<IdentityResult> SignOutAsync(Guid userId)
+        {
+            var user = await _userManager.FindByIdAsync(userId.ToString());
+
+            return await _userManager.UpdateSecurityStampAsync(user);
         }
     }
 }

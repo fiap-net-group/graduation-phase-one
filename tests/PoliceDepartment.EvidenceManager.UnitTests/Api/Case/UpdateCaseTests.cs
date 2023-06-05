@@ -23,11 +23,13 @@ namespace PoliceDepartment.EvidenceManager.UnitTests.Api.Case
         }
 
         [Theory]
-        [InlineData(false,null,null, ResponseMessage.CaseDontExists)]
-        [InlineData(true,"",null, ResponseMessage.InvalidCase)]
-        [InlineData(true,null,"", ResponseMessage.InvalidCase)]
-        [InlineData(true,"","", ResponseMessage.InvalidCase)]
+        [InlineData(false, false, null,null, ResponseMessage.CaseDontExists)]
+        [InlineData(true, false, null,null, ResponseMessage.Forbidden)]
+        [InlineData(true,true,"",null, ResponseMessage.InvalidCase)]
+        [InlineData(true, true, null,"", ResponseMessage.InvalidCase)]
+        [InlineData(true, true, "","", ResponseMessage.InvalidCase)]
         public async Task RunAsync_InvalidRequest_ShouldReturnError(bool exists, 
+                                                                    bool sameOffcerId,
                                                                     string name,
                                                                     string description, 
                                                                     ResponseMessage expectedResponse)
@@ -38,12 +40,13 @@ namespace PoliceDepartment.EvidenceManager.UnitTests.Api.Case
 
             var viewModel = new CaseViewModel { Name = name, Description = description };
             var entity = exists ? _fixture.Case.GenerateSingleEntity() : new CaseEntity();
+            var officerId = sameOffcerId ? entity.OfficerId : Guid.NewGuid();
             uow.Case.GetByIdAsync(Arg.Any<Guid>(), Arg.Any<CancellationToken>()).Returns(Task.FromResult(entity));
 
             var sut = new UpdateCase(logger, uow);
 
             //Act
-            var response = await sut.RunAsync(Guid.NewGuid(), Guid.NewGuid(), viewModel, CancellationToken.None);
+            var response = await sut.RunAsync(Guid.NewGuid(), officerId, viewModel, CancellationToken.None);
 
             //Assert
             response.Success.Should().BeFalse();
@@ -65,7 +68,7 @@ namespace PoliceDepartment.EvidenceManager.UnitTests.Api.Case
             var sut = new UpdateCase(logger, uow);
 
             //Act
-            var act = () => sut.RunAsync(Guid.NewGuid(), Guid.NewGuid(), viewModel, CancellationToken.None);
+            var act = () => sut.RunAsync(Guid.NewGuid(), entity.OfficerId, viewModel, CancellationToken.None);
 
             //Assert
             await act.Should()
@@ -92,7 +95,7 @@ namespace PoliceDepartment.EvidenceManager.UnitTests.Api.Case
             var sut = new UpdateCase(logger, uow);
 
             //Act
-            var response = await sut.RunAsync(Guid.NewGuid(), Guid.NewGuid(), viewModel, CancellationToken.None);
+            var response = await sut.RunAsync(Guid.NewGuid(), entity.OfficerId, viewModel, CancellationToken.None);
 
             //Assert
             response.Success.Should().BeTrue();

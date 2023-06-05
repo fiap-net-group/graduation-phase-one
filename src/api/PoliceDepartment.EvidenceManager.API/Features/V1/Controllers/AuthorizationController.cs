@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using PoliceDepartment.EvidenceManager.Domain.Authorization;
 using PoliceDepartment.EvidenceManager.Domain.Authorization.UseCases;
 using PoliceDepartment.EvidenceManager.SharedKernel.Responses;
@@ -13,10 +15,12 @@ namespace PoliceDepartment.EvidenceManager.API.Features.V1.Controllers
     public sealed class AuthorizationController : ControllerBase
     {
         private readonly ILogin<LoginViewModel, BaseResponseWithValue<AccessTokenModel>> _login;
+        private readonly ILogOut<LogOutViewModel, BaseResponse> _logOut;
 
-        public AuthorizationController(ILogin<LoginViewModel, BaseResponseWithValue<AccessTokenModel>> login)
+        public AuthorizationController(ILogin<LoginViewModel, BaseResponseWithValue<AccessTokenModel>> login, ILogOut<LogOutViewModel, BaseResponse> logOut = null)
         {
             _login = login;
+            _logOut = logOut;
         }
 
         /// <summary>
@@ -37,6 +41,30 @@ namespace PoliceDepartment.EvidenceManager.API.Features.V1.Controllers
 
             if (response.Success)
                 return Ok(response);
+
+            return BadRequest(response);
+        }
+
+        /// <summary>
+        /// Log out the officer
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <param name="cancellationToken"></param>
+        /// <response code="200">The access token</response>
+        /// <response code="400">The reason of non-authentication</response>
+        /// <response code="401">Invalid API-KEY</response>
+        [HttpGet("{userId:guid}")]
+        [Authorize]
+        [ProducesResponseType(StatusCodes.Status200OK, StatusCode = StatusCodes.Status200OK, Type = typeof(BaseResponse))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, StatusCode = StatusCodes.Status400BadRequest, Type = typeof(BaseResponse))]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized, StatusCode = StatusCodes.Status401Unauthorized, Type = typeof(BaseResponse))]
+        public async Task<IActionResult> LogOut(Guid userId, CancellationToken cancellationToken)
+        {
+            var response = await _logOut.RunAsync(userId, cancellationToken);
+            if (response.Success){
+                
+                return Ok(response);
+            }
 
             return BadRequest(response);
         }
