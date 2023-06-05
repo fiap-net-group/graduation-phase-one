@@ -43,7 +43,7 @@ namespace PoliceDepartment.EvidenceManager.UnitTests.Api.Case
             var sut = new UpdateCase(logger, uow);
 
             //Act
-            var response = await sut.RunAsync(Guid.NewGuid(), viewModel, CancellationToken.None);
+            var response = await sut.RunAsync(Guid.NewGuid(), Guid.NewGuid(), viewModel, CancellationToken.None);
 
             //Assert
             response.Success.Should().BeFalse();
@@ -65,7 +65,7 @@ namespace PoliceDepartment.EvidenceManager.UnitTests.Api.Case
             var sut = new UpdateCase(logger, uow);
 
             //Act
-            var act = () => sut.RunAsync(Guid.NewGuid(), viewModel, CancellationToken.None);
+            var act = () => sut.RunAsync(Guid.NewGuid(), Guid.NewGuid(), viewModel, CancellationToken.None);
 
             //Assert
             await act.Should()
@@ -92,7 +92,7 @@ namespace PoliceDepartment.EvidenceManager.UnitTests.Api.Case
             var sut = new UpdateCase(logger, uow);
 
             //Act
-            var response = await sut.RunAsync(Guid.NewGuid(), viewModel, CancellationToken.None);
+            var response = await sut.RunAsync(Guid.NewGuid(), Guid.NewGuid(), viewModel, CancellationToken.None);
 
             //Assert
             response.Success.Should().BeTrue();
