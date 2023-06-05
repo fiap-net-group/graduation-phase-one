@@ -1,4 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using PoliceDepartment.EvidenceManager.Domain.Authorization;
+using PoliceDepartment.EvidenceManager.Domain.Evidence.UseCases;
+using PoliceDepartment.EvidenceManager.SharedKernel.Responses;
+using PoliceDepartment.EvidenceManager.SharedKernel.ViewModels;
 
 namespace PoliceDepartment.EvidenceManager.API.Features.V1.Controllers
 {
@@ -11,6 +16,39 @@ namespace PoliceDepartment.EvidenceManager.API.Features.V1.Controllers
     [Produces("application/json")]
     public sealed class EvidencesController : ControllerBase
     {
+        private readonly ICreateEvidence<CreateEvidenceViewModel, BaseResponse> _createEvidence;
+
+        public EvidencesController(ICreateEvidence<CreateEvidenceViewModel, BaseResponse> createEvidence)
+        {
+            _createEvidence = createEvidence;
+        }
+
+
+        ///<summary>
+        /// Create evidence
+        /// </summary>
+        /// <param name="evidence">The evidence body</param>
+        /// <param name="cancellationToken"></param>
+        /// <response code="201">The created evidence</response>
+        /// <response code="400">Invalid case properties</response>
+        /// <response code="401">Invalid access code or API-TOKEN</response>
+        [HttpPost]
+        //[Authorize(AuthorizationPolicies.IsPoliceOfficer)]
+        [ProducesResponseType(StatusCodes.Status201Created, StatusCode = StatusCodes.Status201Created, Type = typeof(BaseResponse))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, StatusCode = StatusCodes.Status400BadRequest, Type = typeof(BaseResponse))]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized, StatusCode = StatusCodes.Status401Unauthorized, Type = typeof(BaseResponse))]
+        public async Task<IActionResult> CreateEvidence([FromBody] CreateEvidenceViewModel evidence, CancellationToken cancellationToken)
+        {
+            var response = await _createEvidence.RunAsync(evidence, cancellationToken);
+
+            if (!response.Success)
+            {
+                return BadRequest(response);
+            }
+
+            return CreatedAtAction(nameof(CreateEvidence), response);
+        }
+
         /// <summary>
         /// Ping method
         /// </summary>

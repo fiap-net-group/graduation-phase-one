@@ -15,6 +15,8 @@ namespace PoliceDepartment.EvidenceManager.SharedKernel.Responses
         [Description("Invalid credentials")]
         InvalidCredentials = 4,
         [Description("Action is not permited")]
-        Forbidden = 5
+        Forbidden = 5,
+        [Description("Invalid evidence")]
+        InvalidEvidence = 6,
     }
 }

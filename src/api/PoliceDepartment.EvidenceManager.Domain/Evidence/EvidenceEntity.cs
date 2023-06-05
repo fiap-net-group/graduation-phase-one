@@ -1,5 +1,4 @@
 ﻿using PoliceDepartment.EvidenceManager.Domain.Case;
-using PoliceDepartment.EvidenceManager.Domain.Officer;
 
 namespace PoliceDepartment.EvidenceManager.Domain.Evidence
 {

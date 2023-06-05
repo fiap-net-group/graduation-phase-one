@@ -15,9 +15,9 @@ namespace PoliceDepartment.EvidenceManager.Infra.Database.Repositories
             _context = context;
         } 
 
-        public Task CreateAsync(EvidenceEntity evidence)
+        public async Task CreateAsync(EvidenceEntity evidence, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            await _context.Evidences.AddAsync(evidence);
         }
 
         public Task DeleteByIdAsync(Guid id)

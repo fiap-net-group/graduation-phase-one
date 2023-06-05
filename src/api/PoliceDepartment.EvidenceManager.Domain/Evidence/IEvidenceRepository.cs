@@ -2,7 +2,7 @@
 {
     public interface IEvidenceRepository : IDisposable
     {
-        Task CreateAsync(EvidenceEntity evidence);
+        Task CreateAsync(EvidenceEntity evidence, CancellationToken cancellationToken);
         Task<EvidenceEntity> GetByIdAsync(Guid id);
         Task<IEnumerable<EvidenceEntity>> GetPaginatedAsync(int page, int rows);
         Task DeleteByIdAsync(Guid id);
