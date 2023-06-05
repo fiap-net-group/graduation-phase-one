@@ -16,8 +16,6 @@ using PoliceDepartment.EvidenceManager.Domain.Officer.UseCases;
 using PoliceDepartment.EvidenceManager.Domain.Evidence.UseCases;
 using PoliceDepartment.EvidenceManager.API.Application.Evidence.UseCases;
 using PoliceDepartment.EvidenceManager.API.Application.Evidence;
-using PoliceDepartment.EvidenceManager.Domain.Evidence.UseCases;
-using PoliceDepartment.EvidenceManager.API.Application.Evidence.UseCases;
 
 namespace PoliceDepartment.EvidenceManager.API.DependencyInjection.BusinessRules
 {

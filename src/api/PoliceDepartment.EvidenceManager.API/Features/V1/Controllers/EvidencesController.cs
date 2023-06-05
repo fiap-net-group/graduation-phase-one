@@ -17,16 +17,11 @@ namespace PoliceDepartment.EvidenceManager.API.Features.V1.Controllers
     public sealed class EvidencesController : ControllerBase
     {
         private readonly IGetEvidenceById<BaseResponseWithValue<EvidenceViewModel>> _getById;
-
-        public EvidencesController(IGetEvidenceById<BaseResponseWithValue<EvidenceViewModel>> getById)
-        {
-            _getById = getById;
-        }
-
         private readonly ICreateEvidence<CreateEvidenceViewModel, BaseResponse> _createEvidence;
 
-        public EvidencesController(ICreateEvidence<CreateEvidenceViewModel, BaseResponse> createEvidence)
+        public EvidencesController(IGetEvidenceById<BaseResponseWithValue<EvidenceViewModel>> getById, ICreateEvidence<CreateEvidenceViewModel, BaseResponse> createEvidence)
         {
+            _getById = getById;
             _createEvidence = createEvidence;
         }
 
@@ -40,7 +35,7 @@ namespace PoliceDepartment.EvidenceManager.API.Features.V1.Controllers
         /// <response code="400">Invalid case properties</response>
         /// <response code="401">Invalid access code or API-TOKEN</response>
         [HttpPost]
-        //[Authorize(AuthorizationPolicies.IsPoliceOfficer)]
+        [Authorize(AuthorizationPolicies.IsPoliceOfficer)]
         [ProducesResponseType(StatusCodes.Status201Created, StatusCode = StatusCodes.Status201Created, Type = typeof(BaseResponse))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, StatusCode = StatusCodes.Status400BadRequest, Type = typeof(BaseResponse))]
         [ProducesResponseType(StatusCodes.Status401Unauthorized, StatusCode = StatusCodes.Status401Unauthorized, Type = typeof(BaseResponse))]
@@ -53,7 +48,7 @@ namespace PoliceDepartment.EvidenceManager.API.Features.V1.Controllers
                 return BadRequest(response);
             }
 
-            return CreatedAtAction(nameof(CreateEvidence), response);
+            return CreatedAtAction(null, null, response);
         }
 
         /// <summary>
