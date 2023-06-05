@@ -1,5 +1,6 @@
 ﻿using PoliceDepartment.EvidenceManager.API.DependencyInjection.ApiDocumentation.Swagger;
 using PoliceDepartment.EvidenceManager.API.DependencyInjection.BusinessRules;
+using PoliceDepartment.EvidenceManager.Application.Authorization.UseCases;
 using System.Diagnostics.CodeAnalysis;
 
 namespace PoliceDepartment.EvidenceManager.API.DependencyInjection

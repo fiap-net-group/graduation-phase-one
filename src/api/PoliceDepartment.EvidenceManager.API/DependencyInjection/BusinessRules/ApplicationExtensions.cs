@@ -44,6 +44,8 @@ namespace PoliceDepartment.EvidenceManager.API.DependencyInjection.BusinessRules
 
             services.AddAutoMapper(typeof(EvidenceMapperProfile));
 
+            services.AddScoped<CreateAdminIfNeeded>();
+
             return services;
         }
     }
