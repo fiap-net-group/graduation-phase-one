@@ -2,6 +2,6 @@
 {
     public interface IDeleteEvidence<TResult>
     {
-        Task<TResult> RunAsync(Guid id, CancellationToken cancellationToken);
+        Task<TResult> RunAsync(Guid id,Guid userId, CancellationToken cancellationToken);
     }
 }

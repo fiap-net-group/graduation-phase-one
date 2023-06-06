@@ -54,6 +54,7 @@ namespace PoliceDepartment.EvidenceManager.API.DependencyInjection.BusinessRules
                     IssuerSigningKey = new SymmetricSecurityKey(
                         Encoding.UTF8.GetBytes(configuration["Jwt:Key"]))
                 };
+                options.MapInboundClaims = false;
             });
 
             return services;
