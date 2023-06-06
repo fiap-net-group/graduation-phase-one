@@ -22,7 +22,9 @@ namespace PoliceDepartment.EvidenceManager.Infra.Database.Repositories
 
         public Task DeleteByIdAsync(Guid id)
         {
-            throw new NotImplementedException();
+            _context.Evidences.Remove(new EvidenceEntity { Id = id });
+
+            return Task.CompletedTask;
         }
 
         public async Task DeleteByCaseAsync(Guid caseId, CancellationToken cancellationToken)

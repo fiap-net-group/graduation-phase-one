@@ -1,5 +1,4 @@
 ﻿using FluentValidation;
-using PoliceDepartment.EvidenceManager.Application.Authorization;
 using PoliceDepartment.EvidenceManager.Application.Authorization.UseCases;
 using PoliceDepartment.EvidenceManager.Application.Officer;
 using PoliceDepartment.EvidenceManager.Application.Officer.UseCases;
@@ -39,6 +38,7 @@ namespace PoliceDepartment.EvidenceManager.API.DependencyInjection.BusinessRules
             services.AddScoped<ICreateCase<CreateCaseViewModel, BaseResponse>, CreateCase>();
 
             services.AddScoped<IGetEvidenceById<BaseResponseWithValue<EvidenceViewModel>>, GetEvidenceById>();
+            services.AddScoped<IDeleteEvidence<BaseResponse>, DeleteEvidence>();
 
             services.AddScoped<IValidator<CreateCaseViewModel>, CaseValidator>();
 
