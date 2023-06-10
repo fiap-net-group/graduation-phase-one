@@ -31,7 +31,7 @@ namespace PoliceDepartment.EvidenceManager.API.Features.V1.Controllers
         /// <response code="200">The access token</response>
         /// <response code="400">The reason of non-authentication</response>
         /// <response code="401">Invalid API-KEY</response>
-        [HttpPost]
+        [HttpPost("login")]
         [ProducesResponseType(StatusCodes.Status200OK, StatusCode = StatusCodes.Status200OK, Type = typeof(Domain.Authorization.AccessTokenModel))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, StatusCode = StatusCodes.Status400BadRequest, Type = typeof(BaseResponse))]
         [ProducesResponseType(StatusCodes.Status401Unauthorized, StatusCode = StatusCodes.Status401Unauthorized, Type = typeof(BaseResponse))]
