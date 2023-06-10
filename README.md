@@ -6,8 +6,15 @@ This project is a implementation of a Police department evidence manager system.
 
 ## Running the project
 Follow these steps to run the project locally.
-```cs
-//TBD
+```bash
+# You have to be at docker folder to run the commands
+cd docker
+
+# development
+docker-compose -f docker-compose-development.yml up --build 
+
+# production
+docker-compose up --build 
 ```
 
 ## Jargões
