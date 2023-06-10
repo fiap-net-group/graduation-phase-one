@@ -2,7 +2,7 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using PoliceDepartment.EvidenceManager.Domain.Authorization;
-using PoliceDepartment.EvidenceManager.Domain.Logger;
+using PoliceDepartment.EvidenceManager.SharedKernel.Logger;
 using System.Diagnostics.CodeAnalysis;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;

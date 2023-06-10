@@ -1,27 +1,31 @@
-﻿using PoliceDepartment.EvidenceManager.Domain.Authorization;
+﻿using AutoMapper;
+using PoliceDepartment.EvidenceManager.Domain.Authorization;
 using PoliceDepartment.EvidenceManager.Domain.Authorization.UseCases;
 using PoliceDepartment.EvidenceManager.Domain.Exceptions;
-using PoliceDepartment.EvidenceManager.Domain.Logger;
+using PoliceDepartment.EvidenceManager.SharedKernel.Logger;
 using PoliceDepartment.EvidenceManager.SharedKernel.Responses;
 using PoliceDepartment.EvidenceManager.SharedKernel.ViewModels;
 
 namespace PoliceDepartment.EvidenceManager.Application.Authorization.UseCases
 {
-    public sealed class Login : ILogin<LoginViewModel, BaseResponseWithValue<AccessTokenModel>>
+    public sealed class Login : ILogin<LoginViewModel, BaseResponseWithValue<AccessTokenViewModel>>
     {
         private readonly ILoggerManager _logger;
         private readonly IIdentityManager _identityManager;
-        private readonly BaseResponseWithValue<AccessTokenModel> _response;
+        private readonly IMapper _mapper;
+        private readonly BaseResponseWithValue<AccessTokenViewModel> _response;
 
         public Login(ILoggerManager logger,
-                     IIdentityManager identityManager)
+                     IIdentityManager identityManager,
+                     IMapper mapper)
         {
             _logger = logger;
             _identityManager = identityManager;
             _response = new();
+            _mapper = mapper;
         }
 
-        public async Task<BaseResponseWithValue<AccessTokenModel>> RunAsync(LoginViewModel login, CancellationToken cancellationToken)
+        public async Task<BaseResponseWithValue<AccessTokenViewModel>> RunAsync(LoginViewModel login, CancellationToken cancellationToken)
         {
             BusinessException.ThrowIfNull(login);
 
@@ -38,7 +42,7 @@ namespace PoliceDepartment.EvidenceManager.Application.Authorization.UseCases
 
             _logger.LogDebug("Success Login", ("username", login.Username));
 
-            return _response.AsSuccess(accessToken);
+            return _response.AsSuccess(_mapper.Map<AccessTokenViewModel>(accessToken));
         }
     }
 }

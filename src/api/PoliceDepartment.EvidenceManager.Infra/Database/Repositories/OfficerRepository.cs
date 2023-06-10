@@ -1,8 +1,6 @@
-using Microsoft.EntityFrameworkCore;
 using PoliceDepartment.EvidenceManager.Domain.Exceptions;
-using PoliceDepartment.EvidenceManager.Domain.Logger;
 using PoliceDepartment.EvidenceManager.Domain.Officer;
-using PoliceDepartment.EvidenceManager.Infra.Database.Mappings;
+using PoliceDepartment.EvidenceManager.SharedKernel.Logger;
 using System.Diagnostics.CodeAnalysis;
 
 namespace PoliceDepartment.EvidenceManager.Infra.Database.Repositories

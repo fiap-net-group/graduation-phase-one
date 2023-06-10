@@ -1,7 +1,7 @@
 ﻿using PoliceDepartment.EvidenceManager.Domain.Database;
 using PoliceDepartment.EvidenceManager.Domain.Evidence.UseCases;
 using PoliceDepartment.EvidenceManager.Domain.Exceptions;
-using PoliceDepartment.EvidenceManager.Domain.Logger;
+using PoliceDepartment.EvidenceManager.SharedKernel.Logger;
 using PoliceDepartment.EvidenceManager.SharedKernel.Responses;
 
 namespace PoliceDepartment.EvidenceManager.API.Application.Evidence.UseCases
