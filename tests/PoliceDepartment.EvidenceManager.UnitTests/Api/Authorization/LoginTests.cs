@@ -1,9 +1,10 @@
-﻿using FluentAssertions;
+﻿using AutoMapper;
+using FluentAssertions;
 using NSubstitute;
 using PoliceDepartment.EvidenceManager.Application.Authorization.UseCases;
 using PoliceDepartment.EvidenceManager.Domain.Authorization;
 using PoliceDepartment.EvidenceManager.Domain.Exceptions;
-using PoliceDepartment.EvidenceManager.Domain.Logger;
+using PoliceDepartment.EvidenceManager.SharedKernel.Logger;
 using PoliceDepartment.EvidenceManager.SharedKernel.Responses;
 using PoliceDepartment.EvidenceManager.SharedKernel.ViewModels;
 using PoliceDepartment.EvidenceManager.UnitTests.Fixtures.Api;
@@ -34,8 +35,9 @@ namespace PoliceDepartment.EvidenceManager.UnitTests.Api.Authorization
             var logger = Substitute.For<ILoggerManager>();
             var identityManager = Substitute.For<IIdentityManager>();
             identityManager.AuthenticateAsync(username, password).Returns(new AccessTokenModel());
+            var mapper = Substitute.For<IMapper>();
 
-            var sut = new Login(logger, identityManager);
+            var sut = new Login(logger, identityManager, mapper);
 
             //Act
             var response = await sut.RunAsync(new LoginViewModel(username, password), CancellationToken.None);
@@ -51,7 +53,9 @@ namespace PoliceDepartment.EvidenceManager.UnitTests.Api.Authorization
             //Arrange
             var logger = Substitute.For<ILoggerManager>();
             var identityManager = Substitute.For<IIdentityManager>();
-            var sut = new Login(logger, identityManager);
+            var mapper = Substitute.For<IMapper>();
+
+            var sut = new Login(logger, identityManager, mapper);
 
             //Act
             var act = () => sut.RunAsync(default, CancellationToken.None);
@@ -68,8 +72,9 @@ namespace PoliceDepartment.EvidenceManager.UnitTests.Api.Authorization
             var identityManager = Substitute.For<IIdentityManager>();
             identityManager.AuthenticateAsync(Arg.Any<string>(), Arg.Any<string>())
             .Returns(new AccessTokenModel("Bearer", _fixture.Authorization.GenerateFakeJwtToken(), DateTime.Now.AddDays(10), Guid.NewGuid().ToString()));
+            var mapper = Substitute.For<IMapper>();
 
-            var sut = new Login(logger, identityManager);
+            var sut = new Login(logger, identityManager, mapper);
 
             //Act
             var response = await sut.RunAsync(new LoginViewModel("username@email.com", "password123"), CancellationToken.None);
