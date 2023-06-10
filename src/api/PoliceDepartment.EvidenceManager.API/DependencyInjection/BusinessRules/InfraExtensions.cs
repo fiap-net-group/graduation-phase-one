@@ -39,7 +39,9 @@ namespace PoliceDepartment.EvidenceManager.API.DependencyInjection.BusinessRules
             }
             else
             {
-                //ADD PROD DI
+                //Add prod
+                services.AddScoped<IEvidenceFileServer, EvidenceLocalServer>();
+                services.AddSingleton<ILoggerManager, ConsoleLogger>();
             }
 
 
