@@ -107,9 +107,12 @@ namespace PoliceDepartment.EvidenceManager.Infra.Identity
 
             var result = await _userManager.CreateAsync(user, password);
 
-            if(result.Succeeded)            
+            if(result.Succeeded)
+            {
                 await _userManager.AddClaimAsync(user, new Claim("OfficerType", officerType));
-            
+                await _userManager.AddClaimAsync(user, new Claim(JwtRegisteredClaimNames.Name, user.NormalizedUserName));
+            }
+
             return result;
         }
     

@@ -9,9 +9,7 @@ namespace PoliceDepartment.EvidenceManager.Application.Officer
             RuleFor(x => x.Email).Cascade(CascadeMode.Continue)
                                  .NotEmpty()
                                  .EmailAddress()
-                                 .WithMessage("Email is required")
-                                 .Equal(x => x.UserName)
-                                 .WithMessage("Email should be equal to username");
+                                 .WithMessage("Email is required");
 
             RuleFor(x => x.UserName).Cascade(CascadeMode.Continue)
                                     .NotEmpty()
