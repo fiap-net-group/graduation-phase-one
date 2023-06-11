@@ -27,6 +27,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\api\PoliceDepartment.EvidenceManager.Application\PoliceDepartment.EvidenceManager.Application.csproj" />
     <ProjectReference Include="..\..\src\api\PoliceDepartment.EvidenceManager.Domain\PoliceDepartment.EvidenceManager.Domain.csproj" />
+    <ProjectReference Include="..\..\src\web\PoliceDepartment.EvidenceManager.MVC\PoliceDepartment.EvidenceManager.MVC.csproj" />
   </ItemGroup>
 
 </Project>
