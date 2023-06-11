@@ -26,7 +26,7 @@ namespace PoliceDepartment.EvidenceManager.MVC.Controllers
         [Route("error/{statusCode:length(3,3)}")]
         public IActionResult Errors(int statusCode)
         {
-            var modelErro = new ErrorViewModel(statusCode);
+            var modelErro = new ErrorModel(statusCode);
 
             return View("Error", modelErro);
         }

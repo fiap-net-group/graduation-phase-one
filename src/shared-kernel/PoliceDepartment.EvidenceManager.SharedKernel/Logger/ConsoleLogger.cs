@@ -50,6 +50,7 @@ namespace PoliceDepartment.EvidenceManager.SharedKernel.Logger
             Log(message, LoggerManagerSeverity.CRITICAL, newParameters);
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "CA2254", Justification = "")]
         public void Log(string message, LoggerManagerSeverity severity, params (string name, object value)[] parameters)
         {
             switch (severity)

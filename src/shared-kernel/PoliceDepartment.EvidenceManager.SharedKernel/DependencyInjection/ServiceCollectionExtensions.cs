@@ -5,7 +5,7 @@ namespace PoliceDepartment.EvidenceManager.SharedKernel.DependencyInjection
 {
     public static class ServiceCollectionExtensions
     {
-        static IServiceCollection AddLogging(this IServiceCollection services)
+        public static IServiceCollection AddCustomLogging(this IServiceCollection services)
         {
             services.AddSingleton<ILoggerManager, ConsoleLogger>();
 

@@ -1,23 +1,17 @@
+using PoliceDepartment.EvidenceManager.MVC.DependencyInjection;
+
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddControllersWithViews();
+builder.Configuration
+       .SetBasePath(builder.Environment.ContentRootPath)
+       .AddJsonFile("appsettings.json", true, true)
+       .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", true, true)
+       .AddEnvironmentVariables();
+
+builder.Services.AddDependencyInjection(builder.Configuration);
 
 var app = builder.Build();
 
-//Error handler
-app.UseExceptionHandler("/error/500");
-app.UseStatusCodePagesWithRedirects("/error/{0}");
-app.UseHsts();
-
-app.UseHttpsRedirection();
-app.UseStaticFiles();
-
-app.UseRouting();
-
-app.UseAuthorization();
-
-app.MapControllerRoute(
-    name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+app.UseDependencyInjection();
 
 app.Run();
