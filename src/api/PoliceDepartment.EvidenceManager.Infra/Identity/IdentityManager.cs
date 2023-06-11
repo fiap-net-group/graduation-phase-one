@@ -35,6 +35,8 @@ namespace PoliceDepartment.EvidenceManager.Infra.Identity
             var claims = await _userManager.GetClaimsAsync(user);
             var userRoles = await _userManager.GetRolesAsync(user);
 
+            if (!claims.Any(c => c.Type == JwtRegisteredClaimNames.Name))
+                claims.Add(new Claim(JwtRegisteredClaimNames.Name, user.UserName));
             claims.Add(new Claim(JwtRegisteredClaimNames.UniqueName, user.Email));
             claims.Add(new Claim(JwtRegisteredClaimNames.Sub, user.Id));
             claims.Add(new Claim(JwtRegisteredClaimNames.Email, user.Email));
