@@ -19,7 +19,6 @@ namespace PoliceDepartment.EvidenceManager.API.DependencyInjection.BusinessRules
         internal static IServiceCollection AddInfraConfiguration(this IServiceCollection services, IConfiguration configuration, bool isDevelopment)
         {
             services.AddScoped<IAppDatabaseContext, SqlServerContext>();
-            services.AddScoped<IIdentityContext, IdentityContext>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<IEvidenceRepository, EvidenceRepository>();
             services.AddScoped<ICaseRepository, CaseRepository>();
@@ -40,22 +39,6 @@ namespace PoliceDepartment.EvidenceManager.API.DependencyInjection.BusinessRules
 
 
             return services;
-        }
-
-        internal static WebApplication UseInfrastructureConfiguration(this WebApplication app)
-        {
-            using var serviceScope = app.Services.GetService<IServiceScopeFactory>().CreateScope();
-
-            using var databaseContext = serviceScope.ServiceProvider.GetRequiredService<IAppDatabaseContext>();
-            using var identityContext = serviceScope.ServiceProvider.GetRequiredService<IIdentityContext>();
-
-            if (databaseContext.AnyPendingMigrationsAsync().Result)
-                databaseContext.MigrateAsync();
-
-            if (identityContext.AnyPendingMigrationsAsync().Result)
-                identityContext.MigrateAsync();
-
-            return app;
         }
     }
 }

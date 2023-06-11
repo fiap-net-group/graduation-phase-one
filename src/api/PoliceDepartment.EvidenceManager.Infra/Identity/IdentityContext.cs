@@ -19,7 +19,7 @@ namespace PoliceDepartment.EvidenceManager.Infra.Identity
 
                 return migrations.Any();
             }
-            catch
+            catch(Exception ex)
             {
                 return false;
             }
@@ -28,6 +28,11 @@ namespace PoliceDepartment.EvidenceManager.Infra.Identity
         public async Task MigrateAsync()
         {
             await Database.MigrateAsync();
+        }
+
+        public async Task TestConnectionAsync()
+        {
+            _ = await Database.ExecuteSqlRawAsync("SELECT 1");
         }
     }
 }

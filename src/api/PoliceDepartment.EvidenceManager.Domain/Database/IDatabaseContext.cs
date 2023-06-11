@@ -4,5 +4,6 @@
     {
         Task<bool> AnyPendingMigrationsAsync();
         Task MigrateAsync();
+        Task TestConnectionAsync();
     }
 }

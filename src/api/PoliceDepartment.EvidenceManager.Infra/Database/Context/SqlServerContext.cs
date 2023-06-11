@@ -78,5 +78,18 @@ namespace PoliceDepartment.EvidenceManager.Infra.Database
                 return false;
             }
         }
+
+        public async Task TestConnectionAsync()
+        {
+            try
+            {
+                _ = await Database.ExecuteSqlRawAsync("SELECT 1");
+            }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
+        }
     }
 }

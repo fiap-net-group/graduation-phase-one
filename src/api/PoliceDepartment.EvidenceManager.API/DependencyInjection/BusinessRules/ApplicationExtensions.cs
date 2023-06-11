@@ -25,7 +25,7 @@ namespace PoliceDepartment.EvidenceManager.API.DependencyInjection.BusinessRules
             services.AddScoped<ILogin<LoginViewModel, BaseResponseWithValue<AccessTokenViewModel>>, Login>();
             services.AddScoped<ILogOut<LogOutViewModel, BaseResponse>, LogOut>();
 
-            services.AddScoped<ICreateOfficer<CreateOfficerViewModel, BaseResponse>, Officer>();
+            services.AddScoped<ICreateOfficer<CreateOfficerViewModel, BaseResponse>, CreateOfficer>();
 
             services.AddScoped<IValidator<CreateOfficerViewModel>, OfficerValidator>();
 

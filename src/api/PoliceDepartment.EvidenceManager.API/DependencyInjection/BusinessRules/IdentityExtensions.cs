@@ -16,12 +16,13 @@ namespace PoliceDepartment.EvidenceManager.API.DependencyInjection.BusinessRules
     {
         internal static IServiceCollection AddIdentityConfiguration(this IServiceCollection services, IConfiguration configuration)
         {
-            services.AddDbContext<IdentityContext>(options => options.UseSqlServer(configuration.GetConnectionString("SqlServerConnection")));
+            services.AddDbContext<IIdentityContext, IdentityContext>(options => options.UseSqlServer(configuration.GetConnectionString("SqlServerConnection")));
 
+            services.AddScoped<IIdentityContext, IdentityContext>();
             services.AddScoped<IIdentityManager, IdentityManager>();
 
             services.AddIdentity<IdentityUser, IdentityRole>(options =>
-            {
+            {   
                 options.Password.RequireNonAlphanumeric = false;
                 options.Password.RequireDigit = false;
                 options.Password.RequireLowercase = false;
