@@ -48,7 +48,7 @@ namespace PoliceDepartment.EvidenceManager.Application.Officer.UseCases
 
             _logger.LogDebug("Begin Create user");
 
-            var resultIdentity = await _identityManager.CreateAsync(viewModel.Email, viewModel.UserName, viewModel.Password, Enum.GetName(viewModel.OfficerType));
+            var resultIdentity = await _identityManager.CreateAsync(viewModel.Email, viewModel.Password, Enum.GetName(viewModel.OfficerType));
 
             if(!resultIdentity.Succeeded){
                 _logger.LogWarning("Error on create user");
@@ -61,7 +61,9 @@ namespace PoliceDepartment.EvidenceManager.Application.Officer.UseCases
 
             var entity = await _identityManager.FindByEmailAsync(viewModel.Email);
 
-            OfficerEntity officer = _mapper.Map<OfficerEntity>(entity);
+            var officer = _mapper.Map<OfficerEntity>(entity);
+
+            officer.Name = viewModel.Name;
 
             await _Officerrepository.CreateAsync(officer, cancellationToken);
 

@@ -25,8 +25,10 @@ namespace PoliceDepartment.EvidenceManager.Infra.Identity
             _userManager = userManager;
         }
 
-        public async Task<AccessTokenModel> AuthenticateAsync(string email, string password)
+        public async Task<AccessTokenModel> AuthenticateAsync(string email, string password, string name, CancellationToken cancellationToken)
         {
+            cancellationToken.ThrowIfCancellationRequested();
+
             var user = await _userManager.FindByEmailAsync(email);
 
             if (!await ValidateLoginAsync(user, email, password))
@@ -36,7 +38,7 @@ namespace PoliceDepartment.EvidenceManager.Infra.Identity
             var userRoles = await _userManager.GetRolesAsync(user);
 
             if (!claims.Any(c => c.Type == JwtRegisteredClaimNames.Name))
-                claims.Add(new Claim(JwtRegisteredClaimNames.Name, user.UserName));
+                claims.Add(new Claim(JwtRegisteredClaimNames.Name, name));
             claims.Add(new Claim(JwtRegisteredClaimNames.UniqueName, user.Email));
             claims.Add(new Claim(JwtRegisteredClaimNames.Sub, user.Id));
             claims.Add(new Claim(JwtRegisteredClaimNames.Email, user.Email));
@@ -97,23 +99,19 @@ namespace PoliceDepartment.EvidenceManager.Infra.Identity
            => (long)Math.Round((date.ToUniversalTime() - new DateTimeOffset(1970, 1, 1, 0, 0, 0, TimeSpan.Zero)).TotalSeconds);
 
         public async Task<IdentityResult> CreateAsync(string email, 
-                                                      string userName, 
                                                       string password, 
                                                       string officerType){
             var user = new IdentityUser
             {
-                UserName = userName,
+                UserName = email,
                 Email = email,
                 EmailConfirmed = true,
             };
 
             var result = await _userManager.CreateAsync(user, password);
 
-            if(result.Succeeded)
-            {
-                await _userManager.AddClaimAsync(user, new Claim("OfficerType", officerType));
-                await _userManager.AddClaimAsync(user, new Claim(JwtRegisteredClaimNames.Name, user.NormalizedUserName));
-            }
+            if(result.Succeeded)           
+                await _userManager.AddClaimAsync(user, new Claim("OfficerType", officerType));            
 
             return result;
         }

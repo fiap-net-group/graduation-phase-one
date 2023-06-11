@@ -32,7 +32,6 @@ namespace PoliceDepartment.EvidenceManager.Application.Authorization.UseCases
             }
 
             var response = await _identityManager.CreateAsync(_configuration["Admin:Email"],
-                                                              _configuration["Admin:Email"],
                                                               _configuration["Admin:Password"],
                                                               Enum.GetName(OfficerType.Administrator));
 

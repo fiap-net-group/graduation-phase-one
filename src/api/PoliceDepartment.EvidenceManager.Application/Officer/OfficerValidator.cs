@@ -11,9 +11,9 @@ namespace PoliceDepartment.EvidenceManager.Application.Officer
                                  .EmailAddress()
                                  .WithMessage("Email is required");
 
-            RuleFor(x => x.UserName).Cascade(CascadeMode.Continue)
+            RuleFor(x => x.Name).Cascade(CascadeMode.Continue)
                                     .NotEmpty()
-                                    .WithMessage("UserName is required");
+                                    .WithMessage("Name is required");
 
             RuleFor(x => x.Password).Cascade(CascadeMode.Continue)
                                     .NotEmpty()
