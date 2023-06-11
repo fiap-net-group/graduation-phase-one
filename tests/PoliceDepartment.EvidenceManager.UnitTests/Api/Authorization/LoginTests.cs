@@ -1,9 +1,12 @@
 ﻿using AutoMapper;
 using FluentAssertions;
+using Microsoft.Extensions.Configuration;
 using NSubstitute;
 using PoliceDepartment.EvidenceManager.Application.Authorization.UseCases;
 using PoliceDepartment.EvidenceManager.Domain.Authorization;
+using PoliceDepartment.EvidenceManager.Domain.Database;
 using PoliceDepartment.EvidenceManager.Domain.Exceptions;
+using PoliceDepartment.EvidenceManager.Domain.Officer;
 using PoliceDepartment.EvidenceManager.SharedKernel.Logger;
 using PoliceDepartment.EvidenceManager.SharedKernel.Responses;
 using PoliceDepartment.EvidenceManager.SharedKernel.ViewModels;
@@ -22,22 +25,27 @@ namespace PoliceDepartment.EvidenceManager.UnitTests.Api.Authorization
         }
 
         [Theory]
-        [InlineData("", "")]
-        [InlineData(null, null)]
-        [InlineData("", null)]
-        [InlineData(null, "")]
-        [InlineData("unexistentUsername@email.com", "")]
-        [InlineData("", "unexistent123")]
-        [InlineData("unexistentUsername@email.com", "unexistent123")]
-        public async Task RunAsync_InvalidCredentials_ShouldReturnError(string username, string password)
+        [InlineData("", "", true)]
+        [InlineData(null, null, true)]
+        [InlineData("", null, true)]
+        [InlineData(null, "", true)]
+        [InlineData("unexistentUsername@email.com", "", true)]
+        [InlineData("", "unexistent123", true)]
+        [InlineData("unexistentUsername@email.com", "unexistent123", true)]
+        [InlineData("unexistentUsername@email.com", "unexistent123", false)]
+        public async Task RunAsync_InvalidCredentials_ShouldReturnError(string username, string password, bool officerExists)
         {
             //Arrange
             var logger = Substitute.For<ILoggerManager>();
             var identityManager = Substitute.For<IIdentityManager>();
-            identityManager.AuthenticateAsync(username, password).Returns(new AccessTokenModel());
+            identityManager.AuthenticateAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string>(), Arg.Any<CancellationToken>()).Returns(new AccessTokenModel());
             var mapper = Substitute.For<IMapper>();
+            var uow = Substitute.For<IUnitOfWork>();
+            uow.Officer.GetByEmailAsync(Arg.Any<string>(), Arg.Any<CancellationToken>())
+                              .Returns(Task.FromResult(officerExists ? _fixture.Officer.GenerateSingleEntity() : new OfficerEntity()));
+            var configuration = Substitute.For<IConfiguration>();
 
-            var sut = new Login(logger, identityManager, mapper);
+            var sut = new Login(logger, identityManager, mapper, uow, configuration);
 
             //Act
             var response = await sut.RunAsync(new LoginViewModel(username, password), CancellationToken.None);
@@ -52,10 +60,12 @@ namespace PoliceDepartment.EvidenceManager.UnitTests.Api.Authorization
         {
             //Arrange
             var logger = Substitute.For<ILoggerManager>();
-            var identityManager = Substitute.For<IIdentityManager>();
+            var uow = Substitute.For<IUnitOfWork>();
             var mapper = Substitute.For<IMapper>();
+            var identityManager = Substitute.For<IIdentityManager>();
+            var configuration = Substitute.For<IConfiguration>();
 
-            var sut = new Login(logger, identityManager, mapper);
+            var sut = new Login(logger, identityManager, mapper, uow, configuration);
 
             //Act
             var act = () => sut.RunAsync(default, CancellationToken.None);
@@ -70,11 +80,15 @@ namespace PoliceDepartment.EvidenceManager.UnitTests.Api.Authorization
             //Arrange
             var logger = Substitute.For<ILoggerManager>();
             var identityManager = Substitute.For<IIdentityManager>();
-            identityManager.AuthenticateAsync(Arg.Any<string>(), Arg.Any<string>())
+            identityManager.AuthenticateAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string>(), Arg.Any<CancellationToken>())
             .Returns(new AccessTokenModel("Bearer", _fixture.Authorization.GenerateFakeJwtToken(), DateTime.Now.AddDays(10), Guid.NewGuid().ToString()));
             var mapper = Substitute.For<IMapper>();
+            var uow = Substitute.For<IUnitOfWork>();
+            uow.Officer.GetByEmailAsync(Arg.Any<string>(), Arg.Any<CancellationToken>())
+                              .Returns(Task.FromResult(_fixture.Officer.GenerateSingleEntity()));
+            var configuration = Substitute.For<IConfiguration>();
 
-            var sut = new Login(logger, identityManager, mapper);
+            var sut = new Login(logger, identityManager, mapper, uow, configuration);
 
             //Act
             var response = await sut.RunAsync(new LoginViewModel("username@email.com", "password123"), CancellationToken.None);

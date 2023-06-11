@@ -6,12 +6,14 @@
     public class ApiFixture
     {
         public AuthorizationFixture Authorization { get; set; }
+        public OfficerFixture Officer{ get; set; }
         public CaseFixture Case { get; set; }
         public EvidenceFixture Evidence { get; set; }
 
         public ApiFixture()
         {
             Authorization = new();
+            Officer = new();
             Case = new();
             Evidence = new();
         }
