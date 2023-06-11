@@ -9,7 +9,7 @@ using PoliceDepartment.EvidenceManager.SharedKernel.ViewModels;
 
 namespace PoliceDepartment.EvidenceManager.Application.Officer.UseCases
 {
-    public class Officer : ICreateOfficer<CreateOfficerViewModel, BaseResponse>
+    public class CreateOfficer : ICreateOfficer<CreateOfficerViewModel, BaseResponse>
     {
         private readonly ILoggerManager _logger;
         private readonly BaseResponse _response;
@@ -18,7 +18,7 @@ namespace PoliceDepartment.EvidenceManager.Application.Officer.UseCases
         private readonly IIdentityManager _identityManager;
         private readonly IValidator<CreateOfficerViewModel> _validator;
 
-        public Officer( ILoggerManager logger, 
+        public CreateOfficer( ILoggerManager logger, 
                         IIdentityManager identityManager, 
                         IOfficerRepository officerrepository, 
                         IMapper mapper, 
