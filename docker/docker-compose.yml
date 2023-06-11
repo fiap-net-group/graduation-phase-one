@@ -5,8 +5,7 @@ services:
     image: mcr.microsoft.com/mssql/server:2019-latest
     networks:
       - backend
-    hostname: 'sqlserver'
-    container_name: graduation-phase-one-sqlserver
+    container_name: sqlserver
     environment:
       ACCEPT_EULA: 'Y'
       SA_PASSWORD: "AvS#a1s45s"
@@ -14,10 +13,7 @@ services:
     volumes:
       - c:\data\volumes\mssql:/var/opt/mssql3
     ports:
-      - '11433:1433'    
-    expose:
-      - 1433
-
+      - '1433:1433'    
   api:
     image: ${DOCKER_REGISTRY-}api
     networks:
@@ -25,7 +21,7 @@ services:
     build:
       context: ../
       dockerfile: ./src/api/PoliceDepartment.EvidenceManager.API/Dockerfile
-    container_name: graduation-phase-one-api
+    container_name: api
     depends_on:
       - sqlserver
     environment:
@@ -36,7 +32,6 @@ services:
     volumes:
       - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
       - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
-
   mvc:
     image: ${DOCKER_REGISTRY-}mvc
     networks:
@@ -44,7 +39,7 @@ services:
     build:
       context: ../
       dockerfile: ./src/web/PoliceDepartment.EvidenceManager.MVC/Dockerfile
-    container_name: graduation-phase-one-mvc
+    container_name: mvc
     depends_on:
       - api
     environment:

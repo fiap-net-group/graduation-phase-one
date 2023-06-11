@@ -1,0 +1,57 @@
+  version: '3.3'
+  name: graduation-phase-one
+  services:
+    sqlserver:
+      image: mcr.microsoft.com/mssql/server:2019-latest
+      networks:
+        - backend
+      container_name: sqlserver
+      environment:
+        ACCEPT_EULA: 'Y'
+        SA_PASSWORD: "AvS#a1s45s"
+        MSSQL_PID: Express
+      volumes:
+        - c:\data\volumes\mssql:/var/opt/mssql3
+      ports:
+        - '1433:1433'    
+
+    api:
+      image: ${DOCKER_REGISTRY-}api
+      networks:
+        - backend
+      build:
+        context: ../
+        dockerfile: ./src/api/PoliceDepartment.EvidenceManager.API/Dockerfile
+      container_name: api
+      depends_on:
+        - sqlserver
+      environment:
+        - ASPNETCORE_ENVIRONMENT=Staging
+        - ASPNETCORE_URLS=http://+:80
+      ports:
+        - "5015:80"
+      volumes:
+        - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
+        - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
+
+    mvc:
+      image: ${DOCKER_REGISTRY-}mvc
+      networks:
+        - backend
+      build:
+        context: ../
+        dockerfile: ./src/web/PoliceDepartment.EvidenceManager.MVC/Dockerfile
+      container_name: mvc
+      depends_on:
+        - api
+      environment:
+        - ASPNETCORE_ENVIRONMENT=Staging
+        - ASPNETCORE_URLS=http://+:80
+      ports:
+        - "5020:80"
+      volumes:
+        - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
+        - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
+  networks:
+    backend:
+      driver: bridge
