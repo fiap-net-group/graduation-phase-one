@@ -19,9 +19,20 @@ namespace PoliceDepartment.EvidenceManager.UnitTests.Api.Authorization
     {
         private readonly ApiFixture _fixture;
 
+        private readonly ILoggerManager _logger;
+        private readonly IIdentityManager _identityManager;
+        private readonly IMapper _mapper;
+        private readonly IUnitOfWork _uow;
+        private readonly IConfiguration _configuration;
+
         public LoginTests(ApiFixture fixture)
         {
             _fixture = fixture;
+            _logger = Substitute.For<ILoggerManager>();
+            _identityManager = Substitute.For<IIdentityManager>();
+            _mapper = Substitute.For<IMapper>();
+            _uow = Substitute.For<IUnitOfWork>();
+            _configuration = Substitute.For<IConfiguration>();
         }
 
         [Theory]
@@ -36,16 +47,11 @@ namespace PoliceDepartment.EvidenceManager.UnitTests.Api.Authorization
         public async Task RunAsync_InvalidCredentials_ShouldReturnError(string username, string password, bool officerExists)
         {
             //Arrange
-            var logger = Substitute.For<ILoggerManager>();
-            var identityManager = Substitute.For<IIdentityManager>();
-            identityManager.AuthenticateAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string>(), Arg.Any<CancellationToken>()).Returns(new AccessTokenModel());
-            var mapper = Substitute.For<IMapper>();
-            var uow = Substitute.For<IUnitOfWork>();
-            uow.Officer.GetByEmailAsync(Arg.Any<string>(), Arg.Any<CancellationToken>())
+            _identityManager.AuthenticateAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string>(), Arg.Any<CancellationToken>()).Returns(new AccessTokenModel());
+            _uow.Officer.GetByEmailAsync(Arg.Any<string>(), Arg.Any<CancellationToken>())
                               .Returns(Task.FromResult(officerExists ? _fixture.Officer.GenerateSingleEntity() : new OfficerEntity()));
-            var configuration = Substitute.For<IConfiguration>();
 
-            var sut = new Login(logger, identityManager, mapper, uow, configuration);
+            var sut = new Login(_logger, _identityManager, _mapper, _uow, _configuration);
 
             //Act
             var response = await sut.RunAsync(new LoginViewModel(username, password), CancellationToken.None);
@@ -59,13 +65,7 @@ namespace PoliceDepartment.EvidenceManager.UnitTests.Api.Authorization
         public void RunAsync_NullViewModel_ShouldThrow()
         {
             //Arrange
-            var logger = Substitute.For<ILoggerManager>();
-            var uow = Substitute.For<IUnitOfWork>();
-            var mapper = Substitute.For<IMapper>();
-            var identityManager = Substitute.For<IIdentityManager>();
-            var configuration = Substitute.For<IConfiguration>();
-
-            var sut = new Login(logger, identityManager, mapper, uow, configuration);
+            var sut = new Login(_logger, _identityManager, _mapper, _uow, _configuration);
 
             //Act
             var act = () => sut.RunAsync(default, CancellationToken.None);
@@ -78,17 +78,12 @@ namespace PoliceDepartment.EvidenceManager.UnitTests.Api.Authorization
         public async Task RunAsync_ExistingCredentials_ShouldReturnSuccess()
         {
             //Arrange
-            var logger = Substitute.For<ILoggerManager>();
-            var identityManager = Substitute.For<IIdentityManager>();
-            identityManager.AuthenticateAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string>(), Arg.Any<CancellationToken>())
+            _identityManager.AuthenticateAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string>(), Arg.Any<CancellationToken>())
             .Returns(new AccessTokenModel("Bearer", _fixture.Authorization.GenerateFakeJwtToken(), DateTime.Now.AddDays(10), Guid.NewGuid().ToString()));
-            var mapper = Substitute.For<IMapper>();
-            var uow = Substitute.For<IUnitOfWork>();
-            uow.Officer.GetByEmailAsync(Arg.Any<string>(), Arg.Any<CancellationToken>())
+            _uow.Officer.GetByEmailAsync(Arg.Any<string>(), Arg.Any<CancellationToken>())
                               .Returns(Task.FromResult(_fixture.Officer.GenerateSingleEntity()));
-            var configuration = Substitute.For<IConfiguration>();
 
-            var sut = new Login(logger, identityManager, mapper, uow, configuration);
+            var sut = new Login(_logger, _identityManager, _mapper, _uow, _configuration);
 
             //Act
             var response = await sut.RunAsync(new LoginViewModel("username@email.com", "password123"), CancellationToken.None);
