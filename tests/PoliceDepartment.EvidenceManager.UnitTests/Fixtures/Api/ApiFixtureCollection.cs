@@ -1,4 +1,6 @@
-﻿namespace PoliceDepartment.EvidenceManager.UnitTests.Fixtures.Api
+﻿using PoliceDepartment.EvidenceManager.UnitTests.Fixtures.Shared;
+
+namespace PoliceDepartment.EvidenceManager.UnitTests.Fixtures.Api
 {
     [CollectionDefinition(nameof(ApiFixtureCollection))]
     public class ApiFixtureCollection : ICollectionFixture<ApiFixture> { }

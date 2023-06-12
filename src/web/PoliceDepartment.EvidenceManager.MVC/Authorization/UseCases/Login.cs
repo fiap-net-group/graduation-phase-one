@@ -37,8 +37,10 @@ namespace PoliceDepartment.EvidenceManager.MVC.Authorization.UseCases
             var authResponse = await _client.AuthorizeAsync(username, password, cancellationToken);
 
             if (!authResponse.Success || !authResponse.Value.Valid())            
-                return _response.AsError(errors: authResponse.ResponseDetails.Errors);            
-
+                return authResponse.ResponseDetails.Errors is not null && authResponse.ResponseDetails.Errors.Any() 
+                    ? _response.AsError(errors: authResponse.ResponseDetails.Errors) 
+                    : _response.AsError(ResponseMessage.InvalidCredentials);
+            
             var accessToken = _tokenHandler.ReadToken(authResponse.Value.AccessToken) as JwtSecurityToken;
 
             var claims = new List<Claim>
@@ -50,16 +52,14 @@ namespace PoliceDepartment.EvidenceManager.MVC.Authorization.UseCases
 
             var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
 
-            var authProperties = new AuthenticationProperties
-            {
-                ExpiresUtc = DateTimeOffset.UtcNow.AddHours(8),
-                IsPersistent = true
-            };
-
             await _authService.SignInAsync(_officerUser.HttpContext,
                                             CookieAuthenticationDefaults.AuthenticationScheme,
                                             new ClaimsPrincipal(claimsIdentity),
-                                            authProperties);
+                                            new AuthenticationProperties
+                                            {
+                                                ExpiresUtc = DateTimeOffset.UtcNow.AddHours(8),
+                                                IsPersistent = true
+                                            });
 
             _logger.LogDebug("MVC - Success Login logic", ("username", username));
 
