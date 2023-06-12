@@ -4,7 +4,7 @@ namespace PoliceDepartment.EvidenceManager.SharedKernel.Responses
 {
     public enum ResponseMessage
     {
-        [Description("An error ocurred")]
+        [Description("An error ocurred, try again later")]
         GenericError = 0,
         [Description("Success")]
         Success = 1,

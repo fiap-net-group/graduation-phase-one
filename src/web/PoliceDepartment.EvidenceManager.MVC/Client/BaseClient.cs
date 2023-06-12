@@ -1,4 +1,5 @@
-﻿using Polly.Retry;
+﻿using PoliceDepartment.EvidenceManager.SharedKernel.Logger;
+using Polly.Retry;
 using System.Text.Json;
 
 namespace PoliceDepartment.EvidenceManager.MVC.Client
@@ -9,28 +10,40 @@ namespace PoliceDepartment.EvidenceManager.MVC.Client
         private readonly JsonSerializerOptions _serializeOptions;
         private readonly HttpClient _client;
         private readonly string _apiKey;
+        private readonly ILoggerManager _logger;
 
-        public BaseClient(AsyncRetryPolicy<HttpResponseMessage> retryPolicy, 
-                          JsonSerializerOptions serializeOptions, 
-                          HttpClient client, 
-                          IConfiguration configuration)
+        public BaseClient(AsyncRetryPolicy<HttpResponseMessage> retryPolicy,
+                          JsonSerializerOptions serializeOptions,
+                          HttpClient client,
+                          IConfiguration configuration,
+                          ILoggerManager logger)
         {
             _retryPolicy = retryPolicy;
             _serializeOptions = serializeOptions;
             _client = client;
             _apiKey = configuration["Api:ApiKey"];
+            _logger = logger;
         }
 
         public async Task<TResponse> SendAsync<TResponse>(HttpRequestMessage request, CancellationToken cancellationToken)
         {
-            var apiResponse = await _retryPolicy.ExecuteAsync(async action =>
+            try
             {
-                request.Headers.Add(ClientExtensions.ApiKeyHeader, _apiKey);
+                var apiResponse = await _retryPolicy.ExecuteAsync(async action =>
+                {
+                    request.Headers.Add(ClientExtensions.ApiKeyHeader, _apiKey);
 
-                return await _client.SendAsync(request, cancellationToken);
-            }, cancellationToken);
+                    return await _client.SendAsync(request, cancellationToken);
+                }, cancellationToken);
 
-            return await apiResponse.Content.ReadFromJsonAsync<TResponse>(_serializeOptions, cancellationToken);
+                return await apiResponse.Content.ReadFromJsonAsync<TResponse>(_serializeOptions, cancellationToken);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogCritical("Error on API Access", ex);
+
+                throw;
+            }
         }
     }
 }

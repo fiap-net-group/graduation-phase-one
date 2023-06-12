@@ -1,5 +1,6 @@
 ﻿using PoliceDepartment.EvidenceManager.MVC.Authorization.Interfaces;
 using PoliceDepartment.EvidenceManager.MVC.Client;
+using PoliceDepartment.EvidenceManager.SharedKernel.Logger;
 using PoliceDepartment.EvidenceManager.SharedKernel.Responses;
 using PoliceDepartment.EvidenceManager.SharedKernel.ViewModels;
 using Polly.Retry;
@@ -14,13 +15,15 @@ namespace PoliceDepartment.EvidenceManager.MVC.Authorization
 
         private readonly string _loginUrl;
 
-        public AuthorizationClient(AsyncRetryPolicy<HttpResponseMessage> retryPolicy,                                   
+        public AuthorizationClient(AsyncRetryPolicy<HttpResponseMessage> retryPolicy,
                                    JsonSerializerOptions serializeOptions,
                                    IHttpClientFactory _clientFactory,
-                                   IConfiguration configuration) : base(retryPolicy, 
-                                                                        serializeOptions, 
-                                                                        _clientFactory.CreateClient(ClientExtensions.AuthorizationClientName), 
-                                                                        configuration)
+                                   IConfiguration configuration,
+                                   ILoggerManager logger) : base(retryPolicy,
+                                                                 serializeOptions,
+                                                                 _clientFactory.CreateClient(ClientExtensions.AuthorizationClientName),
+                                                                 configuration,
+                                                                 logger)
         {
             _serializeOptions = serializeOptions;
 
@@ -38,7 +41,14 @@ namespace PoliceDepartment.EvidenceManager.MVC.Authorization
                                             "application/json")
             };
 
-            return await SendAsync<BaseResponseWithValue<AccessTokenViewModel>>(request, cancellationToken);
+            try
+            {
+                return await SendAsync<BaseResponseWithValue<AccessTokenViewModel>>(request, cancellationToken);
+            }
+            catch
+            {
+                return new BaseResponseWithValue<AccessTokenViewModel>().AsError(ResponseMessage.GenericError);   
+            }
         }
     }
 }
