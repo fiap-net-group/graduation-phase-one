@@ -25,7 +25,7 @@ namespace PoliceDepartment.EvidenceManager.MVC.Client
             _logger = logger;
         }
 
-        public async Task<TResponse> SendAsync<TResponse>(HttpRequestMessage request, CancellationToken cancellationToken)
+        protected async Task<TResponse> SendAsync<TResponse>(HttpRequestMessage request, CancellationToken cancellationToken)
         {
             try
             {

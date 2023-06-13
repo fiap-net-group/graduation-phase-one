@@ -17,11 +17,11 @@ namespace PoliceDepartment.EvidenceManager.MVC.Authorization
 
         public AuthorizationClient(AsyncRetryPolicy<HttpResponseMessage> retryPolicy,
                                    JsonSerializerOptions serializeOptions,
-                                   IHttpClientFactory _clientFactory,
+                                   IHttpClientFactory clientFactory,
                                    IConfiguration configuration,
                                    ILoggerManager logger) : base(retryPolicy,
                                                                  serializeOptions,
-                                                                 _clientFactory.CreateClient(ClientExtensions.AuthorizationClientName),
+                                                                 clientFactory.CreateClient(ClientExtensions.AuthorizationClientName),
                                                                  configuration,
                                                                  logger)
         {
@@ -43,7 +43,8 @@ namespace PoliceDepartment.EvidenceManager.MVC.Authorization
 
             try
             {
-                return await SendAsync<BaseResponseWithValue<AccessTokenViewModel>>(request, cancellationToken);
+                var response =  await SendAsync<BaseResponseWithValue<AccessTokenViewModel>>(request, cancellationToken);
+                return response;
             }
             catch
             {
