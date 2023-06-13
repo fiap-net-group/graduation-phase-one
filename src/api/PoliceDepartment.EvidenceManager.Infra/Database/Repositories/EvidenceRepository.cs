@@ -65,5 +65,15 @@ namespace PoliceDepartment.EvidenceManager.Infra.Database.Repositories
             if (disposing)
                 _context.Dispose();
         }
+
+        public async Task<IEnumerable<EvidenceEntity>> GetByCaseIdAsync(Guid caseId, CancellationToken cancellationToken)
+        {
+            var evidences = await _context.Evidences.Where(e => e.CaseId == caseId).ToListAsync(cancellationToken);
+
+            if (!evidences.Any())
+                return new List<EvidenceEntity>();
+
+            return evidences;
+        }
     }
 }

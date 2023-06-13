@@ -11,7 +11,7 @@ namespace PoliceDepartment.EvidenceManager.UnitTests.Fixtures.Api
             return GenerateEntityCollection(1, caseId).First();
         }
 
-        private IEnumerable<EvidenceEntity> GenerateEntityCollection(int v, Guid caseId)
+        public IEnumerable<EvidenceEntity> GenerateEntityCollection(int v, Guid caseId)
         {
             return new Faker<EvidenceEntity>()
                 .RuleFor(e => e.Id, Guid.NewGuid())
@@ -34,6 +34,11 @@ namespace PoliceDepartment.EvidenceManager.UnitTests.Fixtures.Api
                 CaseId = entity.CaseId.ToString(),
                 ImageId = entity.ImageId.ToString()
             };
+        }
+
+        public IEnumerable<EvidenceViewModel> GenerateViewModelCollectionByEntityCollection(IEnumerable<EvidenceEntity> entities)
+        {
+            return entities.Select(GenerateViewModelByEntity);
         }
     }
 }
