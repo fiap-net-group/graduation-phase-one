@@ -3,7 +3,9 @@ using PoliceDepartment.EvidenceManager.MVC.Authorization.Interfaces;
 using PoliceDepartment.EvidenceManager.MVC.Models;
 using PoliceDepartment.EvidenceManager.SharedKernel.Extensions;
 using PoliceDepartment.EvidenceManager.SharedKernel.Logger;
+using PoliceDepartment.EvidenceManager.SharedKernel.Responses;
 using System.Linq;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace PoliceDepartment.EvidenceManager.MVC.Controllers
 {
@@ -42,14 +44,26 @@ namespace PoliceDepartment.EvidenceManager.MVC.Controllers
 
             var loginResponse = await _login.RunAsync(viewModel.Username, viewModel.Password, cancellationToken);
 
-            if (!loginResponse.Success || !HttpContext.User.Identity.IsAuthenticated)
+            if (!loginResponse.Success || !IsAuthenticated())
             {
                 _logger.LogWarning("MVC - Invalid login", ("username", viewModel.Username), ("loginResponse", loginResponse));
 
-                foreach (var error in loginResponse.ResponseDetails.Errors)
-                    ModelState.AddModelError(string.Empty, error);
+                if ((loginResponse.ResponseDetails.Errors is null || !loginResponse.ResponseDetails.Errors.Any()) && !loginResponse.Success)
+                {
+                    ModelState.AddModelError(string.Empty, loginResponse.ResponseDetails.Message);
+                    return View(ModelState);
+                }
 
-                return View();
+                if (loginResponse.Success)
+                {
+                    ModelState.AddModelError(string.Empty, ResponseMessage.GenericError.GetDescription());
+                    return View(ModelState);
+                }
+
+                foreach (var error in loginResponse.ResponseDetails.Errors)
+                    ModelState.AddModelError(string.Empty, error);                
+
+                return View(ModelState);
             }
 
             _logger.LogDebug("MVC - Success Login", ("username", viewModel.Username));
@@ -64,6 +78,13 @@ namespace PoliceDepartment.EvidenceManager.MVC.Controllers
             //TODO:
             //Add the cases page
             return RedirectToAction("Index", "Home");
+        }
+
+        private bool IsAuthenticated()
+        {
+            return HttpContext.User is not null &&
+                HttpContext.User.Identity is not null &&
+                HttpContext.User.Identity.IsAuthenticated;
         }
     }
 }
