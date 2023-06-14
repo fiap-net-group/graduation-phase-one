@@ -10,10 +10,14 @@ namespace PoliceDepartment.EvidenceManager.MVC.Controllers
     public sealed class AuthorizationController : BaseController
     {
         private readonly ILogin _login;
+        private readonly ILogout _logout;
 
-        public AuthorizationController(ILoggerManager logger, ILogin login) : base(logger)
+        public AuthorizationController(ILoggerManager logger, 
+                                       ILogin login, 
+                                       ILogout logout) : base(logger)
         {
             _login = login;
+            _logout = logout;
         }
 
         [HttpGet]
@@ -47,19 +51,19 @@ namespace PoliceDepartment.EvidenceManager.MVC.Controllers
                 if ((loginResponse.ResponseDetails.Errors is null || !loginResponse.ResponseDetails.Errors.Any()) && !loginResponse.Success)
                 {
                     ModelState.AddModelError(string.Empty, loginResponse.ResponseDetails.Message);
-                    return View(ModelState);
+                    return View(viewModel);
                 }
 
                 if (loginResponse.Success)
                 {
                     ModelState.AddModelError(string.Empty, ResponseMessage.GenericError.GetDescription());
-                    return View(ModelState);
+                    return View(viewModel);
                 }
 
                 foreach (var error in loginResponse.ResponseDetails.Errors)
                     ModelState.AddModelError(string.Empty, error);
 
-                return View(ModelState);
+                return View(viewModel);
             }
 
             Logger.LogDebug("MVC - Success Login", ("username", viewModel.Username));
@@ -67,6 +71,7 @@ namespace PoliceDepartment.EvidenceManager.MVC.Controllers
             return RedirectToAction("Index", "Home");
         }
 
+        [HttpGet]
         public async Task<IActionResult> Logout(CancellationToken cancellationToken)
         {
             if (!IsAuthenticated())
@@ -75,6 +80,8 @@ namespace PoliceDepartment.EvidenceManager.MVC.Controllers
 
                 return RedirectToAction("Index", "Home");
             }
+
+            await _logout.RunAsync(cancellationToken);
 
             return RedirectToAction("Index", "Home");
         }

@@ -1,4 +1,5 @@
-﻿using PoliceDepartment.EvidenceManager.MVC.Authorization.Interfaces;
+﻿using Microsoft.IdentityModel.JsonWebTokens;
+using PoliceDepartment.EvidenceManager.MVC.Authorization.Interfaces;
 using System.Security.Claims;
 
 namespace PoliceDepartment.EvidenceManager.MVC.Authorization
@@ -26,7 +27,18 @@ namespace PoliceDepartment.EvidenceManager.MVC.Authorization
                                        HttpContext.User.Identity is not null &&
                                        HttpContext.User.Identity.IsAuthenticated;
 
-        public string Name => IsAuthenticated ? HttpContext.User.Identity.Name : string.Empty;
+        public string Name
+        {
+            get
+            {
+                if (!IsAuthenticated)
+                    return string.Empty;
+
+                var claim = HttpContext.User.FindFirst(JwtRegisteredClaimNames.Name);
+
+                return claim is null ? string.Empty : claim.Value;
+            }
+        }
 
         public Guid Id
         {

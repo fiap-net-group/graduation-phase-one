@@ -51,6 +51,7 @@ namespace PoliceDepartment.EvidenceManager.MVC.Authorization
             services.AddScoped<IAuthorizationClient, AuthorizationClient>();
             services.AddScoped<IOfficerUser, OfficerUser>();
             services.AddScoped<ILogin, Login>();
+            services.AddScoped<ILogout, Logout>();
         }
 
         public static void UseAuthorizationConfiguration(this IApplicationBuilder app)

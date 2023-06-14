@@ -42,11 +42,7 @@ namespace PoliceDepartment.EvidenceManager.MVC.Authorization.UseCases
             var apiLogoutResponse = await _client.SignOutAsync(_officerUser.AccessToken , cancellationToken);
 
             if(!apiLogoutResponse.Success)
-            {
                 _logger.LogWarning("MVC - Error logging out at Auth API");
-
-                return apiLogoutResponse;
-            }
 
             await _authService.SignOutAsync(_officerUser.HttpContext, 
                                             CookieAuthenticationDefaults.AuthenticationScheme, 
