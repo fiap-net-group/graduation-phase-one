@@ -34,7 +34,7 @@ namespace PoliceDepartment.EvidenceManager.MVC.Authorization.UseCases
         {
             _logger.LogDebug("MVC - Begin Login logic", ("username", username));
 
-            var authResponse = await _client.AuthorizeAsync(username, password, cancellationToken);
+            var authResponse = await _client.SignInAsync(username, password, cancellationToken);
 
             if (!authResponse.Success || !authResponse.Value.Valid())            
                 return authResponse.ResponseDetails.Errors is not null && authResponse.ResponseDetails.Errors.Any() 
@@ -45,7 +45,7 @@ namespace PoliceDepartment.EvidenceManager.MVC.Authorization.UseCases
 
             var claims = new List<Claim>
             {
-                new Claim("JWT", authResponse.Value.AccessToken),
+                new Claim(AuthorizationExtensions.AccessTokenClaimName, authResponse.Value.AccessToken),
             };
 
             claims.AddRange(accessToken.Claims);

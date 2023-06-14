@@ -43,7 +43,7 @@ namespace PoliceDepartment.EvidenceManager.UnitTests.Mvc.Authorization.UseCases
 
             var authResponse = new BaseResponseWithValue<AccessTokenViewModel>();
 
-            _client.AuthorizeAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<CancellationToken>())
+            _client.SignInAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<CancellationToken>())
                    .Returns(Task.FromResult(responseSuccess ? authResponse.AsSuccess(fakeToken) : authResponse.AsError(ResponseMessage.InvalidCredentials)));
 
             var sut = new Login(_authService,_officerUser, _client, _logger);
@@ -63,7 +63,7 @@ namespace PoliceDepartment.EvidenceManager.UnitTests.Mvc.Authorization.UseCases
             var authResponse = new BaseResponseWithValue<AccessTokenViewModel>()
                 .AsSuccess(new AccessTokenViewModel("Bearer", _fixture.Authorization.GenerateFakeJwtToken(), DateTime.Now.AddDays(1), Guid.NewGuid().ToString()));
 
-            _client.AuthorizeAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<CancellationToken>()).Returns(Task.FromResult(authResponse));
+            _client.SignInAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<CancellationToken>()).Returns(Task.FromResult(authResponse));
 
             var sut = new Login(_authService, _officerUser, _client, _logger);
 

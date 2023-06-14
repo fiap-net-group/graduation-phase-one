@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using PoliceDepartment.EvidenceManager.MVC.Models;
+using PoliceDepartment.EvidenceManager.SharedKernel.Extensions;
 using System.Diagnostics;
 
 namespace PoliceDepartment.EvidenceManager.MVC.Controllers
@@ -15,6 +16,15 @@ namespace PoliceDepartment.EvidenceManager.MVC.Controllers
 
         public IActionResult Index()
         {
+            //var officerType = HttpContext.User.Claims.FirstOrDefault(c => c.Type == "OfficerType");
+
+            ////TODO:
+            ////Add the create officer page
+            //if (officerType is not null && officerType.Value == Enum.GetName(OfficerType.Administrator))
+            //    return RedirectToAction("Index", "Home");
+
+            ////TODO:
+            ////Add the cases page
             return View();
         }
 

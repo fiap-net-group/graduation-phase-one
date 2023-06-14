@@ -53,6 +53,7 @@ namespace PoliceDepartment.EvidenceManager.UnitTests.Mvc.Authorization
             _clientFactory = Substitute.For<IHttpClientFactory>();
             _configuration = Substitute.For<IConfiguration>();
             _configuration["Api:Authorization:Endpoints:Login"].Returns(_fixture.Authorization.LoginUrl);
+            _configuration["Api:Authorization:Endpoints:Logout"].Returns(_fixture.Authorization.LogoutUrl);
             _logger = Substitute.For<ILoggerManager>();
         }
 
@@ -69,7 +70,7 @@ namespace PoliceDepartment.EvidenceManager.UnitTests.Mvc.Authorization
             var sut = new AuthorizationClient(_retryPolicy, _serializeOptions, _clientFactory, _configuration, _logger);
 
             //Act
-            var response = sut.AuthorizeAsync("username","password123",CancellationToken.None).Result;
+            var response = sut.SignInAsync("username","password123",CancellationToken.None).Result;
 
             //Assert
             response.Should().NotBeNull();
@@ -92,7 +93,7 @@ namespace PoliceDepartment.EvidenceManager.UnitTests.Mvc.Authorization
             var sut = new AuthorizationClient(_retryPolicy, _serializeOptions, _clientFactory, _configuration, _logger);
 
             //Act
-            var response = sut.AuthorizeAsync("username", "password123", CancellationToken.None).Result;
+            var response = sut.SignInAsync("username", "password123", CancellationToken.None).Result;
 
             //Assert
             response.Should().NotBeNull();
@@ -114,7 +115,7 @@ namespace PoliceDepartment.EvidenceManager.UnitTests.Mvc.Authorization
             var sut = new AuthorizationClient(_retryPolicy, _serializeOptions, _clientFactory, _configuration, _logger);
 
             //Act
-            var response = sut.AuthorizeAsync("username", "password123", CancellationToken.None).Result;
+            var response = sut.SignInAsync("username", "password123", CancellationToken.None).Result;
 
             //Assert
             response.Should().NotBeNull();

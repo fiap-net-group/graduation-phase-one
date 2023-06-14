@@ -22,7 +22,9 @@ namespace PoliceDepartment.EvidenceManager.MVC.Authorization
             }
         }
 
-        public bool IsAuthenticated => HttpContext.User.Identity.IsAuthenticated;
+        public bool IsAuthenticated => HttpContext.User is not null &&
+                                       HttpContext.User.Identity is not null &&
+                                       HttpContext.User.Identity.IsAuthenticated;
 
         public string Name => IsAuthenticated ? HttpContext.User.Identity.Name : string.Empty;
 
@@ -33,14 +35,25 @@ namespace PoliceDepartment.EvidenceManager.MVC.Authorization
                 if(!IsAuthenticated)
                     return Guid.Empty;
 
-                ArgumentNullException.ThrowIfNull(HttpContext.User);
-
                 var claim = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier);
 
                 if(claim is not null)
                     return Guid.Parse(claim.Value);
 
                 return Guid.Empty;
+            }
+        }
+
+        public string AccessToken
+        {
+            get
+            {
+                if (!IsAuthenticated)
+                    return string.Empty;
+
+                var claim = HttpContext.User.FindFirst(AuthorizationExtensions.AccessTokenClaimName);
+
+                return claim?.Value;
             }
         }
     }
