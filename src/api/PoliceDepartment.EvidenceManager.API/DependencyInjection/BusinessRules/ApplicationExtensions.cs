@@ -14,6 +14,7 @@ using System.Diagnostics.CodeAnalysis;
 using PoliceDepartment.EvidenceManager.Domain.Officer.UseCases;
 using PoliceDepartment.EvidenceManager.Domain.Evidence.UseCases;
 using PoliceDepartment.EvidenceManager.API.Application.Evidence.UseCases;
+using PoliceDepartment.EvidenceManager.Application.Evidence.UseCases;
 
 namespace PoliceDepartment.EvidenceManager.API.DependencyInjection.BusinessRules
 {
@@ -39,6 +40,7 @@ namespace PoliceDepartment.EvidenceManager.API.DependencyInjection.BusinessRules
 
             services.AddScoped<IGetEvidenceById<BaseResponseWithValue<EvidenceViewModel>>, GetEvidenceById>();
             services.AddScoped<IDeleteEvidence<BaseResponse>, DeleteEvidence>();
+            services.AddScoped<IGetEvidencesByCaseId<BaseResponseWithValue<IEnumerable<EvidenceViewModel>>>, GetEvidencesByCaseId>();
 
             services.AddScoped<IValidator<CreateCaseViewModel>, CaseValidator>();
 
