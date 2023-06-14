@@ -2,13 +2,13 @@ using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace PoliceDepartment.EvidenceManager.MVC.Models
 {
-    public class ErrorViewModel
+    public sealed class ErrorModel
     {
         public string Message { get; internal set; }
         public string Title { get; internal set; }
         public int ErrorCode { get; internal set; }
 
-        public ErrorViewModel(int errorCode)
+        public ErrorModel(int errorCode)
         {
             if (errorCode == 404)
             {

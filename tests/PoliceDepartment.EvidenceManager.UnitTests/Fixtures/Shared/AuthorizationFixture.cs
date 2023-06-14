@@ -1,12 +1,23 @@
 ﻿using Microsoft.IdentityModel.Tokens;
+using PoliceDepartment.EvidenceManager.SharedKernel.ViewModels;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 
-namespace PoliceDepartment.EvidenceManager.UnitTests.Fixtures.Api
+namespace PoliceDepartment.EvidenceManager.UnitTests.Fixtures.Shared
 {
     public class AuthorizationFixture
     {
+        public string LoginUrl => "http://localhost/api/fake/authorization/login/";
+
+        public AccessTokenViewModel GenerateViewModel(bool valid, Guid? userId = null)
+        {
+            var id = userId is null ? Guid.NewGuid().ToString() : userId.Value.ToString();
+            return valid ?
+                new AccessTokenViewModel("Bearer", GenerateFakeJwtToken(), DateTime.Now.AddDays(1), id) :
+                new AccessTokenViewModel();
+        }
+
         public string GenerateFakeJwtToken()
         {
             var tokenDescriptor = new SecurityTokenDescriptor

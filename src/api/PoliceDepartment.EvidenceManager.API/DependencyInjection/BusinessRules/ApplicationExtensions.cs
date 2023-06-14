@@ -22,10 +22,10 @@ namespace PoliceDepartment.EvidenceManager.API.DependencyInjection.BusinessRules
     {
         internal static IServiceCollection AddApplicationConfiguration(this IServiceCollection services)
         {
-            services.AddScoped<ILogin<LoginViewModel, BaseResponseWithValue<AccessTokenModel>>, Login>();
+            services.AddScoped<ILogin<LoginViewModel, BaseResponseWithValue<AccessTokenViewModel>>, Login>();
             services.AddScoped<ILogOut<LogOutViewModel, BaseResponse>, LogOut>();
 
-            services.AddScoped<ICreateOfficer<CreateOfficerViewModel, BaseResponse>, Officer>();
+            services.AddScoped<ICreateOfficer<CreateOfficerViewModel, BaseResponse>, CreateOfficer>();
 
             services.AddScoped<IValidator<CreateOfficerViewModel>, OfficerValidator>();
 

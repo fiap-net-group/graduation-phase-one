@@ -1,6 +1,7 @@
 ﻿using PoliceDepartment.EvidenceManager.API.DependencyInjection.ApiDocumentation;
 using PoliceDepartment.EvidenceManager.API.DependencyInjection.ApiDocumentation.Swagger;
 using PoliceDepartment.EvidenceManager.API.DependencyInjection.BusinessRules;
+using PoliceDepartment.EvidenceManager.SharedKernel.DependencyInjection;
 using System.Diagnostics.CodeAnalysis;
 
 namespace PoliceDepartment.EvidenceManager.API.DependencyInjection
@@ -17,6 +18,8 @@ namespace PoliceDepartment.EvidenceManager.API.DependencyInjection
             services.AddInfraConfiguration(configuration, isDevelopment);
 
             services.AddIdentityConfiguration(configuration);
+
+            services.AddCustomLogging();
 
             services.AddApiVersioningConfiguration();
 

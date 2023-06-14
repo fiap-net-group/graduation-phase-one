@@ -1,4 +1,4 @@
-﻿namespace PoliceDepartment.EvidenceManager.Domain.Logger
+﻿namespace PoliceDepartment.EvidenceManager.SharedKernel.Logger
 {
     public interface ILoggerManager
     {
