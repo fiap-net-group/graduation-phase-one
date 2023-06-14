@@ -58,7 +58,7 @@ namespace PoliceDepartment.EvidenceManager.UnitTests.Mvc.Authorization
         }
 
         [Fact]
-        public void AuthorizeAsync_ServerIsOff_SholdReturnGenericError()
+        public void SignInAsync_ServerIsOff_SholdReturnGenericError()
         {
             //Arrange
             var mockHttpRequest = new MockHttpMessageHandler();
@@ -80,7 +80,7 @@ namespace PoliceDepartment.EvidenceManager.UnitTests.Mvc.Authorization
 
 
         [Fact]
-        public void AuthorizeAsync_InvalidRequest_SholdReturnBadRequest()
+        public void SignInAsync_InvalidRequest_SholdReturnBadRequest()
         {
             //Arrange
             var expectedResponseBody = JsonSerializer.Serialize(new BaseResponseWithValue<AccessTokenViewModel>().AsError(ResponseMessage.InvalidCredentials), _serializeOptions);
@@ -102,13 +102,13 @@ namespace PoliceDepartment.EvidenceManager.UnitTests.Mvc.Authorization
         }
 
         [Fact]
-        public void AuthorizeAsync_ValidRequest_SholdReturnSuccessAndValidToken()
+        public void SignInAsync_ValidRequest_SholdReturnSuccessAndValidToken()
         {
             //Arrange
             var expectedResponseBody = JsonSerializer.Serialize(new BaseResponseWithValue<AccessTokenViewModel>().AsSuccess(_fixture.Authorization.GenerateViewModel(valid: true)), _serializeOptions);
             var mockHttpRequest = new MockHttpMessageHandler();
             mockHttpRequest.When(_fixture.Authorization.LoginUrl)
-                           .Respond(HttpStatusCode.BadRequest, "application/json", expectedResponseBody);
+                           .Respond(HttpStatusCode.OK, "application/json", expectedResponseBody);
             var mockClient = mockHttpRequest.ToHttpClient();
             _clientFactory.CreateClient(ClientExtensions.AuthorizationClientName).Returns(mockClient);
 
@@ -116,6 +116,71 @@ namespace PoliceDepartment.EvidenceManager.UnitTests.Mvc.Authorization
 
             //Act
             var response = sut.SignInAsync("username", "password123", CancellationToken.None).Result;
+
+            //Assert
+            response.Should().NotBeNull();
+            response.Success.Should().BeTrue();
+        }
+
+        [Fact]
+        public void SignOutAsync_ServerIsOff_SholdReturnGenericError()
+        {
+            //Arrange
+            var mockHttpRequest = new MockHttpMessageHandler();
+            mockHttpRequest.When(_fixture.Authorization.LogoutUrl)
+                           .Respond(HttpStatusCode.InternalServerError, "application/json", "{'error' : 'An error ocurred'}");
+            var mockClient = mockHttpRequest.ToHttpClient();
+            _clientFactory.CreateClient(ClientExtensions.AuthorizationClientName).Returns(mockClient);
+
+            var sut = new AuthorizationClient(_retryPolicy, _serializeOptions, _clientFactory, _configuration, _logger);
+
+            //Act
+            var response = sut.SignOutAsync(_fixture.Authorization.GenerateFakeJwtToken(), CancellationToken.None).Result;
+
+            //Assert
+            response.Should().NotBeNull();
+            response.Success.Should().BeFalse();
+            response.ResponseDetails.Message.Should().Be("An error ocurred, try again later");
+        }
+
+
+        [Fact]
+        public void SignOutAsync_Unauthorized_SholdReturnUnauthorized()
+        {
+            //Arrange
+            var expectedResponseBody = JsonSerializer.Serialize(new BaseResponseWithValue<AccessTokenViewModel>().AsError(ResponseMessage.UserIsNotAuthenticated), _serializeOptions);
+            var mockHttpRequest = new MockHttpMessageHandler();
+            mockHttpRequest.When(_fixture.Authorization.LogoutUrl)
+                           .Respond(HttpStatusCode.Unauthorized, "application/json", expectedResponseBody);
+            var mockClient = mockHttpRequest.ToHttpClient();
+            _clientFactory.CreateClient(ClientExtensions.AuthorizationClientName).Returns(mockClient);
+
+            var sut = new AuthorizationClient(_retryPolicy, _serializeOptions, _clientFactory, _configuration, _logger);
+
+            //Act
+            var response = sut.SignOutAsync(_fixture.Authorization.GenerateFakeJwtToken(), CancellationToken.None).Result;
+
+            //Assert
+            response.Should().NotBeNull();
+            response.Success.Should().BeFalse();
+            response.ResponseDetails.Message.Should().Be(ResponseMessage.UserIsNotAuthenticated.GetDescription());
+        }
+
+        [Fact]
+        public void SignOutAsync_ValidRequest_SholdReturnSuccessAndValidToken()
+        {
+            //Arrange
+            var expectedResponseBody = JsonSerializer.Serialize(new BaseResponse().AsSuccess(), _serializeOptions);
+            var mockHttpRequest = new MockHttpMessageHandler();
+            mockHttpRequest.When(_fixture.Authorization.LogoutUrl)
+                           .Respond(HttpStatusCode.OK, "application/json", expectedResponseBody);
+            var mockClient = mockHttpRequest.ToHttpClient();
+            _clientFactory.CreateClient(ClientExtensions.AuthorizationClientName).Returns(mockClient);
+
+            var sut = new AuthorizationClient(_retryPolicy, _serializeOptions, _clientFactory, _configuration, _logger);
+
+            //Act
+            var response = sut.SignOutAsync(_fixture.Authorization.GenerateFakeJwtToken(), CancellationToken.None).Result;
 
             //Assert
             response.Should().NotBeNull();

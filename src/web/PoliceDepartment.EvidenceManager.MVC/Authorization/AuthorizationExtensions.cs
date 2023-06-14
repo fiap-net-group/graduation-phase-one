@@ -2,9 +2,6 @@
 using PoliceDepartment.EvidenceManager.MVC.Authorization.Interfaces;
 using PoliceDepartment.EvidenceManager.MVC.Authorization.UseCases;
 using PoliceDepartment.EvidenceManager.MVC.Client;
-using Polly;
-using Polly.Extensions.Http;
-using System.Text.Json;
 
 namespace PoliceDepartment.EvidenceManager.MVC.Authorization
 {
@@ -21,31 +18,10 @@ namespace PoliceDepartment.EvidenceManager.MVC.Authorization
                     options.AccessDeniedPath = "/error/403";
                 });
 
-            services.AddSingleton(new JsonSerializerOptions
-            {
-                PropertyNameCaseInsensitive = true,
-                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-            });
-
-
             services.AddHttpClient(ClientExtensions.AuthorizationClientName, client =>
             {
                 client.BaseAddress = new Uri(configuration["Api:Authorization:BaseAddress"]);
             });
-
-            services.AddSingleton(HttpPolicyExtensions
-                .HandleTransientHttpError()
-                .WaitAndRetryAsync(new[]
-                {
-                    TimeSpan.FromSeconds(1),
-                    TimeSpan.FromSeconds(5),
-                    TimeSpan.FromSeconds(10),
-                }, (outcome, timespan, retryCount, context) =>
-                {
-                    Console.ForegroundColor = ConsoleColor.Blue;
-                    Console.WriteLine($"Attempt: {retryCount}!");
-                    Console.ForegroundColor = ConsoleColor.White;
-                }));
 
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddScoped<IAuthorizationClient, AuthorizationClient>();
