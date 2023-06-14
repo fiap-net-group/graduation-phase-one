@@ -181,8 +181,32 @@ namespace PoliceDepartment.EvidenceManager.UnitTests.Mvc.Authorization
             var response = sut.Logout(CancellationToken.None).Result as RedirectToActionResult;
 
             //Assert
-            response.ActionName.Should().Be("Index");
-            response.ControllerName.Should().Be("Home");
+            response?.ActionName.Should().Be("Index");
+            response?.ControllerName.Should().Be("Home");
+        }
+
+        [Fact]
+        public void LogoutGet_UserAuthenticated_ShouldReturnToHome()
+        {
+            //Arrange
+            var identity = new GenericIdentity("valid@email.com", "email");
+            var sut = new AuthorizationController(_logger, _login, _logout)
+            {
+                ControllerContext = new ControllerContext
+                {
+                    HttpContext = new DefaultHttpContext
+                    {
+                        User = new ClaimsPrincipal(identity)
+                    }
+                }
+            };
+
+            //Act
+            var response = sut.Logout(CancellationToken.None).Result as RedirectToActionResult;
+
+            //Assert
+            response?.ActionName.Should().Be("Index");
+            response?.ControllerName.Should().Be("Home");
         }
     }
 }
