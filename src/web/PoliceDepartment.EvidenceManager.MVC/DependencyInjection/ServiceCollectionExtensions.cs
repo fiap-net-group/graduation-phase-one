@@ -1,4 +1,4 @@
-﻿using PoliceDepartment.EvidenceManager.MVC.DependencyInjection.Configurations;
+﻿using PoliceDepartment.EvidenceManager.MVC.Authorization;
 using PoliceDepartment.EvidenceManager.SharedKernel.DependencyInjection;
 
 namespace PoliceDepartment.EvidenceManager.MVC.DependencyInjection

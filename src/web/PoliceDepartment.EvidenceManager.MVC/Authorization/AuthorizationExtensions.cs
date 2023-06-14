@@ -1,17 +1,17 @@
 ﻿using Microsoft.AspNetCore.Authentication.Cookies;
-using PoliceDepartment.EvidenceManager.MVC.Authorization;
 using PoliceDepartment.EvidenceManager.MVC.Authorization.Interfaces;
 using PoliceDepartment.EvidenceManager.MVC.Authorization.UseCases;
 using PoliceDepartment.EvidenceManager.MVC.Client;
 using Polly;
 using Polly.Extensions.Http;
-using Polly.Retry;
 using System.Text.Json;
 
-namespace PoliceDepartment.EvidenceManager.MVC.DependencyInjection.Configurations
+namespace PoliceDepartment.EvidenceManager.MVC.Authorization
 {
     public static class AuthorizationExtensions
     {
+        public const string AccessTokenClaimName = "AccessToken";
+
         public static void AddAuthorizationConfiguration(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)

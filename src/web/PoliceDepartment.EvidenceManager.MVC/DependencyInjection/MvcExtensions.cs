@@ -1,4 +1,4 @@
-﻿namespace PoliceDepartment.EvidenceManager.MVC.DependencyInjection.Configurations
+﻿namespace PoliceDepartment.EvidenceManager.MVC.DependencyInjection
 {
     public static class MvcExtensions
     {
