@@ -4,26 +4,26 @@ using PoliceDepartment.EvidenceManager.MVC.Models;
 using PoliceDepartment.EvidenceManager.SharedKernel.Extensions;
 using PoliceDepartment.EvidenceManager.SharedKernel.Logger;
 using PoliceDepartment.EvidenceManager.SharedKernel.Responses;
-using System.Linq;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace PoliceDepartment.EvidenceManager.MVC.Controllers
 {
-    public sealed class AuthorizationController : Controller
+    public sealed class AuthorizationController : BaseController
     {
-        private readonly ILoggerManager _logger;
         private readonly ILogin _login;
+        private readonly ILogout _logout;
 
-        public AuthorizationController(ILoggerManager logger, ILogin login)
+        public AuthorizationController(ILoggerManager logger, 
+                                       ILogin login, 
+                                       ILogout logout) : base(logger)
         {
-            _logger = logger;
             _login = login;
+            _logout = logout;
         }
 
         [HttpGet]
         public IActionResult Login(string returnUrl = null)
         {
-            _logger.LogDebug("MVC - Page Login");
+            Logger.LogDebug("MVC - Page Login");
 
             ViewData["ReturnUrl"] = returnUrl;
 
@@ -33,11 +33,11 @@ namespace PoliceDepartment.EvidenceManager.MVC.Controllers
         [HttpPost]
         public async Task<IActionResult> Login(LoginModel viewModel, CancellationToken cancellationToken)
         {
-            _logger.LogDebug("MVC - Begin Login", ("username", viewModel.Username));
+            Logger.LogDebug("MVC - Begin Login", ("username", viewModel.Username));
 
             if (!ModelState.IsValid)
             {
-                _logger.LogWarning("MVC - Invalid login properties", (nameof(ModelState), ModelState));
+                Logger.LogWarning("MVC - Invalid login properties", (nameof(ModelState), ModelState));
 
                 return View(viewModel);
             }
@@ -46,45 +46,44 @@ namespace PoliceDepartment.EvidenceManager.MVC.Controllers
 
             if (!loginResponse.Success || !IsAuthenticated())
             {
-                _logger.LogWarning("MVC - Invalid login", ("username", viewModel.Username), ("loginResponse", loginResponse));
+                Logger.LogWarning("MVC - Invalid login", ("username", viewModel.Username), ("loginResponse", loginResponse));
 
                 if ((loginResponse.ResponseDetails.Errors is null || !loginResponse.ResponseDetails.Errors.Any()) && !loginResponse.Success)
                 {
                     ModelState.AddModelError(string.Empty, loginResponse.ResponseDetails.Message);
-                    return View(ModelState);
+                    return View(viewModel);
                 }
 
                 if (loginResponse.Success)
                 {
                     ModelState.AddModelError(string.Empty, ResponseMessage.GenericError.GetDescription());
-                    return View(ModelState);
+                    return View(viewModel);
                 }
 
                 foreach (var error in loginResponse.ResponseDetails.Errors)
-                    ModelState.AddModelError(string.Empty, error);                
+                    ModelState.AddModelError(string.Empty, error);
 
-                return View(ModelState);
+                return View(viewModel);
             }
 
-            _logger.LogDebug("MVC - Success Login", ("username", viewModel.Username));
+            Logger.LogDebug("MVC - Success Login", ("username", viewModel.Username));
 
-            var officerType = HttpContext.User.Claims.FirstOrDefault(c => c.Type == "OfficerType");
-
-            //TODO:
-            //Add the create officer page
-            if (officerType is not null && officerType.Value == Enum.GetName(OfficerType.Administrator))
-                return RedirectToAction("Index", "Home");
-
-            //TODO:
-            //Add the cases page
             return RedirectToAction("Index", "Home");
         }
 
-        private bool IsAuthenticated()
+        [HttpGet]
+        public async Task<IActionResult> Logout(CancellationToken cancellationToken)
         {
-            return HttpContext.User is not null &&
-                HttpContext.User.Identity is not null &&
-                HttpContext.User.Identity.IsAuthenticated;
+            if (!IsAuthenticated())
+            {
+                Logger.LogWarning("MVC - User can't logout because is not authenticated");
+
+                return RedirectToAction("Index", "Home");
+            }
+
+            await _logout.RunAsync(cancellationToken);
+
+            return RedirectToAction("Index", "Home");
         }
     }
 }

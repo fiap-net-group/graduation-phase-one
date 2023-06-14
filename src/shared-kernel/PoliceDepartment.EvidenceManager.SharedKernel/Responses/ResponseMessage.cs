@@ -18,5 +18,7 @@ namespace PoliceDepartment.EvidenceManager.SharedKernel.Responses
         Forbidden = 5,
         [Description("Evidence does't exists")]	
         EvidenceDontExists = 6,
+        [Description("User is not authenticated")]
+        UserIsNotAuthenticated = 7,
     }
 }

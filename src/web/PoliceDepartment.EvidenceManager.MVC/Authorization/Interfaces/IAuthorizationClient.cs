@@ -5,6 +5,7 @@ namespace PoliceDepartment.EvidenceManager.MVC.Authorization.Interfaces
 {
     public interface IAuthorizationClient
     {
-        Task<BaseResponseWithValue<AccessTokenViewModel>> AuthorizeAsync(string username, string password, CancellationToken cancellationToken);
+        Task<BaseResponseWithValue<AccessTokenViewModel>> SignInAsync(string username, string password, CancellationToken cancellationToken);
+        Task<BaseResponse> SignOutAsync(string accessToken, CancellationToken cancellationToken);
     }
 }

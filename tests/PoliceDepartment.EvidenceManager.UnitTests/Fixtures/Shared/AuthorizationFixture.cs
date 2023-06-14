@@ -9,6 +9,7 @@ namespace PoliceDepartment.EvidenceManager.UnitTests.Fixtures.Shared
     public class AuthorizationFixture
     {
         public string LoginUrl => "http://localhost/api/fake/authorization/login/";
+        public string LogoutUrl => "http://localhost/api/fake/authorization/logout/";
 
         public AccessTokenViewModel GenerateViewModel(bool valid, Guid? userId = null)
         {

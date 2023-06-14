@@ -6,5 +6,6 @@
         HttpContext HttpContext { get; }
         string Name { get; }
         Guid Id { get; }
+        string AccessToken { get; }
     }
 }

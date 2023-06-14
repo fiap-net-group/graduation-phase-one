@@ -18,20 +18,17 @@ using Bogus.DataSets;
 
 namespace PoliceDepartment.EvidenceManager.UnitTests.Mvc.Authorization
 {
-    [Collection(nameof(MvcFixtureCollection))]
     public class AuthorizationControllerTests
     {
-        private readonly MvcFixture _fixture;
-
         private readonly ILoggerManager _logger;
         private readonly ILogin _login;
+        private readonly ILogout _logout;
 
-        public AuthorizationControllerTests(MvcFixture fixture)
+        public AuthorizationControllerTests()
         {
-            _fixture = fixture;
-
             _logger = Substitute.For<ILoggerManager>();
             _login = Substitute.For<ILogin>();
+            _logout = Substitute.For<ILogout>();
         }
 
         [Theory]
@@ -50,8 +47,7 @@ namespace PoliceDepartment.EvidenceManager.UnitTests.Mvc.Authorization
         [InlineData(" ", " ", "Username is required", "Password is required")]
         [InlineData(null, " ", "Username is required", "Password is required")]
         [InlineData(null, "", "Username is required", "Password is required")]
-
-        public void ModelState_InvalidModel_ShouldReturnInvalid(string username, string password, params string[] errorMessages)
+        public void LoginModelState_InvalidModel_ShouldReturnInvalid(string username, string password, params string[] errorMessages)
         {
             //Arrange
             var sut = new LoginModel { Username = username, Password = password };
@@ -79,7 +75,7 @@ namespace PoliceDepartment.EvidenceManager.UnitTests.Mvc.Authorization
             _login.RunAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<CancellationToken>())
                   .Returns(Task.FromResult(new BaseResponse().AsError(ResponseMessage.InvalidCredentials)));
 
-            var sut = new AuthorizationController(_logger, _login);
+            var sut = new AuthorizationController(_logger, _login, _logout);
 
             //Act
             var response = sut.Login(viewModel, CancellationToken.None).Result as ViewResult;
@@ -100,7 +96,7 @@ namespace PoliceDepartment.EvidenceManager.UnitTests.Mvc.Authorization
             _login.RunAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<CancellationToken>())
                   .Returns(Task.FromResult(expectedResponse));
 
-            var sut = new AuthorizationController(_logger, _login);
+            var sut = new AuthorizationController(_logger, _login, _logout);
 
             //Act
             var response = sut.Login(viewModel, CancellationToken.None).Result as ViewResult;
@@ -119,7 +115,7 @@ namespace PoliceDepartment.EvidenceManager.UnitTests.Mvc.Authorization
             var viewModel = new LoginModel { Username = "valid@email.com", Password = "password123" };
             _login.RunAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<CancellationToken>()).Returns(Task.FromResult(new BaseResponse().AsSuccess()));
 
-            var sut = new AuthorizationController(_logger, _login)
+            var sut = new AuthorizationController(_logger, _login, _logout)
             {
                 ControllerContext = new ControllerContext
                 {
@@ -148,7 +144,7 @@ namespace PoliceDepartment.EvidenceManager.UnitTests.Mvc.Authorization
             _login.RunAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<CancellationToken>()).Returns(Task.FromResult(new BaseResponse().AsSuccess()));
 
             var identity = new GenericIdentity("valid@email.com", "email");
-            var sut = new AuthorizationController(_logger, _login)
+            var sut = new AuthorizationController(_logger, _login, _logout)
             {
                 ControllerContext = new ControllerContext
                 {
@@ -164,6 +160,53 @@ namespace PoliceDepartment.EvidenceManager.UnitTests.Mvc.Authorization
 
             //Assert
             response?.ViewData.ModelState.Keys.Count().Should().Be(0);
+        }
+
+        [Fact]
+        public void LogoutGet_UserNotAuthenticated_ShouldReturnToHome()
+        {
+            //Arrange
+            var sut = new AuthorizationController(_logger, _login, _logout)
+            {
+                ControllerContext = new ControllerContext
+                {
+                    HttpContext = new DefaultHttpContext
+                    {
+                        User = new ClaimsPrincipal()
+                    }
+                }
+            };
+
+            //Act
+            var response = sut.Logout(CancellationToken.None).Result as RedirectToActionResult;
+
+            //Assert
+            response?.ActionName.Should().Be("Index");
+            response?.ControllerName.Should().Be("Home");
+        }
+
+        [Fact]
+        public void LogoutGet_UserAuthenticated_ShouldReturnToHome()
+        {
+            //Arrange
+            var identity = new GenericIdentity("valid@email.com", "email");
+            var sut = new AuthorizationController(_logger, _login, _logout)
+            {
+                ControllerContext = new ControllerContext
+                {
+                    HttpContext = new DefaultHttpContext
+                    {
+                        User = new ClaimsPrincipal(identity)
+                    }
+                }
+            };
+
+            //Act
+            var response = sut.Logout(CancellationToken.None).Result as RedirectToActionResult;
+
+            //Assert
+            response?.ActionName.Should().Be("Index");
+            response?.ControllerName.Should().Be("Home");
         }
     }
 }
