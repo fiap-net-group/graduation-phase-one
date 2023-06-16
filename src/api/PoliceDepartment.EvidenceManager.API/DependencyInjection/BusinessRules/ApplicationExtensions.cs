@@ -1,5 +1,4 @@
 ﻿using FluentValidation;
-using PoliceDepartment.EvidenceManager.Application.Authorization;
 using PoliceDepartment.EvidenceManager.Application.Authorization.UseCases;
 using PoliceDepartment.EvidenceManager.Application.Officer;
 using PoliceDepartment.EvidenceManager.Application.Officer.UseCases;
@@ -16,6 +15,7 @@ using PoliceDepartment.EvidenceManager.Domain.Officer.UseCases;
 using PoliceDepartment.EvidenceManager.Domain.Evidence.UseCases;
 using PoliceDepartment.EvidenceManager.API.Application.Evidence.UseCases;
 using PoliceDepartment.EvidenceManager.API.Application.Evidence;
+using PoliceDepartment.EvidenceManager.Application.Evidence.UseCases;
 
 namespace PoliceDepartment.EvidenceManager.API.DependencyInjection.BusinessRules
 {
@@ -24,10 +24,10 @@ namespace PoliceDepartment.EvidenceManager.API.DependencyInjection.BusinessRules
     {
         internal static IServiceCollection AddApplicationConfiguration(this IServiceCollection services)
         {
-            services.AddScoped<ILogin<LoginViewModel, BaseResponseWithValue<AccessTokenModel>>, Login>();
+            services.AddScoped<ILogin<LoginViewModel, BaseResponseWithValue<AccessTokenViewModel>>, Login>();
             services.AddScoped<ILogOut<LogOutViewModel, BaseResponse>, LogOut>();
 
-            services.AddScoped<ICreateOfficer<CreateOfficerViewModel, BaseResponse>, Officer>();
+            services.AddScoped<ICreateOfficer<CreateOfficerViewModel, BaseResponse>, CreateOfficer>();
 
             services.AddScoped<IValidator<CreateOfficerViewModel>, OfficerValidator>();
 
@@ -41,6 +41,8 @@ namespace PoliceDepartment.EvidenceManager.API.DependencyInjection.BusinessRules
             services.AddScoped<ICreateEvidence<CreateEvidenceViewModel, BaseResponse>, CreateEvidence>();
 
             services.AddScoped<IGetEvidenceById<BaseResponseWithValue<EvidenceViewModel>>, GetEvidenceById>();
+            services.AddScoped<IDeleteEvidence<BaseResponse>, DeleteEvidence>();
+            services.AddScoped<IGetEvidencesByCaseId<BaseResponseWithValue<IEnumerable<EvidenceViewModel>>>, GetEvidencesByCaseId>();
 
             services.AddScoped<IValidator<CreateCaseViewModel>, CaseValidator>();
             services.AddScoped<IValidator<CreateEvidenceViewModel>, EvidenceValidator>();

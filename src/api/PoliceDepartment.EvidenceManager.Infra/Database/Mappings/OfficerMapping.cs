@@ -14,6 +14,8 @@ namespace PoliceDepartment.EvidenceManager.Infra.Database.Mappings
 
             builder.Property(o => o.Id).IsRequired();
 
+            builder.Property(o => o.Name).IsRequired();
+
             builder.ToTable("Officers");
         }
     }

@@ -6,7 +6,7 @@ namespace PoliceDepartment.EvidenceManager.Application.Authorization
     {
         public static Guid GetUserId(this ClaimsPrincipal userClaims)
         {
-            var userId = userClaims.Claims.First(i => i.Type == "UserId");
+            var userId = userClaims.Claims.First(i => i.Type == "sub");
 
             if(userId is null)
                 return Guid.Empty;

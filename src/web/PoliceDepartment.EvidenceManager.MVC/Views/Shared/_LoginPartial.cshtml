@@ -1,0 +1,20 @@
+﻿@using PoliceDepartment.EvidenceManager.MVC.Authorization.Interfaces;
+@inject IOfficerUser OfficerUser
+
+<ul class="navbar-nav">
+    @if (OfficerUser.IsAuthenticated)
+    {
+        <li class="nav-item">
+            <a id="manage" class="nav-link text-dark" href="#" title="Manage">Hey @OfficerUser.Name!</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link text-dark" id="login" asp-controller="Authorization" asp-action="Logout">Sign out</a>
+        </li>
+    }
+    else
+    {
+        <li class="nav-item">
+            <a class="nav-link text-dark" id="login" asp-controller="Authorization" asp-action="Login">Sign in</a>
+        </li>
+    }
+</ul>

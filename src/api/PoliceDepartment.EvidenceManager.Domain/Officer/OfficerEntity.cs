@@ -17,6 +17,25 @@ namespace PoliceDepartment.EvidenceManager.Domain.Officer
             }
         }
 
+        public string Name { get; set; }
+
         public ICollection<CaseEntity> Cases { get; set; }
+
+        public OfficerEntity()
+        {
+            Id = Guid.Empty;
+        }
+
+        public bool Exists()
+        {
+            return Id != Guid.Empty;
+        }
+
+        public OfficerEntity AsAdmin()
+        {
+            Id = Guid.NewGuid();
+            Name = "Admin";
+            return this;
+        }
     }
 }

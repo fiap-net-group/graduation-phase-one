@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Configuration;
 using PoliceDepartment.EvidenceManager.Domain.Authorization;
-using PoliceDepartment.EvidenceManager.Domain.Logger;
+using PoliceDepartment.EvidenceManager.SharedKernel.Logger;
 using PoliceDepartment.EvidenceManager.SharedKernel.Extensions;
 
 namespace PoliceDepartment.EvidenceManager.Application.Authorization.UseCases
@@ -32,7 +32,6 @@ namespace PoliceDepartment.EvidenceManager.Application.Authorization.UseCases
             }
 
             var response = await _identityManager.CreateAsync(_configuration["Admin:Email"],
-                                                              _configuration["Admin:Email"],
                                                               _configuration["Admin:Password"],
                                                               Enum.GetName(OfficerType.Administrator));
 

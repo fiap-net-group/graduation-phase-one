@@ -1,7 +1,8 @@
 ﻿using Newtonsoft.Json;
 using PoliceDepartment.EvidenceManager.Domain.Exceptions;
-using PoliceDepartment.EvidenceManager.Domain.Logger;
+using PoliceDepartment.EvidenceManager.SharedKernel.Logger;
 using PoliceDepartment.EvidenceManager.SharedKernel.Responses;
+using System;
 using System.Net;
 
 namespace PoliceDepartment.EvidenceManager.API.Middlewares
@@ -23,6 +24,17 @@ namespace PoliceDepartment.EvidenceManager.API.Middlewares
             try
             {
                 await _next(context);
+
+                if (context.Response.StatusCode == (int)HttpStatusCode.Unauthorized)
+                {
+                    _logger.LogWarning("Unauthorized error caught by middleware - JWT TOKEN");
+
+                    var code = HttpStatusCode.BadRequest;
+
+                    var result = JsonConvert.SerializeObject(new BaseResponse().AsError(ResponseMessage.UserIsNotAuthenticated));
+
+                    await ErrorResponse(context, result, code);
+                }
             }
             catch (BusinessException ex)
             {
@@ -32,7 +44,7 @@ namespace PoliceDepartment.EvidenceManager.API.Middlewares
             }
             catch (UnauthorizedAccessException ex)
             {
-                _logger.LogWarning("Unauthorized error caught by middleware", ("exception", ex));
+                _logger.LogWarning("Unauthorized error caught by middleware - API TOKEN", ("exception", ex));
 
                 await HandleExceptionAsync(context, ex);
             }

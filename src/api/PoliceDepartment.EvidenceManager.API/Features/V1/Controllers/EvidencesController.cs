@@ -18,14 +18,19 @@ namespace PoliceDepartment.EvidenceManager.API.Features.V1.Controllers
     public sealed class EvidencesController : ControllerBase
     {
         private readonly IGetEvidenceById<BaseResponseWithValue<EvidenceViewModel>> _getById;
+        private readonly IDeleteEvidence<BaseResponse> _deleteEvidence;
+        private readonly IGetEvidencesByCaseId<BaseResponseWithValue<IEnumerable<EvidenceViewModel>>> _getByCaseId;
         private readonly ICreateEvidence<CreateEvidenceViewModel, BaseResponse> _createEvidence;
 
-        public EvidencesController(IGetEvidenceById<BaseResponseWithValue<EvidenceViewModel>> getById, ICreateEvidence<CreateEvidenceViewModel, BaseResponse> createEvidence)
+        public EvidencesController(IGetEvidenceById<BaseResponseWithValue<EvidenceViewModel>> getById, ICreateEvidence<CreateEvidenceViewModel, BaseResponse> createEvidence, 
+            IDeleteEvidence<BaseResponse> deleteEvidence,
+            IGetEvidencesByCaseId<BaseResponseWithValue<IEnumerable<EvidenceViewModel>>> getByCaseId)
         {
             _getById = getById;
             _createEvidence = createEvidence;
+            _deleteEvidence = deleteEvidence;
+            _getByCaseId = getByCaseId;
         }
-
 
         ///<summary>
         /// Create evidence
@@ -80,10 +85,61 @@ namespace PoliceDepartment.EvidenceManager.API.Features.V1.Controllers
         [HttpGet("{id:guid}")]
         [Authorize(AuthorizationPolicies.IsPoliceOfficer)]
         [ProducesResponseType(StatusCodes.Status200OK, StatusCode = StatusCodes.Status200OK, Type = typeof(EvidenceViewModel))]
+        [ProducesResponseType(StatusCodes.Status404NotFound, StatusCode = StatusCodes.Status404NotFound, Type = typeof(BaseResponse))]
         [ProducesResponseType(StatusCodes.Status401Unauthorized, StatusCode = StatusCodes.Status401Unauthorized, Type = typeof(BaseResponse))]
         public async Task<IActionResult> GetById(Guid id, CancellationToken cancellationToken)
         {
             var response = await _getById.RunAsync(id, cancellationToken);
+
+            if(response.Success)
+                return Ok(response);
+
+            if(response.ResponseMessageEqual(ResponseMessage.EvidenceDontExists))
+                return NotFound(response);
+
+            return Forbid();
+        }
+
+        /// <summary>
+        /// Get evidences by case id
+        /// </summary>
+        /// <param name="caseId">The case id</param>
+        /// <param name="cancellationToken"></param>
+        /// <response code="200">The evidences</response>
+        /// <response code="401">Invalid access code or API-TOKEN</response>
+        [HttpGet("case/{caseId:guid}")]
+        [Authorize(AuthorizationPolicies.IsPoliceOfficer)]
+        [ProducesResponseType(StatusCodes.Status200OK, StatusCode = StatusCodes.Status200OK, Type = typeof(IEnumerable<EvidenceViewModel>))]
+        [ProducesResponseType(StatusCodes.Status404NotFound, StatusCode = StatusCodes.Status404NotFound, Type = typeof(BaseResponse))]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized, StatusCode = StatusCodes.Status401Unauthorized, Type = typeof(BaseResponse))]
+        public async Task<IActionResult> GetByCaseId(Guid caseId, CancellationToken cancellationToken)
+        {
+            var response = await _getByCaseId.RunAsync(caseId, cancellationToken);
+
+            if(response.Success)
+                return Ok(response);
+
+            if(response.ResponseMessageEqual(ResponseMessage.EvidenceDontExists))
+                return NotFound(response);
+
+            return Forbid();
+        }
+
+        /// <summary>
+        /// Delete evidence
+        /// </summary>
+        /// <param name="id">The evidence id</param>
+        /// <param name="cancellationToken"></param>
+        /// <response code="200">The evidence was deleted</response>
+        /// <response code="401">Invalid access code or API-TOKEN</response>
+        [HttpDelete("{id:guid}")]
+        [Authorize(AuthorizationPolicies.IsPoliceOfficer)]
+        [ProducesResponseType(StatusCodes.Status200OK, StatusCode = StatusCodes.Status200OK, Type = typeof(BaseResponse))]
+        [ProducesResponseType(StatusCodes.Status404NotFound, StatusCode = StatusCodes.Status404NotFound, Type = typeof(BaseResponse))]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized, StatusCode = StatusCodes.Status401Unauthorized, Type = typeof(BaseResponse))]
+        public async Task<IActionResult> Delete(Guid id, CancellationToken cancellationToken)
+        {
+            var response = await _deleteEvidence.RunAsync(id,User.GetUserId(), cancellationToken);
 
             if(response.Success)
                 return Ok(response);

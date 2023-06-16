@@ -22,7 +22,9 @@ namespace PoliceDepartment.EvidenceManager.Infra.Database.Repositories
 
         public Task DeleteByIdAsync(Guid id)
         {
-            throw new NotImplementedException();
+            _context.Evidences.Remove(new EvidenceEntity { Id = id });
+
+            return Task.CompletedTask;
         }
 
         public async Task DeleteByCaseAsync(Guid caseId, CancellationToken cancellationToken)
@@ -62,6 +64,16 @@ namespace PoliceDepartment.EvidenceManager.Infra.Database.Repositories
         {
             if (disposing)
                 _context.Dispose();
+        }
+
+        public async Task<IEnumerable<EvidenceEntity>> GetByCaseIdAsync(Guid caseId, CancellationToken cancellationToken)
+        {
+            var evidences = await _context.Evidences.Where(e => e.CaseId == caseId).ToListAsync(cancellationToken);
+
+            if (!evidences.Any())
+                return new List<EvidenceEntity>();
+
+            return evidences;
         }
     }
 }

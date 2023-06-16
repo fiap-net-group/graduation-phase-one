@@ -1,8 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using PoliceDepartment.EvidenceManager.Domain.Exceptions;
-using PoliceDepartment.EvidenceManager.Domain.Logger;
 using PoliceDepartment.EvidenceManager.Domain.Officer;
-using PoliceDepartment.EvidenceManager.Infra.Database.Mappings;
+using PoliceDepartment.EvidenceManager.SharedKernel.Logger;
 using System.Diagnostics.CodeAnalysis;
 
 namespace PoliceDepartment.EvidenceManager.Infra.Database.Repositories
@@ -29,6 +28,13 @@ namespace PoliceDepartment.EvidenceManager.Infra.Database.Repositories
                 _logger.LogError("An error ocurred at the database");
                 throw new InfrastructureException("Error on create officer");
             }
+        }
+
+        public async Task<OfficerEntity> GetByEmailAsync(string username, CancellationToken cancellationToken)
+        {
+            var officer = await _context.Officers.FirstOrDefaultAsync(o => o.Email == username);
+
+            return officer ?? new OfficerEntity();
         }
 
         public void Dispose()
