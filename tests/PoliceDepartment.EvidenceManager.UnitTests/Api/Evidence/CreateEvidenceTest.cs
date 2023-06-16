@@ -8,8 +8,10 @@ using PoliceDepartment.EvidenceManager.Application.Case.UseCases;
 using PoliceDepartment.EvidenceManager.Domain.Case;
 using PoliceDepartment.EvidenceManager.Domain.Database;
 using PoliceDepartment.EvidenceManager.Domain.Evidence;
+using PoliceDepartment.EvidenceManager.Domain.Evidence.UseCases;
 using PoliceDepartment.EvidenceManager.Domain.Exceptions;
 using PoliceDepartment.EvidenceManager.Domain.Logger;
+using PoliceDepartment.EvidenceManager.SharedKernel.Extensions;
 using PoliceDepartment.EvidenceManager.SharedKernel.Responses;
 using PoliceDepartment.EvidenceManager.SharedKernel.ViewModels;
 using PoliceDepartment.EvidenceManager.UnitTests.Fixtures.Api;
@@ -45,7 +47,11 @@ namespace PoliceDepartment.EvidenceManager.UnitTests.Api.Evidence
             var evidenceEntity = _fixture.Evidence.GenerateSingleEntity();
             _mapper.Map<EvidenceEntity>(evidenceViewModel).Returns(evidenceEntity);
 
+            var caseEntity = _fixture.Case.GenerateSingleEntity();
+            caseEntity.OfficerId = evidenceViewModel.OfficerId;
+
             var _uow = Substitute.For<IUnitOfWork>();
+            _uow.Case.GetByIdAsync(evidenceViewModel.CaseId, CancellationToken.None).Returns(caseEntity);
             _uow.Evidence.CreateAsync(evidenceEntity, CancellationToken.None).Returns(Task.CompletedTask);
             _uow.SaveChangesAsync(Arg.Any<CancellationToken>()).Returns(true);
 
@@ -92,26 +98,91 @@ namespace PoliceDepartment.EvidenceManager.UnitTests.Api.Evidence
         public async Task RunAsync_DatabaseError_ShouldThrow()
         {
             // Arrange
-            CreateEvidenceViewModel caseViewModel = _fixture.Evidence.GenerateViewModel();
+            CreateEvidenceViewModel evidenceViewModel = _fixture.Evidence.GenerateViewModel();
             var validationResult = new ValidationResult();
-            _validator.ValidateAsync(caseViewModel, CancellationToken.None).Returns(validationResult);
+            _validator.ValidateAsync(evidenceViewModel, CancellationToken.None).Returns(validationResult);
 
-            var caseEntity = _fixture.Evidence.GenerateSingleEntity();
-            _mapper.Map<EvidenceEntity>(caseViewModel).Returns(caseEntity);
+            var evidenceEntity = _fixture.Evidence.GenerateSingleEntity();
+            _mapper.Map<EvidenceEntity>(evidenceViewModel).Returns(evidenceEntity);
+            var caseEntity = _fixture.Case.GenerateSingleEntity();
+            caseEntity.OfficerId = evidenceViewModel.OfficerId;
 
             var _uow = Substitute.For<IUnitOfWork>();
-            _uow.Evidence.CreateAsync(caseEntity, CancellationToken.None).Returns(Task.CompletedTask);
+            _uow.Case.GetByIdAsync(evidenceViewModel.CaseId, CancellationToken.None).Returns(caseEntity);
+            _uow.Evidence.CreateAsync(evidenceEntity, CancellationToken.None).Returns(Task.CompletedTask);
             _uow.SaveChangesAsync(Arg.Any<CancellationToken>()).Returns(false);
 
             var sut = new CreateEvidence(_logger, _uow, _mapper, _validator);
 
             //Act
-            var act = async () => await sut.RunAsync(caseViewModel, CancellationToken.None);
+            var act = async () => await sut.RunAsync(evidenceViewModel, CancellationToken.None);
 
             //Assert
             await act.Should()
                 .ThrowExactlyAsync<InfrastructureException>()
                 .WithMessage("An unexpected error ocurred");
+        }
+
+        [Fact]
+        public async Task RunAsync_OwnerValid_ReturnsSuccess()
+        {
+            // Arrange
+            var evidenceViewModel = new CreateEvidenceViewModel
+            {
+                CaseId = Guid.NewGuid(),
+                OfficerId = Guid.NewGuid(),
+            };
+
+            var validationResult = new ValidationResult();
+            _validator.ValidateAsync(evidenceViewModel, CancellationToken.None).Returns(validationResult);
+
+            var caseEntity = new CaseEntity { OfficerId = evidenceViewModel.OfficerId };
+            _uow.Case.GetByIdAsync(evidenceViewModel.CaseId, CancellationToken.None).Returns(caseEntity);
+
+            var evidenceEntity = new EvidenceEntity();
+            _mapper.Map<EvidenceEntity>(evidenceViewModel).Returns(evidenceEntity);
+
+            _uow.Evidence.CreateAsync(evidenceEntity, CancellationToken.None).Returns(Task.CompletedTask);
+            _uow.SaveChangesAsync(CancellationToken.None).Returns(true);
+
+            var sut = new CreateEvidence(_logger, _uow, _mapper, _validator);
+
+            //Act
+            var response = await sut.RunAsync(evidenceViewModel, CancellationToken.None);
+
+            // Assert
+            response.Should().BeOfType<BaseResponse>();
+            await _uow.Case.Received(1).GetByIdAsync(evidenceViewModel.CaseId, CancellationToken.None);
+            await _uow.Evidence.Received(1).CreateAsync(evidenceEntity, CancellationToken.None);
+            await _uow.Received(1).SaveChangesAsync(CancellationToken.None);
+        }
+
+        [Fact]
+        public async Task RunAsync_OwnerInvalid_ReturnsError()
+        {
+            // Arrange
+            var evidenceViewModel = new CreateEvidenceViewModel
+            {
+                CaseId = Guid.NewGuid(),
+                OfficerId = Guid.NewGuid(),
+            };
+
+            var validationResult = new ValidationResult();
+            _validator.ValidateAsync(evidenceViewModel, CancellationToken.None).Returns(validationResult);
+
+            var caseEntity = new CaseEntity { OfficerId = Guid.NewGuid() };
+            _uow.Case.GetByIdAsync(evidenceViewModel.CaseId, CancellationToken.None).Returns(caseEntity);
+
+            var sut = new CreateEvidence(_logger, _uow, _mapper, _validator);
+
+            //Act
+            var response = await sut.RunAsync(evidenceViewModel, CancellationToken.None);
+
+            // Assert
+            response.Should().BeOfType<BaseResponse>();
+            response.Success.Should().BeFalse();
+            response.ResponseDetails.Message.Should().Be(ResponseMessage.Forbidden.GetDescription());
+            await _uow.Case.Received(1).GetByIdAsync(evidenceViewModel.CaseId, CancellationToken.None);
         }
     }
 }

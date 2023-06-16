@@ -44,6 +44,7 @@ namespace PoliceDepartment.EvidenceManager.UnitTests.Fixtures.Api
             return new Faker<CreateEvidenceViewModel>()
                 .RuleFor(x => x.Name, f => f.Lorem.Sentence())
                 .RuleFor(x => x.Description, f => f.Lorem.Sentence())
+                .RuleFor(x => x.OfficerId, f => f.Random.Guid())
                 .RuleFor(x => x.CaseId, f => f.Random.Guid())
                 .RuleFor(x => x.ImageId, f => f.Random.Guid())
                 .Generate();
