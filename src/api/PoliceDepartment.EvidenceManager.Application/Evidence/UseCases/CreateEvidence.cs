@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using FluentValidation;
+using Microsoft.AspNetCore.Identity;
 using PoliceDepartment.EvidenceManager.Domain.Database;
 using PoliceDepartment.EvidenceManager.Domain.Evidence;
 using PoliceDepartment.EvidenceManager.Domain.Evidence.UseCases;
@@ -41,21 +42,29 @@ namespace PoliceDepartment.EvidenceManager.API.Application.Evidence.UseCases
                 return _response.AsError(ResponseMessage.InvalidEvidence, errorMessages);
             }
 
-            _logger.LogDebug("Begin Create evidence");
+            _logger.LogDebug("Verifing if officer is owner case");
+
+            bool isOfficerOwnerCase = _uow.Case.GetByIdAsync(evidence.CaseId, cancellationToken).Result.OfficerId == evidence.OfficerId;
+
+            if (!isOfficerOwnerCase)
+            {
+                _logger.LogWarning("Officer is not owner case");
+                return _response.AsError(ResponseMessage.Forbidden, "Officer is not owner case");
+            }
 
             var evidenceEntity = _mapper.Map<EvidenceEntity>(evidence);
 
-            if(evidenceEntity is null)
+            if (evidenceEntity is null)
             {
-                _logger.LogError("An error ocurred at the mapper"); 
-                throw new BusinessException("An unexpected error ocurred"); 
+                _logger.LogError("An error ocurred at the mapper");
+                throw new BusinessException("An unexpected error ocurred");
             }
 
             _logger.LogDebug("Adding evidence to database");
 
             await _uow.Evidence.CreateAsync(evidenceEntity, cancellationToken);
 
-            if(!await _uow.SaveChangesAsync(cancellationToken))
+            if (!await _uow.SaveChangesAsync(cancellationToken))
             {
                 _logger.LogError("An error ocurred at the database");
                 throw new InfrastructureException("An unexpected error ocurred");

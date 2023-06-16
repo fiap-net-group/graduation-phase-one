@@ -6,5 +6,6 @@
         public string Description { get; set; }
         public Guid CaseId { get; set; }
         public Guid ImageId { get; set; }
+        public Guid OfficerId { get; set; }
     }
 }

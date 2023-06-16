@@ -21,6 +21,7 @@ namespace PoliceDepartment.EvidenceManager.Application.Case
                 .ForMember(dest => dest.UpdatedAt, opt => opt.MapFrom(_ => DateTime.Now))
                 .ForMember(dest => dest.Officer, opt => opt.Ignore())
                 .ForMember(dest => dest.Evidences, opt => opt.Ignore())
+                .ForMember(dest => dest.OfficerId, opt => opt.Ignore())
                 .ReverseMap();
 
         }

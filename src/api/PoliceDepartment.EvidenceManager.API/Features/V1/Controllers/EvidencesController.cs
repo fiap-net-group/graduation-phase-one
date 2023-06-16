@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using PoliceDepartment.EvidenceManager.Application.Authorization;
 using PoliceDepartment.EvidenceManager.Domain.Authorization;
 using PoliceDepartment.EvidenceManager.Domain.Evidence.UseCases;
 using PoliceDepartment.EvidenceManager.SharedKernel.Responses;
@@ -34,21 +35,26 @@ namespace PoliceDepartment.EvidenceManager.API.Features.V1.Controllers
         /// <response code="201">The created evidence</response>
         /// <response code="400">Invalid case properties</response>
         /// <response code="401">Invalid access code or API-TOKEN</response>
+        /// <response code="403">Officer is not owner case</response>
         [HttpPost]
         [Authorize(AuthorizationPolicies.IsPoliceOfficer)]
         [ProducesResponseType(StatusCodes.Status201Created, StatusCode = StatusCodes.Status201Created, Type = typeof(BaseResponse))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, StatusCode = StatusCodes.Status400BadRequest, Type = typeof(BaseResponse))]
         [ProducesResponseType(StatusCodes.Status401Unauthorized, StatusCode = StatusCodes.Status401Unauthorized, Type = typeof(BaseResponse))]
+        [ProducesResponseType(StatusCodes.Status403Forbidden, StatusCode = StatusCodes.Status403Forbidden, Type = typeof(BaseResponse))]
         public async Task<IActionResult> CreateEvidence([FromBody] CreateEvidenceViewModel evidence, CancellationToken cancellationToken)
         {
+            evidence.OfficerId = User.GetUserId();
+
             var response = await _createEvidence.RunAsync(evidence, cancellationToken);
+            
+            if (response.Success)
+                return CreatedAtAction(null, null, response);               
 
-            if (!response.Success)
-            {
-                return BadRequest(response);
-            }
+            if (response.ResponseMessageEqual(ResponseMessage.Forbidden))
+                return Forbid();
 
-            return CreatedAtAction(null, null, response);
+            return BadRequest();
         }
 
         /// <summary>
