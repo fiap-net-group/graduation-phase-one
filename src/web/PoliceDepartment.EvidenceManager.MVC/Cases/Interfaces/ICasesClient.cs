@@ -1,13 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using PoliceDepartment.EvidenceManager.SharedKernel.Responses;
+using PoliceDepartment.EvidenceManager.SharedKernel.ViewModels;
 
 namespace PoliceDepartment.EvidenceManager.MVC.Cases.Interfaces
 {
     public interface ICasesClient
     {
-
+        Task<BaseResponseWithValue<IEnumerable<CaseViewModel>>> GetByOfficerIdAsync(Guid officerId, CancellationToken cancellationToken);
     }
 }
