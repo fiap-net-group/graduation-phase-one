@@ -1,4 +1,4 @@
-﻿namespace PoliceDepartment.EvidenceManager.Domain.Case.UseCases
+﻿namespace PoliceDepartment.EvidenceManager.SharedKernel.Case.UseCases
 {
     public interface IUpdateCase<TViewModel, TResponse>
     {

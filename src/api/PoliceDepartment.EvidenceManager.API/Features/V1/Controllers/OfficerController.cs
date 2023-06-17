@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
-using PoliceDepartment.EvidenceManager.Domain.Officer.UseCases;
+using PoliceDepartment.EvidenceManager.SharedKernel.Officer.UseCases;
 using PoliceDepartment.EvidenceManager.SharedKernel.Responses;
 using PoliceDepartment.EvidenceManager.SharedKernel.ViewModels;
 

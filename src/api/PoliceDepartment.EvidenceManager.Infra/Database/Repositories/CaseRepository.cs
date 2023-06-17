@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using PoliceDepartment.EvidenceManager.Domain.Case;
+using PoliceDepartment.EvidenceManager.SharedKernel.Case;
 using PoliceDepartment.EvidenceManager.Infra.Database.Mappings;
 using System.Diagnostics.CodeAnalysis;
 

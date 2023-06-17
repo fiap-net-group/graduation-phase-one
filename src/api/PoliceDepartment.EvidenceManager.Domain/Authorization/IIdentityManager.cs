@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 
-namespace PoliceDepartment.EvidenceManager.Domain.Authorization
+namespace PoliceDepartment.EvidenceManager.SharedKernel.Authorization
 {
     public interface IIdentityManager
     {

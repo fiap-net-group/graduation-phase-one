@@ -1,4 +1,4 @@
-namespace PoliceDepartment.EvidenceManager.Domain.Officer.UseCases
+namespace PoliceDepartment.EvidenceManager.SharedKernel.Officer.UseCases
 {
     public interface ICreateOfficer<TViewModel,TResult>
     {

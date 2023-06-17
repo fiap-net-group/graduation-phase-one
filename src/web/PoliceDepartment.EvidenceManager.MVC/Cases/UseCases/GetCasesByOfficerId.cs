@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PoliceDepartment.EvidenceManager.SharedKernel.Evidence
+namespace PoliceDepartment.EvidenceManager.MVC.Cases.UseCases
 {
-    public class EvidenceImage
+    public class GetCasesByOfficerId
     {
 
     }

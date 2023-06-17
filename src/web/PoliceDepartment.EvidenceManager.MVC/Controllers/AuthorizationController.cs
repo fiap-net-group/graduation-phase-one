@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using PoliceDepartment.EvidenceManager.MVC.Authorization.Interfaces;
 using PoliceDepartment.EvidenceManager.MVC.Models;
 using PoliceDepartment.EvidenceManager.SharedKernel.Extensions;
@@ -72,6 +73,7 @@ namespace PoliceDepartment.EvidenceManager.MVC.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public async Task<IActionResult> Logout(CancellationToken cancellationToken)
         {
             if (!IsAuthenticated())

@@ -1,4 +1,4 @@
-﻿namespace PoliceDepartment.EvidenceManager.Domain.Database
+﻿namespace PoliceDepartment.EvidenceManager.SharedKernel.Database
 {
     public interface IDatabaseContext : IDisposable
     {

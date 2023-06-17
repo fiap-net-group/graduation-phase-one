@@ -1,4 +1,4 @@
-﻿namespace PoliceDepartment.EvidenceManager.Domain.Evidence
+﻿namespace PoliceDepartment.EvidenceManager.SharedKernel.Evidence
 {
     public interface IEvidenceFileServer
     {

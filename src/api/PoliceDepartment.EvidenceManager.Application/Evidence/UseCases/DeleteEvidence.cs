@@ -1,6 +1,6 @@
-﻿using PoliceDepartment.EvidenceManager.Domain.Database;
-using PoliceDepartment.EvidenceManager.Domain.Evidence.UseCases;
-using PoliceDepartment.EvidenceManager.Domain.Exceptions;
+﻿using PoliceDepartment.EvidenceManager.SharedKernel.Database;
+using PoliceDepartment.EvidenceManager.SharedKernel.Evidence.UseCases;
+using PoliceDepartment.EvidenceManager.SharedKernel.Exceptions;
 using PoliceDepartment.EvidenceManager.SharedKernel.Logger;
 using PoliceDepartment.EvidenceManager.SharedKernel.Responses;
 

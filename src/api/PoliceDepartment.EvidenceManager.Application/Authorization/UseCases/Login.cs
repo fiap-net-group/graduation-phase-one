@@ -1,9 +1,9 @@
 ﻿using AutoMapper;
 using Microsoft.Extensions.Configuration;
-using PoliceDepartment.EvidenceManager.Domain.Authorization;
-using PoliceDepartment.EvidenceManager.Domain.Authorization.UseCases;
-using PoliceDepartment.EvidenceManager.Domain.Database;
-using PoliceDepartment.EvidenceManager.Domain.Exceptions;
+using PoliceDepartment.EvidenceManager.SharedKernel.Authorization;
+using PoliceDepartment.EvidenceManager.SharedKernel.Authorization.UseCases;
+using PoliceDepartment.EvidenceManager.SharedKernel.Database;
+using PoliceDepartment.EvidenceManager.SharedKernel.Exceptions;
 using PoliceDepartment.EvidenceManager.SharedKernel.Logger;
 using PoliceDepartment.EvidenceManager.SharedKernel.Responses;
 using PoliceDepartment.EvidenceManager.SharedKernel.ViewModels;
@@ -43,7 +43,7 @@ namespace PoliceDepartment.EvidenceManager.Application.Authorization.UseCases
 
             var officer = login.Username != _adminUserName ? 
                         await _uow.Officer.GetByEmailAsync(login.Username, cancellationToken)
-                        : new Domain.Officer.OfficerEntity().AsAdmin();
+                        : new SharedKernel.Officer.OfficerEntity().AsAdmin();
 
             if(!officer.Exists())
             {

@@ -1,4 +1,4 @@
-﻿namespace PoliceDepartment.EvidenceManager.Domain.Case
+﻿namespace PoliceDepartment.EvidenceManager.SharedKernel.Case
 {
     public interface ICaseRepository : IDisposable
     {
