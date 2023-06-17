@@ -25,7 +25,7 @@ namespace PoliceDepartment.EvidenceManager.MVC.Cases.UseCases
 
             if(!casesResponse.Success)
             {
-                _logger.LogWarning("MVC - Error getting cases by officer id", ("officerId", officerId));
+                _logger.LogWarning("MVC - Error getting cases by officer id", ("officerId", officerId), (nameof(casesResponse), casesResponse));
 
                 return casesResponse;
             }

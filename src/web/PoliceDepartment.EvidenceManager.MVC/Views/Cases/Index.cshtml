@@ -1,0 +1,28 @@
+﻿@model CasesPageModel
+
+@{
+    ViewData["Title"] = "Cases";
+}
+
+<h1>Cases</h1>
+<table>
+    <tr>
+        <th>Name</th>
+        <th>Description</th>
+        <th>Created At</th>
+    </tr>
+    @foreach (var @case in Model.Cases)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => @case.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => @case.Description)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => @case.CreatedAt)
+            </td>
+        </tr>
+    }
+</table>
