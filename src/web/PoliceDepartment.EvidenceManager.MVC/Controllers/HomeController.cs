@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using PoliceDepartment.EvidenceManager.MVC.Models;
 using PoliceDepartment.EvidenceManager.SharedKernel.Extensions;
 using System.Diagnostics;
@@ -14,23 +15,15 @@ namespace PoliceDepartment.EvidenceManager.MVC.Controllers
             _logger = logger;
         }
 
+        [Authorize]
         public IActionResult Index()
         {
-            //var officerType = HttpContext.User.Claims.FirstOrDefault(c => c.Type == "OfficerType");
+            var officerType = HttpContext.User.Claims.FirstOrDefault(c => c.Type == "OfficerType");
 
-            ////TODO:
-            ////Add the create officer page
-            //if (officerType is not null && officerType.Value == Enum.GetName(OfficerType.Administrator))
-            //    return RedirectToAction("Index", "Home");
+            if (officerType is not null && officerType.Value == Enum.GetName(OfficerType.Administrator))
+                return RedirectToAction("Error", "Home", 403);
 
-            ////TODO:
-            ////Add the cases page
-            return View();
-        }
-
-        public IActionResult Privacy()
-        {
-            return View();
+            return RedirectToAction("Index","Cases");
         }
 
         [Route("error/{statusCode:length(3,3)}")]
