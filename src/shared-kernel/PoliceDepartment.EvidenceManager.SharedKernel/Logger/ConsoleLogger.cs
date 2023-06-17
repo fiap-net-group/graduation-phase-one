@@ -1,7 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
-using PoliceDepartment.EvidenceManager.Domain.Logger;
 
-namespace PoliceDepartment.EvidenceManager.Infra.Logger
+namespace PoliceDepartment.EvidenceManager.SharedKernel.Logger
 {
     public class ConsoleLogger : ILoggerManager
     {
@@ -45,12 +44,13 @@ namespace PoliceDepartment.EvidenceManager.Infra.Logger
 
             parameters.CopyTo(newParameters, 0);
 
-            if(exception != null)
+            if (exception != null)
                 newParameters[newParameters.Length + 1] = (nameof(exception), exception);
 
             Log(message, LoggerManagerSeverity.CRITICAL, newParameters);
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "CA2254", Justification = "")]
         public void Log(string message, LoggerManagerSeverity severity, params (string name, object value)[] parameters)
         {
             switch (severity)

@@ -2,9 +2,9 @@
 using Microsoft.EntityFrameworkCore.Storage;
 using PoliceDepartment.EvidenceManager.Domain.Case;
 using PoliceDepartment.EvidenceManager.Domain.Evidence;
-using PoliceDepartment.EvidenceManager.Domain.Logger;
 using PoliceDepartment.EvidenceManager.Domain.Officer;
 using PoliceDepartment.EvidenceManager.Infra.Database.Mappings;
+using PoliceDepartment.EvidenceManager.SharedKernel.Logger;
 using System.Diagnostics.CodeAnalysis;
 
 namespace PoliceDepartment.EvidenceManager.Infra.Database
@@ -76,6 +76,19 @@ namespace PoliceDepartment.EvidenceManager.Infra.Database
                 _logger.LogError("Error commiting transaction", ex);
                 await transaction.RollbackAsync(cancellationToken);
                 return false;
+            }
+        }
+
+        public async Task TestConnectionAsync()
+        {
+            try
+            {
+                _ = await Database.ExecuteSqlRawAsync("SELECT 1");
+            }
+            catch (Exception ex)
+            {
+
+                throw;
             }
         }
     }

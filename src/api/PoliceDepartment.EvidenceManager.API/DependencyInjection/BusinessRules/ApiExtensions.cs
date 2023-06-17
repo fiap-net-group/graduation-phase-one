@@ -17,11 +17,11 @@ namespace PoliceDepartment.EvidenceManager.API.DependencyInjection.BusinessRules
         {
             app.UseHttpsRedirection();
 
+            app.UseMiddleware<ErrorHandlerMiddleware>();
+
             app.UseAuthorization();
 
             app.MapControllers();
-
-            app.UseMiddleware<ErrorHandlerMiddleware>();
 
             if(!isDevelopment)
             {

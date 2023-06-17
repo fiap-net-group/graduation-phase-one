@@ -6,17 +6,27 @@ This project is a implementation of a Police department evidence manager system.
 
 ## Running the project
 Follow these steps to run the project locally.
-```cs
-//TBD
+```bash
+# You have to be at docker folder to run the commands
+cd docker
+
+# development
+docker-compose -f docker-compose-development.yml up --build 
+
+# staging
+docker-compose -f docker-compose-staging.yml up --build 
+
+# production
+docker-compose up --build 
 ```
 
-## Jargões
+## Key words
 
 | Name | Description |
 | --- | --- |
-| Officer | Polícia(indivíduo) de investigação criminal |
-| Case | Caso de investigação criminal |
-| Evidence | Evidência de caso criminal | 
+| Officer | Police officer |
+| Case | Criminal investigation case |
+| Evidence | Case's evidence | 
 
 ## Give a star
 If you found the project helpful or just want to help the developer, give the project a star!
