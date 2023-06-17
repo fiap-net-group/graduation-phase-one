@@ -14,6 +14,7 @@ using System.Diagnostics.CodeAnalysis;
 using PoliceDepartment.EvidenceManager.Domain.Officer.UseCases;
 using PoliceDepartment.EvidenceManager.Domain.Evidence.UseCases;
 using PoliceDepartment.EvidenceManager.API.Application.Evidence.UseCases;
+using PoliceDepartment.EvidenceManager.API.Application.Evidence;
 using PoliceDepartment.EvidenceManager.Application.Evidence.UseCases;
 
 namespace PoliceDepartment.EvidenceManager.API.DependencyInjection.BusinessRules
@@ -37,12 +38,14 @@ namespace PoliceDepartment.EvidenceManager.API.DependencyInjection.BusinessRules
             services.AddScoped<IUpdateCase<CaseViewModel, BaseResponse>, UpdateCase>();
             services.AddScoped<IDeleteCase<BaseResponse>, DeleteCase>();
             services.AddScoped<ICreateCase<CreateCaseViewModel, BaseResponse>, CreateCase>();
+            services.AddScoped<ICreateEvidence<CreateEvidenceViewModel, BaseResponse>, CreateEvidence>();
 
             services.AddScoped<IGetEvidenceById<BaseResponseWithValue<EvidenceViewModel>>, GetEvidenceById>();
             services.AddScoped<IDeleteEvidence<BaseResponse>, DeleteEvidence>();
             services.AddScoped<IGetEvidencesByCaseId<BaseResponseWithValue<IEnumerable<EvidenceViewModel>>>, GetEvidencesByCaseId>();
 
             services.AddScoped<IValidator<CreateCaseViewModel>, CaseValidator>();
+            services.AddScoped<IValidator<CreateEvidenceViewModel>, EvidenceValidator>();
 
             services.AddAutoMapper(typeof(EvidenceMapperProfile));
 

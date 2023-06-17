@@ -20,5 +20,7 @@ namespace PoliceDepartment.EvidenceManager.SharedKernel.Responses
         EvidenceDontExists = 6,
         [Description("User is not authenticated")]
         UserIsNotAuthenticated = 7,
+        [Description("Invalid evidence")]
+        InvalidEvidence = 8,
     }
 }

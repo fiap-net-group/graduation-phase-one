@@ -20,15 +20,46 @@ namespace PoliceDepartment.EvidenceManager.API.Features.V1.Controllers
         private readonly IGetEvidenceById<BaseResponseWithValue<EvidenceViewModel>> _getById;
         private readonly IDeleteEvidence<BaseResponse> _deleteEvidence;
         private readonly IGetEvidencesByCaseId<BaseResponseWithValue<IEnumerable<EvidenceViewModel>>> _getByCaseId;
+        private readonly ICreateEvidence<CreateEvidenceViewModel, BaseResponse> _createEvidence;
 
-        public EvidencesController(
-            IGetEvidenceById<BaseResponseWithValue<EvidenceViewModel>> getById, 
+        public EvidencesController(IGetEvidenceById<BaseResponseWithValue<EvidenceViewModel>> getById, ICreateEvidence<CreateEvidenceViewModel, BaseResponse> createEvidence, 
             IDeleteEvidence<BaseResponse> deleteEvidence,
             IGetEvidencesByCaseId<BaseResponseWithValue<IEnumerable<EvidenceViewModel>>> getByCaseId)
         {
             _getById = getById;
+            _createEvidence = createEvidence;
             _deleteEvidence = deleteEvidence;
             _getByCaseId = getByCaseId;
+        }
+
+        ///<summary>
+        /// Create evidence
+        /// </summary>
+        /// <param name="evidence">The evidence body</param>
+        /// <param name="cancellationToken"></param>
+        /// <response code="201">The created evidence</response>
+        /// <response code="400">Invalid case properties</response>
+        /// <response code="401">Invalid access code or API-TOKEN</response>
+        /// <response code="403">Officer is not owner case</response>
+        [HttpPost]
+        [Authorize(AuthorizationPolicies.IsPoliceOfficer)]
+        [ProducesResponseType(StatusCodes.Status201Created, StatusCode = StatusCodes.Status201Created, Type = typeof(BaseResponse))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, StatusCode = StatusCodes.Status400BadRequest, Type = typeof(BaseResponse))]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized, StatusCode = StatusCodes.Status401Unauthorized, Type = typeof(BaseResponse))]
+        [ProducesResponseType(StatusCodes.Status403Forbidden, StatusCode = StatusCodes.Status403Forbidden, Type = typeof(BaseResponse))]
+        public async Task<IActionResult> CreateEvidence([FromBody] CreateEvidenceViewModel evidence, CancellationToken cancellationToken)
+        {
+            evidence.OfficerId = User.GetUserId();
+
+            var response = await _createEvidence.RunAsync(evidence, cancellationToken);
+            
+            if (response.Success)
+                return CreatedAtAction(null, null, response);               
+
+            if (response.ResponseMessageEqual(ResponseMessage.Forbidden))
+                return Forbid();
+
+            return BadRequest();
         }
 
         /// <summary>
