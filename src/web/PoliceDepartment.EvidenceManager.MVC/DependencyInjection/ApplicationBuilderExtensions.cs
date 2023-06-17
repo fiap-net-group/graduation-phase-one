@@ -6,9 +6,8 @@ namespace PoliceDepartment.EvidenceManager.MVC.DependencyInjection
     {
         internal static IApplicationBuilder UseDependencyInjection(this WebApplication app)
         {
-            app.UseMvcConfiguration();
-
-            app.UseAuthorizationConfiguration();
+            app.UseMvcConfiguration()
+               .UseAuthorizationConfiguration();
 
             return app;
         }

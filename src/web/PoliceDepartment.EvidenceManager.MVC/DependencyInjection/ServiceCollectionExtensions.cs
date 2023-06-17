@@ -8,13 +8,10 @@ namespace PoliceDepartment.EvidenceManager.MVC.DependencyInjection
     {
         internal static IServiceCollection AddDependencyInjection(this IServiceCollection services, IConfiguration configuration)
         {
-            services.AddMvcConfiguration();
-
-            services.AddClientConfiguration();
-
-            services.AddAuthorizationConfiguration(configuration);
-
-            services.AddCustomLogging();
+            services.AddMvcConfiguration()
+                    .AddClientConfiguration()
+                    .AddAuthorizationConfiguration(configuration)
+                    .AddCustomLogging();
 
             return services;
         }
