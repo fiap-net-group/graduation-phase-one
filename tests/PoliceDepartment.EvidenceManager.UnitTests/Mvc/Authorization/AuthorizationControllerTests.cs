@@ -5,16 +5,12 @@ using PoliceDepartment.EvidenceManager.MVC.Authorization.Interfaces;
 using PoliceDepartment.EvidenceManager.MVC.Controllers;
 using PoliceDepartment.EvidenceManager.MVC.Models;
 using PoliceDepartment.EvidenceManager.SharedKernel.Logger;
-using PoliceDepartment.EvidenceManager.SharedKernel.ViewModels;
-using PoliceDepartment.EvidenceManager.UnitTests.Fixtures.Mvc;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel;
 using PoliceDepartment.EvidenceManager.SharedKernel.Responses;
 using Microsoft.AspNetCore.Http;
 using System.Security.Claims;
 using System.Security.Principal;
-using Polly;
-using Bogus.DataSets;
 
 namespace PoliceDepartment.EvidenceManager.UnitTests.Mvc.Authorization
 {
