@@ -139,7 +139,7 @@ namespace PoliceDepartment.EvidenceManager.UnitTests.Mvc.Cases
             var sut = new CasesClient(_retryPolicy, _serializeOptions, _clientFactory, _configuration, _logger);
 
             //Act
-            var response = sut.CreateCaseAsync(_fixture.Cases.GenerateSingleViewModel(), _fixture.Authorization.GenerateFakeJwtToken(), CancellationToken.None).Result;
+            var response = sut.CreateCaseAsync(_fixture.Cases.GenerateSingleCreateCaseViewModel(), _fixture.Authorization.GenerateFakeJwtToken(), CancellationToken.None).Result;
 
             //Assert
             response.Should().NotBeNull();
@@ -161,7 +161,7 @@ namespace PoliceDepartment.EvidenceManager.UnitTests.Mvc.Cases
             var sut = new CasesClient(_retryPolicy, _serializeOptions, _clientFactory, _configuration, _logger);
 
             //Act
-            var response = sut.CreateCaseAsync(new CaseViewModel(), _fixture.Authorization.GenerateFakeJwtToken(), CancellationToken.None).Result;
+            var response = sut.CreateCaseAsync(new CreateCaseViewModel(), _fixture.Authorization.GenerateFakeJwtToken(), CancellationToken.None).Result;
 
             //Assert
             response.Should().NotBeNull();
@@ -183,7 +183,7 @@ namespace PoliceDepartment.EvidenceManager.UnitTests.Mvc.Cases
             var sut = new CasesClient(_retryPolicy, _serializeOptions, _clientFactory, _configuration, _logger);
 
             //Act
-            var response = sut.CreateCaseAsync(_fixture.Cases.GenerateSingleViewModel(), _fixture.Authorization.GenerateFakeJwtToken(), CancellationToken.None).Result;
+            var response = sut.CreateCaseAsync(_fixture.Cases.GenerateSingleCreateCaseViewModel(), _fixture.Authorization.GenerateFakeJwtToken(), CancellationToken.None).Result;
 
             //Assert
             response.Should().NotBeNull();
@@ -206,7 +206,7 @@ namespace PoliceDepartment.EvidenceManager.UnitTests.Mvc.Cases
             var sut = new CasesClient(_retryPolicy, _serializeOptions, _clientFactory, _configuration, _logger);
 
             //Act
-            var response = sut.CreateCaseAsync(_fixture.Cases.GenerateSingleViewModel(), _fixture.Authorization.GenerateFakeJwtToken(), CancellationToken.None).Result;
+            var response = sut.CreateCaseAsync(_fixture.Cases.GenerateSingleCreateCaseViewModel(), _fixture.Authorization.GenerateFakeJwtToken(), CancellationToken.None).Result;
 
             //Assert
             response.Should().NotBeNull();

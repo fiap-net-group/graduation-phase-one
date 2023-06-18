@@ -49,7 +49,7 @@ namespace PoliceDepartment.EvidenceManager.MVC.Cases
             }
         }
 
-        public async Task<BaseResponse> CreateCaseAsync(CaseViewModel caseViewModel, string accessToken, CancellationToken cancellationToken)
+        public async Task<BaseResponse> CreateCaseAsync(CreateCaseViewModel caseViewModel, string accessToken, CancellationToken cancellationToken)
         {
             var request = new HttpRequestMessage(HttpMethod.Post, _createCaseUrl)
             {
