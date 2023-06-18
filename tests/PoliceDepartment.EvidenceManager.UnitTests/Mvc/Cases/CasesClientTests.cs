@@ -55,6 +55,7 @@ namespace PoliceDepartment.EvidenceManager.UnitTests.Mvc.Cases
             _clientFactory = Substitute.For<IHttpClientFactory>();
             _configuration = Substitute.For<IConfiguration>();
             _configuration["Api:Cases:Endpoints:GetCasesByOfficerId"].Returns(_fixture.Cases.GetByOfficerIdUrl);
+            _configuration["Api:Cases:Endpoints:CreateCase"].Returns(_fixture.Cases.CreateCaseUrl);
             _logger = Substitute.For<ILoggerManager>();
         }
 
@@ -123,6 +124,93 @@ namespace PoliceDepartment.EvidenceManager.UnitTests.Mvc.Cases
             response.Success.Should().BeTrue();
             response.Value.Should().NotBeEmpty();
             response.Value.Any(c => c.OfficerId == officerId).Should().BeTrue();
+        }
+
+        [Fact]
+        public void CreateCaseAsync_ServerIsOff_ShouldReturnGenericError()
+        {
+            //Arrange
+            var mockHttpRequest = new MockHttpMessageHandler();
+            mockHttpRequest.When(_fixture.Cases.CreateCaseUrl)
+                           .Respond(HttpStatusCode.InternalServerError, "application/json", "{'error' : 'An error ocurred'}");
+            var mockClient = mockHttpRequest.ToHttpClient();
+            _clientFactory.CreateClient(ClientExtensions.CasesClientName).Returns(mockClient);
+
+            var sut = new CasesClient(_retryPolicy, _serializeOptions, _clientFactory, _configuration, _logger);
+
+            //Act
+            var response = sut.CreateCaseAsync(_fixture.Cases.GenerateSingleViewModel(), _fixture.Authorization.GenerateFakeJwtToken(), CancellationToken.None).Result;
+
+            //Assert
+            response.Should().NotBeNull();
+            response.Success.Should().BeFalse();
+            response.ResponseDetails.Message.Should().Be("An error ocurred, try again later");
+        }
+
+        [Fact]
+        public void CreateCaseAsync_InvalidCase_ShouldReturnBadRequest()
+        {
+            //Arrange
+            var expectedResponseBody = JsonSerializer.Serialize(new BaseResponse().AsError(ResponseMessage.InvalidCase), _serializeOptions);
+            var mockHttpRequest = new MockHttpMessageHandler();
+            mockHttpRequest.When(_fixture.Cases.CreateCaseUrl)
+                           .Respond(HttpStatusCode.Unauthorized, "application/json", expectedResponseBody);
+            var mockClient = mockHttpRequest.ToHttpClient();
+            _clientFactory.CreateClient(ClientExtensions.CasesClientName).Returns(mockClient);
+
+            var sut = new CasesClient(_retryPolicy, _serializeOptions, _clientFactory, _configuration, _logger);
+
+            //Act
+            var response = sut.CreateCaseAsync(new CaseViewModel(), _fixture.Authorization.GenerateFakeJwtToken(), CancellationToken.None).Result;
+
+            //Assert
+            response.Should().NotBeNull();
+            response.Success.Should().BeFalse();
+            response.ResponseDetails.Message.Should().Be(ResponseMessage.InvalidCase.GetDescription());
+        }
+
+        [Fact]
+        public void CreateCaseAsync_Unauthorized_ShouldReturnUnauthorized()
+        {
+            //Arrange
+            var expectedResponseBody = JsonSerializer.Serialize(new BaseResponse().AsError(ResponseMessage.UserIsNotAuthenticated), _serializeOptions);
+            var mockHttpRequest = new MockHttpMessageHandler();
+            mockHttpRequest.When(_fixture.Cases.CreateCaseUrl)
+                           .Respond(HttpStatusCode.Unauthorized, "application/json", expectedResponseBody);
+            var mockClient = mockHttpRequest.ToHttpClient();
+            _clientFactory.CreateClient(ClientExtensions.CasesClientName).Returns(mockClient);
+
+            var sut = new CasesClient(_retryPolicy, _serializeOptions, _clientFactory, _configuration, _logger);
+
+            //Act
+            var response = sut.CreateCaseAsync(_fixture.Cases.GenerateSingleViewModel(), _fixture.Authorization.GenerateFakeJwtToken(), CancellationToken.None).Result;
+
+            //Assert
+            response.Should().NotBeNull();
+            response.Success.Should().BeFalse();
+            response.ResponseDetails.Message.Should().Be(ResponseMessage.UserIsNotAuthenticated.GetDescription());
+        }
+
+        [Fact]
+        public void CreateCaseAsync_ValidRequest_ShouldReturnSuccessAndValidToken()
+        {
+            //Arrange
+            var officerId = Guid.NewGuid();
+            var expectedResponseBody = JsonSerializer.Serialize(new BaseResponse().AsSuccess(), _serializeOptions);
+            var mockHttpRequest = new MockHttpMessageHandler();
+            mockHttpRequest.When(_fixture.Cases.CreateCaseUrl)
+                           .Respond(HttpStatusCode.OK, "application/json", expectedResponseBody);
+            var mockClient = mockHttpRequest.ToHttpClient();
+            _clientFactory.CreateClient(ClientExtensions.CasesClientName).Returns(mockClient);
+
+            var sut = new CasesClient(_retryPolicy, _serializeOptions, _clientFactory, _configuration, _logger);
+
+            //Act
+            var response = sut.CreateCaseAsync(_fixture.Cases.GenerateSingleViewModel(), _fixture.Authorization.GenerateFakeJwtToken(), CancellationToken.None).Result;
+
+            //Assert
+            response.Should().NotBeNull();
+            response.Success.Should().BeTrue();
         }
     }
 }

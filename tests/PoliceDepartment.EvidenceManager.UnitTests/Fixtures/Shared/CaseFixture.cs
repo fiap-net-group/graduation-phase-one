@@ -1,4 +1,5 @@
 ﻿using Bogus;
+using NSubstitute.Core;
 using NSubstitute.ReceivedExtensions;
 using PoliceDepartment.EvidenceManager.SharedKernel.Case;
 using PoliceDepartment.EvidenceManager.SharedKernel.Evidence;
@@ -9,6 +10,7 @@ namespace PoliceDepartment.EvidenceManager.UnitTests.Fixtures.Shared
     public class CaseFixture
     {
         public string GetByOfficerIdUrl => "http://localhost/api/fake/cases/officer*";
+        public string CreateCaseUrl => "http://localhost/api/fake/cases/";
 
         public CaseEntity GenerateSingleEntity(Guid officerId = default)
         {
@@ -58,6 +60,11 @@ namespace PoliceDepartment.EvidenceManager.UnitTests.Fixtures.Shared
                .RuleFor(c => c.Description, "Description fake")
                .RuleFor(c => c.OfficerId, Guid.NewGuid())
                .Generate();
+        }
+
+        public CaseViewModel GenerateSingleViewModel()
+        {
+            return GenerateViewModelCollection(1).First();
         }
 
         public IEnumerable<CaseViewModel> GenerateViewModelCollection(int quantity, Guid officerId = default)
