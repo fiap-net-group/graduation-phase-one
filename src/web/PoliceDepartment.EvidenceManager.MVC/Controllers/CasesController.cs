@@ -42,5 +42,13 @@ namespace PoliceDepartment.EvidenceManager.MVC.Controllers
 
             return View(_pageModel);
         }
+
+        [HttpGet]
+        public IActionResult CreateCase(CancellationToken cancellationToken)
+        {
+            Logger.LogDebug("MVC - Create Case");
+
+            return View();
+        }
     }
 }

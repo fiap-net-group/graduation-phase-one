@@ -64,7 +64,7 @@ namespace PoliceDepartment.EvidenceManager.MVC.Cases
             }
             catch
             {
-                return new BaseResponseWithValue<BaseResponse>().AsError(ResponseMessage.GenericError);
+                return new BaseResponse().AsError(ResponseMessage.GenericError);
             }
         }
     }
