@@ -4,8 +4,6 @@ using PoliceDepartment.EvidenceManager.SharedKernel.Logger;
 using PoliceDepartment.EvidenceManager.SharedKernel.Responses;
 using PoliceDepartment.EvidenceManager.SharedKernel.ViewModels;
 using Polly.Retry;
-using System.Net.Http.Headers;
-using System.Text;
 using System.Text.Json;
 
 namespace PoliceDepartment.EvidenceManager.MVC.Cases

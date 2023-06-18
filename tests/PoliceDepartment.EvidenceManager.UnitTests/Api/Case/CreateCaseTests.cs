@@ -38,7 +38,7 @@ namespace PoliceDepartment.EvidenceManager.UnitTests.Api.Case
         public async Task RunAsync_ValidRequest_ShoudlReturnSuccess()
         {
             // Arrange
-            CreateCaseViewModel caseViewModel = _fixture.Case.GenerateViewModel();
+            CreateCaseViewModel caseViewModel = _fixture.Case.GenerateSingleCreateCaseViewModel();
             var validationResult = new ValidationResult();
             _validator.ValidateAsync(caseViewModel, CancellationToken.None).Returns(validationResult);
 
@@ -94,7 +94,7 @@ namespace PoliceDepartment.EvidenceManager.UnitTests.Api.Case
         public async Task RunAsync_DatabaseError_ShouldThrow()
         {
             // Arrange
-            CreateCaseViewModel caseViewModel = _fixture.Case.GenerateViewModel();
+            CreateCaseViewModel caseViewModel = _fixture.Case.GenerateSingleCreateCaseViewModel();
             var validationResult = new ValidationResult();
             _validator.ValidateAsync(caseViewModel, CancellationToken.None).Returns(validationResult);
 
