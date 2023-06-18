@@ -7,5 +7,6 @@
         Task<CaseEntity> GetByIdAsync(Guid id, CancellationToken cancellationToken);
         Task DeleteAsync(CaseEntity entity, CancellationToken cancellationToken);
         Task AddAsync(CaseEntity entity, CancellationToken cancellationToken);
+        Task<CaseEntity> GetByNameAsync(string name, CancellationToken cancellationToken);
     }
 }

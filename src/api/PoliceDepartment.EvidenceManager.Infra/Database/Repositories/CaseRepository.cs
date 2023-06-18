@@ -35,6 +35,14 @@ namespace PoliceDepartment.EvidenceManager.Infra.Database.Repositories
             return entity ?? new CaseEntity();
         }
 
+        public async Task<CaseEntity> GetByNameAsync(string name, CancellationToken cancellationToken)
+        {
+            var entity = await _context.Cases.Where(c => c.Name == name)
+                                             .FirstOrDefaultAsync(cancellationToken);
+
+            return entity ?? new CaseEntity();
+        }
+
         public async Task UpdateAsync(CaseEntity entity, CancellationToken cancellationToken)
         {
             await Task.Run(() =>

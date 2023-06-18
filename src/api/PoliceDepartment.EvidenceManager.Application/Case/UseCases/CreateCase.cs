@@ -42,6 +42,15 @@ namespace PoliceDepartment.EvidenceManager.Application.Case.UseCases
                 return _response.AsError(ResponseMessage.InvalidCase, errorMessages);
             }
 
+            var existingCase = await _uow.Case.GetByNameAsync(@case.Name, cancellationToken);
+
+            if(existingCase.Exists())
+            {
+                _logger.LogWarning("Attempt creating case with name that is already used", ("case",@case));
+
+                return _response.AsError(ResponseMessage.CaseAlreadyExists);
+            }
+
             _logger.LogDebug("Begin Create case");
 
             var caseEntity = _mapper.Map<CaseEntity>(@case);
