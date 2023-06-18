@@ -45,7 +45,7 @@ namespace PoliceDepartment.EvidenceManager.UnitTests.Api.Case
             var caseEntity = _fixture.Case.GenerateSingleEntity();
             _mapper.Map<CaseEntity>(caseViewModel).Returns(caseEntity);
 
-            var _uow = Substitute.For<IUnitOfWork>();
+            _uow.Case.GetByNameAsync(Arg.Any<string>(), Arg.Any<CancellationToken>()).Returns(Task.FromResult(new CaseEntity()));
             _uow.Case.AddAsync(caseEntity, CancellationToken.None).Returns(Task.CompletedTask);
             _uow.SaveChangesAsync(Arg.Any<CancellationToken>()).Returns(true);
 
@@ -89,6 +89,30 @@ namespace PoliceDepartment.EvidenceManager.UnitTests.Api.Case
             await _validator.Received(1).ValidateAsync(viewModel, CancellationToken.None);
         }
 
+        [Fact]
+        public async Task RunAsync_ValidRequestButCaseAlreadyExists_ShoudlReturnError()
+        {
+            // Arrange
+            CreateCaseViewModel caseViewModel = _fixture.Case.GenerateSingleCreateCaseViewModel();
+            var validationResult = new ValidationResult();
+            _validator.ValidateAsync(caseViewModel, CancellationToken.None).Returns(validationResult);
+
+            var caseEntity = _fixture.Case.GenerateSingleEntity();
+            _mapper.Map<CaseEntity>(caseViewModel).Returns(caseEntity);
+
+            _uow.Case.GetByNameAsync(Arg.Any<string>(), Arg.Any<CancellationToken>()).Returns(Task.FromResult(_fixture.Case.GenerateSingleEntity()));
+            _uow.Case.AddAsync(caseEntity, CancellationToken.None).Returns(Task.CompletedTask);
+            _uow.SaveChangesAsync(Arg.Any<CancellationToken>()).Returns(true);
+
+            var sut = new CreateCase(_logger, _uow, _mapper, _validator);
+
+            // Act
+            var response = await sut.RunAsync(caseViewModel, CancellationToken.None);
+
+            // Assert
+            response.Success.Should().BeFalse();
+            response.ResponseMessageEqual(ResponseMessage.CaseAlreadyExists);
+        }
 
         [Fact]
         public async Task RunAsync_DatabaseError_ShouldThrow()
@@ -101,7 +125,7 @@ namespace PoliceDepartment.EvidenceManager.UnitTests.Api.Case
             var caseEntity = _fixture.Case.GenerateSingleEntity();
             _mapper.Map<CaseEntity>(caseViewModel).Returns(caseEntity);
 
-            var _uow = Substitute.For<IUnitOfWork>();
+            _uow.Case.GetByNameAsync(Arg.Any<string>(), Arg.Any<CancellationToken>()).Returns(Task.FromResult(new CaseEntity()));
             _uow.Case.AddAsync(caseEntity, CancellationToken.None).Returns(Task.CompletedTask);
             _uow.SaveChangesAsync(Arg.Any<CancellationToken>()).Returns(false);
 
