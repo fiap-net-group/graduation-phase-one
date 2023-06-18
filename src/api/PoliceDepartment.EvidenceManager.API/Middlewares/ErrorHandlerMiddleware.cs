@@ -29,7 +29,7 @@ namespace PoliceDepartment.EvidenceManager.API.Middlewares
                 {
                     _logger.LogWarning("Unauthorized error caught by middleware - JWT TOKEN");
 
-                    var code = HttpStatusCode.BadRequest;
+                    var code = HttpStatusCode.Unauthorized;
 
                     var result = JsonConvert.SerializeObject(new BaseResponse().AsError(ResponseMessage.UserIsNotAuthenticated));
 

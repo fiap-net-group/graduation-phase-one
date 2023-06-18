@@ -59,11 +59,9 @@ namespace PoliceDepartment.EvidenceManager.MVC.Authorization
         {
             var request = new HttpRequestMessage(HttpMethod.Post, _logoutUrl);
 
-            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
-
             try
             {
-                return await SendAsync<BaseResponse>(request, cancellationToken);
+                return await SendAuthenticatedAsync<BaseResponse>(request, accessToken, cancellationToken);
             }
             catch
             {

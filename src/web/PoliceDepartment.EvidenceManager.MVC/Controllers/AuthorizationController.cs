@@ -26,6 +26,13 @@ namespace PoliceDepartment.EvidenceManager.MVC.Controllers
         {
             Logger.LogDebug("MVC - Page Login");
 
+            if(IsAuthenticated())
+            {
+                Logger.LogDebug("MVC - Page Login - User already authenticated");
+
+                return RedirectToAction("Index", "Home");
+            }
+
             ViewData["ReturnUrl"] = returnUrl;
 
             return View();
@@ -45,7 +52,7 @@ namespace PoliceDepartment.EvidenceManager.MVC.Controllers
 
             var loginResponse = await _login.RunAsync(viewModel.Username, viewModel.Password, cancellationToken);
 
-            if (!loginResponse.Success || !IsAuthenticated())
+            if (!loginResponse.Success)
             {
                 Logger.LogWarning("MVC - Invalid login", ("username", viewModel.Username), ("loginResponse", loginResponse));
 

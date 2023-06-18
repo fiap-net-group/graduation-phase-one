@@ -5,6 +5,6 @@ namespace PoliceDepartment.EvidenceManager.MVC.Cases.Interfaces
 {
     public interface ICasesClient
     {
-        Task<BaseResponseWithValue<IEnumerable<CaseViewModel>>> GetByOfficerIdAsync(Guid officerId, CancellationToken cancellationToken);
+        Task<BaseResponseWithValue<IEnumerable<CaseViewModel>>> GetByOfficerIdAsync(Guid officerId, string accessToken, CancellationToken cancellationToken);
     }
 }

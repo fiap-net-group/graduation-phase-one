@@ -19,8 +19,6 @@ namespace PoliceDepartment.EvidenceManager.API.DependencyInjection.BusinessRules
 
             app.UseMiddleware<ErrorHandlerMiddleware>();
 
-            app.UseAuthorization();
-
             app.MapControllers();
 
             if(!isDevelopment)

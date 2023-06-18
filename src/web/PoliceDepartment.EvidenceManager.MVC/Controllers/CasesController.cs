@@ -4,12 +4,6 @@ using PoliceDepartment.EvidenceManager.MVC.Authorization.Interfaces;
 using PoliceDepartment.EvidenceManager.MVC.Cases.Interfaces;
 using PoliceDepartment.EvidenceManager.MVC.Models;
 using PoliceDepartment.EvidenceManager.SharedKernel.Logger;
-using PoliceDepartment.EvidenceManager.SharedKernel.ViewModels;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace PoliceDepartment.EvidenceManager.MVC.Controllers
 {

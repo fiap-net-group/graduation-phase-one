@@ -2,28 +2,39 @@
 using Microsoft.AspNetCore.Mvc;
 using PoliceDepartment.EvidenceManager.MVC.Models;
 using PoliceDepartment.EvidenceManager.SharedKernel.Extensions;
+using PoliceDepartment.EvidenceManager.SharedKernel.Logger;
 using System.Diagnostics;
 
 namespace PoliceDepartment.EvidenceManager.MVC.Controllers
 {
-    public class HomeController : Controller
+    public class HomeController : BaseController
     {
-        private readonly ILogger<HomeController> _logger;
 
-        public HomeController(ILogger<HomeController> logger)
-        {
-            _logger = logger;
-        }
+        public HomeController(ILoggerManager logger) : base(logger) { }
 
-        [Authorize]
         public IActionResult Index()
         {
+            Logger.LogDebug("MVC - Home Index - Start");
+
+            if (!IsAuthenticated())
+            {
+                Logger.LogInformation("MVC - Home Index - User not authenticated, redirecting to login");
+
+                return RedirectToAction("Login", "Authorization");
+            }
+
             var officerType = HttpContext.User.Claims.FirstOrDefault(c => c.Type == "OfficerType");
 
             if (officerType is not null && officerType.Value == Enum.GetName(OfficerType.Administrator))
-                return RedirectToAction("Error", "Home", 403);
+            {
+                Logger.LogDebug("MVC - Home Index - User is admin");
 
-            return RedirectToAction("Index","Cases");
+                return RedirectToAction("Error", "Home", 403);
+            }
+
+            Logger.LogDebug("MVC - Home Index - User is officer, redirecting to cases");
+
+            return RedirectToAction("Index", "Cases");
         }
 
         [Route("error/{statusCode:length(3,3)}")]

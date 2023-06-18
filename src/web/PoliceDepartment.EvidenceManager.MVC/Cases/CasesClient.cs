@@ -4,6 +4,7 @@ using PoliceDepartment.EvidenceManager.SharedKernel.Logger;
 using PoliceDepartment.EvidenceManager.SharedKernel.Responses;
 using PoliceDepartment.EvidenceManager.SharedKernel.ViewModels;
 using Polly.Retry;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
 
@@ -11,8 +12,6 @@ namespace PoliceDepartment.EvidenceManager.MVC.Cases
 {
     public class CasesClient : BaseClient, ICasesClient
     {
-        private readonly JsonSerializerOptions _serializeOptions;
-
         private readonly string _getCasesByOfficerIdUrl;
 
         public CasesClient(AsyncRetryPolicy<HttpResponseMessage> retryPolicy,
@@ -25,20 +24,18 @@ namespace PoliceDepartment.EvidenceManager.MVC.Cases
                                                          configuration,
                                                          logger)
         {
-            _serializeOptions = serializeOptions;
-
             _getCasesByOfficerIdUrl = configuration["Api:Cases:Endpoints:GetCasesByOfficerId"];
 
             ArgumentException.ThrowIfNullOrEmpty(_getCasesByOfficerIdUrl);
         }
 
-        public async Task<BaseResponseWithValue<IEnumerable<CaseViewModel>>> GetByOfficerIdAsync(Guid officerId, CancellationToken cancellationToken)
+        public async Task<BaseResponseWithValue<IEnumerable<CaseViewModel>>> GetByOfficerIdAsync(Guid officerId, string accessToken, CancellationToken cancellationToken)
         {
             var request = new HttpRequestMessage(HttpMethod.Get, _getCasesByOfficerIdUrl + $"/{officerId}");
 
             try
             {
-                return await SendAsync<BaseResponseWithValue<IEnumerable<CaseViewModel>>>(request, cancellationToken);
+                return await SendAuthenticatedAsync<BaseResponseWithValue<IEnumerable<CaseViewModel>>>(request, accessToken, cancellationToken);
             }
             catch
             {

@@ -32,11 +32,6 @@ namespace PoliceDepartment.EvidenceManager.API.DependencyInjection.BusinessRules
             ).AddEntityFrameworkStores<IdentityContext>()
              .AddDefaultTokenProviders();
 
-            services.AddAuthorization(options =>
-            {
-                options.AddPolicys();
-            });
-
             services.AddAuthentication(x =>
             {
                 x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -47,7 +42,7 @@ namespace PoliceDepartment.EvidenceManager.API.DependencyInjection.BusinessRules
                 {
                     ValidateAudience = true,
                     ValidateIssuer = true,
-                    ValidateLifetime = true,
+                    ValidateLifetime = false,
                     ValidateIssuerSigningKey = true,
                     ClockSkew = TimeSpan.Zero,
                     ValidIssuer = configuration["Jwt:Issuer"],
@@ -55,7 +50,11 @@ namespace PoliceDepartment.EvidenceManager.API.DependencyInjection.BusinessRules
                     IssuerSigningKey = new SymmetricSecurityKey(
                         Encoding.UTF8.GetBytes(configuration["Jwt:Key"]))
                 };
-                options.MapInboundClaims = false;
+            });
+
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicys();
             });
 
             return services;
