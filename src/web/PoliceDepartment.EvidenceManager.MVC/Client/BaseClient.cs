@@ -37,7 +37,8 @@ namespace PoliceDepartment.EvidenceManager.MVC.Client
                     request.Headers.Add(ClientExtensions.ApiKeyHeader, _apiKey);
 
                     return await _client.SendAsync(request, cancellationToken);
-                }, cancellationToken);
+                }, 
+                cancellationToken);
 
                 return await apiResponse.Content.ReadFromJsonAsync<TResponse>(_serializeOptions, cancellationToken);
             }
@@ -58,7 +59,8 @@ namespace PoliceDepartment.EvidenceManager.MVC.Client
                     request.Headers.Add(ClientExtensions.ApiKeyHeader, _apiKey);
 
                     return await _client.SendAsync(request, cancellationToken);
-                }, cancellationToken);
+                }, 
+                cancellationToken);
 
                 return await apiResponse.Content.ReadFromJsonAsync<TResponse>(_serializeOptions, cancellationToken);
             }

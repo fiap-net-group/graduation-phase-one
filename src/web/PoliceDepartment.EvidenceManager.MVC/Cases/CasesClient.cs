@@ -33,6 +33,7 @@ namespace PoliceDepartment.EvidenceManager.MVC.Cases
             _createCaseUrl = configuration["Api:Cases:Endpoints:CreateCase"];
 
             ArgumentException.ThrowIfNullOrEmpty(_getCasesByOfficerIdUrl);
+            ArgumentException.ThrowIfNullOrEmpty(_createCaseUrl);
         }
 
         public async Task<BaseResponseWithValue<IEnumerable<CaseViewModel>>> GetByOfficerIdAsync(Guid officerId, string accessToken, CancellationToken cancellationToken)

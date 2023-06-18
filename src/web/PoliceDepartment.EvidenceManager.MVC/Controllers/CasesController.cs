@@ -8,6 +8,7 @@ using PoliceDepartment.EvidenceManager.SharedKernel.Logger;
 namespace PoliceDepartment.EvidenceManager.MVC.Controllers
 {
     [Authorize]
+    [Route("cases")]
     public class CasesController : BaseController
     {
         private readonly IOfficerUser _officerUser;
@@ -30,6 +31,7 @@ namespace PoliceDepartment.EvidenceManager.MVC.Controllers
         }
 
         [HttpGet]
+        [Route("")]
         public async Task<IActionResult> Index(CancellationToken cancellationToken)
         {
             Logger.LogDebug("MVC - Cases Index", ("officerId", _officerUser.Id));
@@ -49,6 +51,7 @@ namespace PoliceDepartment.EvidenceManager.MVC.Controllers
         }
 
         [HttpGet]
+        [Route("create")]
         public IActionResult Create()
         {
             Logger.LogDebug("MVC - Create Case", ("officerId", _officerUser.Id));
@@ -57,13 +60,16 @@ namespace PoliceDepartment.EvidenceManager.MVC.Controllers
         }
 
         [HttpPost]
+        [Route("create")]
         public async Task<IActionResult> PostCreate(CreateCasePageViewModel viewModel, CancellationToken cancellationToken)
         {
             Logger.LogDebug("MVC - Begin create case", ("officerId", _officerUser.Id));
 
             if (!ModelState.IsValid)
             {
-                return View(viewModel);
+                Logger.LogDebug("MVC - Create case - Error", ("officerId", _officerUser.Id));
+
+                return View(nameof(Create), viewModel);
             }
 
             var createCaseResponse = await _createCase.RunAsync(viewModel, cancellationToken);
@@ -79,7 +85,7 @@ namespace PoliceDepartment.EvidenceManager.MVC.Controllers
 
             AddErrorsToModelState(createCaseResponse);
 
-            return View(viewModel);
+            return View(nameof(Create), viewModel);
         }
     }
 }
