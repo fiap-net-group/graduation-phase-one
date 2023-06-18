@@ -1,7 +1,6 @@
 ﻿using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using NSubstitute;
-using PoliceDepartment.EvidenceManager.MVC.Authorization;
 using PoliceDepartment.EvidenceManager.MVC.Authorization.Interfaces;
 using PoliceDepartment.EvidenceManager.MVC.Cases.Interfaces;
 using PoliceDepartment.EvidenceManager.MVC.Controllers;
@@ -10,6 +9,8 @@ using PoliceDepartment.EvidenceManager.SharedKernel.Logger;
 using PoliceDepartment.EvidenceManager.SharedKernel.Responses;
 using PoliceDepartment.EvidenceManager.SharedKernel.ViewModels;
 using PoliceDepartment.EvidenceManager.UnitTests.Fixtures.Mvc;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel;
 
 namespace PoliceDepartment.EvidenceManager.UnitTests.Mvc.Cases
 {
@@ -19,16 +20,18 @@ namespace PoliceDepartment.EvidenceManager.UnitTests.Mvc.Cases
         private readonly MvcFixture _fixture;
 
         private readonly ILoggerManager _logger;
-        private readonly IGetCasesByOfficerId _getCasesByOfficerId;
         private readonly IOfficerUser _officerUser;
+        private readonly IGetCasesByOfficerId _getCasesByOfficerId;
+        private readonly ICreateCase _createCase;
 
         public CasesControllerTests(MvcFixture fixture)
         {
             _fixture = fixture;
 
             _logger = Substitute.For<ILoggerManager>();
-            _getCasesByOfficerId = Substitute.For<IGetCasesByOfficerId>();
             _officerUser = Substitute.For<IOfficerUser>();
+            _getCasesByOfficerId = Substitute.For<IGetCasesByOfficerId>();
+            _createCase = Substitute.For<ICreateCase>();
         }
 
         [Theory]
@@ -43,7 +46,7 @@ namespace PoliceDepartment.EvidenceManager.UnitTests.Mvc.Cases
                                 .Returns(success ? expectedResponse.AsSuccess(_fixture.Cases.GenerateViewModelCollection(caseQuantity)) : expectedResponse.AsError());
             _officerUser.Id.Returns(Guid.Empty);
 
-            var sut = new CasesController(_logger, _officerUser, _getCasesByOfficerId);
+            var sut = new CasesController(_logger, _officerUser, _getCasesByOfficerId, _createCase);
 
             //Act
             var response = sut.Index(CancellationToken.None).Result as ViewResult;
@@ -53,6 +56,73 @@ namespace PoliceDepartment.EvidenceManager.UnitTests.Mvc.Cases
             response?.Model.Should().NotBeNull();
             responseModel?.Cases.Should().NotBeNull();
             responseModel?.Cases.Count().Should().Be(caseQuantity);
+        }
+
+        [Theory]
+        [InlineData("","description fake", "Name is required")]
+        [InlineData(null,"description fake", "Name is required")]
+        [InlineData(" ","description fake", "Name is required")]
+        [InlineData("fake name","", "Description is required")]
+        [InlineData("fake name",null, "Description is required")]
+        [InlineData("fake name"," ", "Description is required")]
+        [InlineData("", "", "Name is required", "Description is required")]
+        [InlineData(null, "", "Name is required", "Description is required")]
+        [InlineData(" ", "", "Name is required", "Description is required")]
+        [InlineData("", null, "Name is required", "Description is required")]
+        [InlineData(null, null, "Name is required", "Description is required")]
+        [InlineData(" ", null, "Name is required", "Description is required")]
+        [InlineData("", " ", "Name is required", "Description is required")]
+        [InlineData(null, " ", "Name is required", "Description is required")]
+        [InlineData(" ", " ", "Name is required", "Description is required")]
+        public void CreateModelState_InvalidModel_ShouldReturnInvalid(string name, string description, params string[] errorMessages)
+        {
+            //Arrange
+            var sut = new CreateCasePageViewModel { Name = name, Description = description };
+            var context = new ValidationContext(sut, null, null);
+            var results = new List<ValidationResult>();
+            TypeDescriptor.AddProviderTransparent(new AssociatedMetadataTypeTypeDescriptionProvider(typeof(CreateCasePageViewModel), typeof(CreateCasePageViewModel)), typeof(CreateCasePageViewModel));
+
+            //Act
+            var response = Validator.TryValidateObject(sut, context, results, true);
+
+            //Assert
+            response.Should().BeFalse();
+            if (errorMessages is not null && errorMessages.Any())
+            {
+                results.Select(r => r.ErrorMessage).Should().Contain(errorMessages);
+                results.Count.Should().Be(errorMessages.Length);
+            }
+        }
+
+        [Theory]
+        [InlineData(true)]
+        [InlineData(false)]
+        public void PostCreate_AllResponses_ShouldReturnAllResponses(bool success)
+        {
+            //Arrange
+            var expectedResponse = new BaseResponse();
+            _createCase.RunAsync(Arg.Any<CreateCasePageViewModel>(), Arg.Any<CancellationToken>())
+                       .Returns(Task.FromResult(success ? expectedResponse.AsSuccess() : expectedResponse.AsError()));
+
+            var viewModel = new CreateCasePageViewModel
+            {
+                Name = "Fake name",
+                Description = "Fake description"
+            };
+            var sut = new CasesController(_logger, _officerUser, _getCasesByOfficerId, _createCase);
+
+            //Act & Assert
+            if(success)
+            {
+                var response = sut.PostCreate(viewModel, CancellationToken.None).Result as RedirectToActionResult;
+                response?.ActionName.Should().Be("Index");
+                response?.ControllerName.Should().Be("Home");
+            }
+            else
+            {
+                var response = sut.PostCreate(viewModel, CancellationToken.None).Result as ViewResult;
+                response?.ViewData.ModelState.Should().NotBeEmpty();
+            }
         }
     }
 }

@@ -5,7 +5,7 @@ using PoliceDepartment.EvidenceManager.SharedKernel.Responses;
 
 namespace PoliceDepartment.EvidenceManager.MVC.Cases.UseCases
 {
-    public class CreateCase
+    public class CreateCase : ICreateCase
     {
         private readonly ILoggerManager _logger;
         private readonly ICasesClient _client;

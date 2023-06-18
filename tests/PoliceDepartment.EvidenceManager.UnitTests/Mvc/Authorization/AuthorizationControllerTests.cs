@@ -74,7 +74,7 @@ namespace PoliceDepartment.EvidenceManager.UnitTests.Mvc.Authorization
             var sut = new AuthorizationController(_logger, _login, _logout);
 
             //Act
-            var response = sut.Login(viewModel, CancellationToken.None).Result as ViewResult;
+            var response = sut.PostLogin(viewModel, CancellationToken.None).Result as ViewResult;
 
             //Assert
             response?.ViewData.ModelState.Keys.Count().Should().Be(1);
@@ -95,7 +95,7 @@ namespace PoliceDepartment.EvidenceManager.UnitTests.Mvc.Authorization
             var sut = new AuthorizationController(_logger, _login, _logout);
 
             //Act
-            var response = sut.Login(viewModel, CancellationToken.None).Result as ViewResult;
+            var response = sut.PostLogin(viewModel, CancellationToken.None).Result as ViewResult;
 
             //Assert
             response?.ViewData.ModelState.Keys.Count().Should().Be(1);
@@ -123,7 +123,7 @@ namespace PoliceDepartment.EvidenceManager.UnitTests.Mvc.Authorization
             };
 
             //Act
-            var response = sut.Login(viewModel, CancellationToken.None).Result as ViewResult;
+            var response = sut.PostLogin(viewModel, CancellationToken.None).Result as ViewResult;
 
             //Assert
             response?.ViewData.ModelState.Keys.Count().Should().Be(1);
@@ -152,7 +152,7 @@ namespace PoliceDepartment.EvidenceManager.UnitTests.Mvc.Authorization
             };
 
             //Act
-            var response = sut.Login(viewModel, CancellationToken.None).Result as ViewResult;
+            var response = sut.PostLogin(viewModel, CancellationToken.None).Result as ViewResult;
 
             //Assert
             response?.ViewData.ModelState.Keys.Count().Should().Be(0);

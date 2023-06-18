@@ -39,7 +39,7 @@ namespace PoliceDepartment.EvidenceManager.MVC.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Login(LoginModel viewModel, CancellationToken cancellationToken)
+        public async Task<IActionResult> PostLogin(LoginModel viewModel, CancellationToken cancellationToken)
         {
             Logger.LogDebug("MVC - Begin Login", ("username", viewModel.Username));
 
@@ -56,20 +56,7 @@ namespace PoliceDepartment.EvidenceManager.MVC.Controllers
             {
                 Logger.LogWarning("MVC - Invalid login", ("username", viewModel.Username), ("loginResponse", loginResponse));
 
-                if ((loginResponse.ResponseDetails.Errors is null || !loginResponse.ResponseDetails.Errors.Any()) && !loginResponse.Success)
-                {
-                    ModelState.AddModelError(string.Empty, loginResponse.ResponseDetails.Message);
-                    return View(viewModel);
-                }
-
-                if (loginResponse.Success)
-                {
-                    ModelState.AddModelError(string.Empty, ResponseMessage.GenericError.GetDescription());
-                    return View(viewModel);
-                }
-
-                foreach (var error in loginResponse.ResponseDetails.Errors)
-                    ModelState.AddModelError(string.Empty, error);
+                AddErrorsToModelState(loginResponse);
 
                 return View(viewModel);
             }
