@@ -24,6 +24,7 @@ namespace PoliceDepartment.EvidenceManager.UnitTests.Mvc.Cases
         private readonly IGetCasesByOfficerId _getCasesByOfficerId;
         private readonly ICreateCase _createCase;
         private readonly IGetCaseDetails _getCaseDetails;
+        private readonly IEditCase _editCase;
 
         public CasesControllerTests(MvcFixture fixture)
         {
@@ -34,6 +35,7 @@ namespace PoliceDepartment.EvidenceManager.UnitTests.Mvc.Cases
             _getCasesByOfficerId = Substitute.For<IGetCasesByOfficerId>();
             _createCase = Substitute.For<ICreateCase>();
             _getCaseDetails = Substitute.For<IGetCaseDetails>();
+            _editCase = Substitute.For<IEditCase>();
         }
 
         [Theory]
@@ -48,7 +50,7 @@ namespace PoliceDepartment.EvidenceManager.UnitTests.Mvc.Cases
                                 .Returns(success ? expectedResponse.AsSuccess(_fixture.Cases.GenerateViewModelCollection(caseQuantity)) : expectedResponse.AsError());
             _officerUser.Id.Returns(Guid.Empty);
 
-            var sut = new CasesController(_logger, _officerUser, _getCasesByOfficerId, _createCase, _getCaseDetails);
+            var sut = new CasesController(_logger, _officerUser, _getCasesByOfficerId, _createCase, _getCaseDetails, _editCase);
 
             //Act
             var response = sut.Index(CancellationToken.None).Result as ViewResult;
@@ -111,7 +113,7 @@ namespace PoliceDepartment.EvidenceManager.UnitTests.Mvc.Cases
                 Name = "Fake name",
                 Description = "Fake description"
             };
-            var sut = new CasesController(_logger, _officerUser, _getCasesByOfficerId, _createCase, _getCaseDetails);
+            var sut = new CasesController(_logger, _officerUser, _getCasesByOfficerId, _createCase, _getCaseDetails, _editCase);
 
             //Act & Assert
             if (success)
@@ -147,7 +149,7 @@ namespace PoliceDepartment.EvidenceManager.UnitTests.Mvc.Cases
             _getCaseDetails.RunAsync(Arg.Any<Guid>(),Arg.Any<CancellationToken>())
                             .Returns(expectedResponse);
 
-            var sut = new CasesController(_logger, _officerUser, _getCasesByOfficerId, _createCase, _getCaseDetails);
+            var sut = new CasesController(_logger, _officerUser, _getCasesByOfficerId, _createCase, _getCaseDetails, _editCase);
 
             //Act & Assert
             if(success && valueIsNotNull && valueIsValid)

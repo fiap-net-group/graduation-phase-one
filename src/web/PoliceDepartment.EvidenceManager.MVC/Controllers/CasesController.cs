@@ -17,6 +17,7 @@ namespace PoliceDepartment.EvidenceManager.MVC.Controllers
         private readonly IGetCasesByOfficerId _getCasesByOfficerId;
         private readonly ICreateCase _createCase;
         private readonly IGetCaseDetails _getCaseDetails;
+        private readonly IEditCase _editCase;
 
         private readonly CasesPageModel _pageModel;
 
@@ -24,12 +25,14 @@ namespace PoliceDepartment.EvidenceManager.MVC.Controllers
                                IOfficerUser officerUser,
                                IGetCasesByOfficerId getCasesByOfficerId,
                                ICreateCase createCase,
-                               IGetCaseDetails getCaseDetails) : base(logger)
+                               IGetCaseDetails getCaseDetails,
+                               IEditCase editCase) : base(logger)
         {
             _officerUser = officerUser;
             _getCasesByOfficerId = getCasesByOfficerId;
             _createCase = createCase;
             _getCaseDetails = getCaseDetails;
+            _editCase = editCase;
 
             _pageModel = new();
         }
@@ -71,7 +74,7 @@ namespace PoliceDepartment.EvidenceManager.MVC.Controllers
 
             if (!ModelState.IsValid)
             {
-                Logger.LogDebug("MVC - Create case - Error", ("officerId", _officerUser.Id));
+                Logger.LogDebug("MVC - Create case - Invalid case", ("officerId", _officerUser.Id));
 
                 return View(nameof(Create), viewModel);
             }
@@ -142,6 +145,28 @@ namespace PoliceDepartment.EvidenceManager.MVC.Controllers
         [Route("edit/{id:guid}")]
         public async Task<IActionResult> PostEdit(Guid id, CaseViewModel viewModel, CancellationToken cancellationToken)
         {
+            Logger.LogDebug("MVC - Begin edit case", ("officerId", _officerUser.Id), ("caseId", id));
+
+            if (!ModelState.IsValid || id == Guid.Empty)
+            {
+                Logger.LogDebug("MVC - Edit case - Invalid case", ("officerId", _officerUser.Id), ("caseId", id));
+                
+                return View(nameof(Edit), viewModel);
+            }
+
+            var editCaseResponse = await _editCase.RunAsync(id, viewModel, cancellationToken);
+
+            if (editCaseResponse.Success)
+            {
+                Logger.LogDebug("MVC - Edit case - Success", ("officerId", _officerUser.Id), ("caseId", id));
+
+                return RedirectToAction("Index", "Home");
+            }
+
+            Logger.LogDebug("MVC - Edit case - Error", ("officerId", _officerUser.Id), ("caseId", id), ("response", editCaseResponse));
+
+            AddErrorsToModelState(editCaseResponse);
+
             return RedirectToAction("Index", "Home");
         }
     }
