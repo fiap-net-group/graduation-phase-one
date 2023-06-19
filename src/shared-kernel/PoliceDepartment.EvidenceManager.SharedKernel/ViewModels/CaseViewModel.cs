@@ -9,5 +9,10 @@
 
         public Guid OfficerId { get; set; }
         public IEnumerable<EvidenceViewModel> Evidences { get; set; }
+
+        public bool Valid()
+        {
+            return Id != Guid.Empty;
+        }
     }
 }

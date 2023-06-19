@@ -33,9 +33,9 @@
                     @Html.DisplayFor(modelItem => viewModel.CreatedAt)
                 </td>
                 <td>
-                    <button class="btn btn-secondary">Details</button>
-                    <button class="btn btn-primary">Edit</button>
-                    <button class="btn btn-danger">Delete</button>
+                    <a class="btn btn-secondary" asp-action="Details" asp-route-id="@viewModel.Id">Details</a>
+                    <a class="btn btn-primary">Edit</a>
+                    <a class="btn btn-danger">Delete</a>
                 </td>
             </tr>
         }

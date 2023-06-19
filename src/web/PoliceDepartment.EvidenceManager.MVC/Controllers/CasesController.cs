@@ -15,17 +15,20 @@ namespace PoliceDepartment.EvidenceManager.MVC.Controllers
 
         private readonly IGetCasesByOfficerId _getCasesByOfficerId;
         private readonly ICreateCase _createCase;
+        private readonly IGetCaseDetails _getCaseDetails;
 
         private readonly CasesPageModel _pageModel;
 
         public CasesController(ILoggerManager logger,
                                IOfficerUser officerUser,
                                IGetCasesByOfficerId getCasesByOfficerId,
-                               ICreateCase createCase) : base(logger)
+                               ICreateCase createCase,
+                               IGetCaseDetails getCaseDetails) : base(logger)
         {
             _officerUser = officerUser;
             _getCasesByOfficerId = getCasesByOfficerId;
             _createCase = createCase;
+            _getCaseDetails = getCaseDetails;
 
             _pageModel = new();
         }
@@ -86,6 +89,29 @@ namespace PoliceDepartment.EvidenceManager.MVC.Controllers
             AddErrorsToModelState(createCaseResponse);
 
             return View(nameof(Create), viewModel);
+        }
+
+        [HttpGet]
+        [Route("details/{id:guid}")]
+        public async Task<IActionResult> Details(Guid id, CancellationToken cancellationToken)
+        {
+            Logger.LogDebug("MVC - Begin get case details", ("officerId", _officerUser.Id), ("caseId", id));
+
+            if (id != Guid.Empty)
+            {
+                var details = await _getCaseDetails.RunAsync(id, cancellationToken);
+
+                if (details.Success && details.Value is not null && details.Value.Valid())
+                {
+                    Logger.LogDebug("MVC - Success getting case details", ("officerId", _officerUser.Id), ("caseId", id));
+
+                    return View(details.Value);
+                }
+            }
+
+            Logger.LogDebug("MVC - Can't return case details because it doesn't exists", ("officerId", _officerUser.Id), ("caseId", id));
+            
+            return RedirectToAction("Error", "Home", 404);
         }
     }
 }

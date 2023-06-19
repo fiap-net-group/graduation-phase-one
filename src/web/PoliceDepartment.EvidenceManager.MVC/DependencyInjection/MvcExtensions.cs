@@ -22,7 +22,7 @@
 
             app.MapControllerRoute(
                 name: "default",
-                pattern: "{controller=Authorization}/{action=Login}/{id?}");
+                pattern: "{controller=Authorization}/{action=Login}/");
 
             return app;
         }
