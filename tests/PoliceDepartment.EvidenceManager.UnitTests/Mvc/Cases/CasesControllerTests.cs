@@ -178,6 +178,7 @@ namespace PoliceDepartment.EvidenceManager.UnitTests.Mvc.Cases
 
             var viewModel = new CaseViewModel
             {
+                Id = Guid.Parse(id),
                 Name = "Fake name",
                 Description = "Fake description"
             };
@@ -187,13 +188,13 @@ namespace PoliceDepartment.EvidenceManager.UnitTests.Mvc.Cases
             //Act & Assert
             if (success)
             {
-                var response = sut.PostEdit(Guid.Parse(id), viewModel, CancellationToken.None).Result as RedirectToActionResult;
+                var response = sut.PostEdit(viewModel, CancellationToken.None).Result as RedirectToActionResult;
                 response?.ActionName.Should().Be("Index");
                 response?.ControllerName.Should().Be("Home");
             }
             else
             {
-                var response = sut.PostEdit(Guid.Parse(id), viewModel, CancellationToken.None).Result as ViewResult;
+                var response = sut.PostEdit(viewModel, CancellationToken.None).Result as ViewResult;
                 response?.ViewData.ModelState.Should().NotBeEmpty();
             }
         }
