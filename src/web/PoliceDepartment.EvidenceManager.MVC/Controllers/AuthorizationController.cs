@@ -2,12 +2,11 @@
 using Microsoft.AspNetCore.Mvc;
 using PoliceDepartment.EvidenceManager.MVC.Authorization.Interfaces;
 using PoliceDepartment.EvidenceManager.MVC.Models;
-using PoliceDepartment.EvidenceManager.SharedKernel.Extensions;
 using PoliceDepartment.EvidenceManager.SharedKernel.Logger;
-using PoliceDepartment.EvidenceManager.SharedKernel.Responses;
 
 namespace PoliceDepartment.EvidenceManager.MVC.Controllers
 {
+    [Route("auth")]
     public sealed class AuthorizationController : BaseController
     {
         private readonly ILogin _login;
@@ -22,6 +21,7 @@ namespace PoliceDepartment.EvidenceManager.MVC.Controllers
         }
 
         [HttpGet]
+        [Route("login")]
         public IActionResult Login(string returnUrl = null)
         {
             Logger.LogDebug("MVC - Page Login");
