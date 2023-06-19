@@ -23,6 +23,7 @@ namespace PoliceDepartment.EvidenceManager.UnitTests.Mvc.Cases
         private readonly IOfficerUser _officerUser;
         private readonly IGetCasesByOfficerId _getCasesByOfficerId;
         private readonly ICreateCase _createCase;
+        private readonly IGetCaseDetails _getCaseDetails;
 
         public CasesControllerTests(MvcFixture fixture)
         {
@@ -32,6 +33,7 @@ namespace PoliceDepartment.EvidenceManager.UnitTests.Mvc.Cases
             _officerUser = Substitute.For<IOfficerUser>();
             _getCasesByOfficerId = Substitute.For<IGetCasesByOfficerId>();
             _createCase = Substitute.For<ICreateCase>();
+            _getCaseDetails = Substitute.For<IGetCaseDetails>();
         }
 
         [Theory]
@@ -46,7 +48,7 @@ namespace PoliceDepartment.EvidenceManager.UnitTests.Mvc.Cases
                                 .Returns(success ? expectedResponse.AsSuccess(_fixture.Cases.GenerateViewModelCollection(caseQuantity)) : expectedResponse.AsError());
             _officerUser.Id.Returns(Guid.Empty);
 
-            var sut = new CasesController(_logger, _officerUser, _getCasesByOfficerId, _createCase);
+            var sut = new CasesController(_logger, _officerUser, _getCasesByOfficerId, _createCase, _getCaseDetails);
 
             //Act
             var response = sut.Index(CancellationToken.None).Result as ViewResult;
@@ -109,7 +111,7 @@ namespace PoliceDepartment.EvidenceManager.UnitTests.Mvc.Cases
                 Name = "Fake name",
                 Description = "Fake description"
             };
-            var sut = new CasesController(_logger, _officerUser, _getCasesByOfficerId, _createCase);
+            var sut = new CasesController(_logger, _officerUser, _getCasesByOfficerId, _createCase, _getCaseDetails);
 
             //Act & Assert
             if(success)
