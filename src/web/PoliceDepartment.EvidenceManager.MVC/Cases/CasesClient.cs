@@ -15,7 +15,7 @@ namespace PoliceDepartment.EvidenceManager.MVC.Cases
 
         private readonly string _getCasesByOfficerIdUrl;
         private readonly string _createCaseUrl;
-
+        private readonly string _getDetailsUrl;
 
         public CasesClient(AsyncRetryPolicy<HttpResponseMessage> retryPolicy,
                            JsonSerializerOptions serializeOptions,
@@ -31,9 +31,11 @@ namespace PoliceDepartment.EvidenceManager.MVC.Cases
 
             _getCasesByOfficerIdUrl = configuration["Api:Cases:Endpoints:GetCasesByOfficerId"];
             _createCaseUrl = configuration["Api:Cases:Endpoints:CreateCase"];
+            _getDetailsUrl = configuration["Api:Cases:Endpoints:GetDetails"];
 
             ArgumentException.ThrowIfNullOrEmpty(_getCasesByOfficerIdUrl);
             ArgumentException.ThrowIfNullOrEmpty(_createCaseUrl);
+            ArgumentException.ThrowIfNullOrEmpty(_getDetailsUrl);
         }
 
         public async Task<BaseResponseWithValue<IEnumerable<CaseViewModel>>> GetByOfficerIdAsync(Guid officerId, string accessToken, CancellationToken cancellationToken)
@@ -66,6 +68,20 @@ namespace PoliceDepartment.EvidenceManager.MVC.Cases
             catch
             {
                 return new BaseResponse().AsError(ResponseMessage.GenericError);
+            }
+        }
+
+        public async Task<BaseResponseWithValue<CaseViewModel>> GetDetailsAsync(Guid id, string accessToken, CancellationToken cancellationToken)
+        {
+            var request = new HttpRequestMessage(HttpMethod.Get, _getDetailsUrl + $"/{id}");
+
+            try
+            {
+                return await SendAuthenticatedAsync<BaseResponseWithValue<CaseViewModel>>(request, accessToken, cancellationToken);
+            }
+            catch
+            {
+                return new BaseResponseWithValue<CaseViewModel>().AsError(ResponseMessage.GenericError);
             }
         }
     }

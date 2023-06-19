@@ -56,6 +56,7 @@ namespace PoliceDepartment.EvidenceManager.UnitTests.Mvc.Cases
             _configuration = Substitute.For<IConfiguration>();
             _configuration["Api:Cases:Endpoints:GetCasesByOfficerId"].Returns(_fixture.Cases.GetByOfficerIdUrl);
             _configuration["Api:Cases:Endpoints:CreateCase"].Returns(_fixture.Cases.CreateCaseUrl);
+            _configuration["Api:Cases:Endpoints:GetDetails"].Returns(_fixture.Cases.GetDetails);
             _logger = Substitute.For<ILoggerManager>();
         }
 
