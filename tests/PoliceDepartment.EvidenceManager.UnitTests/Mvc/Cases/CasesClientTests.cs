@@ -196,7 +196,6 @@ namespace PoliceDepartment.EvidenceManager.UnitTests.Mvc.Cases
         public void CreateCaseAsync_ValidRequest_ShouldReturnSuccessAndValidToken()
         {
             //Arrange
-            var officerId = Guid.NewGuid();
             var expectedResponseBody = JsonSerializer.Serialize(new BaseResponse().AsSuccess(), _serializeOptions);
             var mockHttpRequest = new MockHttpMessageHandler();
             mockHttpRequest.When(_fixture.Cases.CreateCaseUrl)
@@ -212,6 +211,35 @@ namespace PoliceDepartment.EvidenceManager.UnitTests.Mvc.Cases
             //Assert
             response.Should().NotBeNull();
             response.Success.Should().BeTrue();
+        }
+
+        [Theory]
+        [InlineData(HttpStatusCode.InternalServerError, ResponseMessage.GenericError)]
+        [InlineData(HttpStatusCode.Unauthorized, ResponseMessage.UserIsNotAuthenticated)]
+        [InlineData(HttpStatusCode.NotFound, ResponseMessage.CaseDontExists)]
+        [InlineData(HttpStatusCode.OK, ResponseMessage.Success)]
+        public void GetDetailsAsync_AllCases_ShouldReturnExpectedResponse(HttpStatusCode code, ResponseMessage responseMessage)
+        {
+            //Arrange
+            var responseModel = responseMessage == ResponseMessage.Success ? 
+                new BaseResponseWithValue<CaseViewModel>().AsSuccess() : 
+                new BaseResponseWithValue<CaseViewModel>().AsError(responseMessage);
+            var expectedResponseBody = JsonSerializer.Serialize(responseModel, _serializeOptions);
+            var mockHttpRequest = new MockHttpMessageHandler();
+            mockHttpRequest.When(_fixture.Cases.GetDetails)
+                           .Respond(code, "application/json", expectedResponseBody);
+            var mockClient = mockHttpRequest.ToHttpClient();
+            _clientFactory.CreateClient(ClientExtensions.CasesClientName).Returns(mockClient);
+
+            var sut = new CasesClient(_retryPolicy, _serializeOptions, _clientFactory, _configuration, _logger);
+
+            //Act
+            var response = sut.GetDetailsAsync(Guid.NewGuid(), _fixture.Authorization.GenerateFakeJwtToken(), CancellationToken.None).Result;
+
+            //Assert
+            response.Should().NotBeNull();
+            response.Success.Should().Be(responseModel.Success);
+            response.ResponseDetails.Message.Should().Be(responseModel.ResponseDetails.Message);
         }
     }
 }
