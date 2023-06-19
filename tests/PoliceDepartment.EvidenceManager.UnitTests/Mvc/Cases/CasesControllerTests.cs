@@ -114,7 +114,7 @@ namespace PoliceDepartment.EvidenceManager.UnitTests.Mvc.Cases
             var sut = new CasesController(_logger, _officerUser, _getCasesByOfficerId, _createCase, _getCaseDetails);
 
             //Act & Assert
-            if(success)
+            if (success)
             {
                 var response = sut.PostCreate(viewModel, CancellationToken.None).Result as RedirectToActionResult;
                 response?.ActionName.Should().Be("Index");
@@ -124,6 +124,42 @@ namespace PoliceDepartment.EvidenceManager.UnitTests.Mvc.Cases
             {
                 var response = sut.PostCreate(viewModel, CancellationToken.None).Result as ViewResult;
                 response?.ViewData.ModelState.Should().NotBeEmpty();
+            }
+        }
+
+        [Theory]
+        [InlineData("00000000-0000-0000-0000-000000000000", true, false, false)]
+        [InlineData("24553cbd-21fa-48e1-9531-7aea07a5788d", false, false, false)]
+        [InlineData("24553cbd-21fa-48e1-9531-7aea07a5788d", true, false, false)]
+        [InlineData("24553cbd-21fa-48e1-9531-7aea07a5788d", true, true, false)]
+        [InlineData("24553cbd-21fa-48e1-9531-7aea07a5788d", true, true, true)]
+        public void Details_AllCases_ShouldReturnExpectedResponse(string id, bool success, bool valueIsNotNull, bool valueIsValid)
+        {
+            //Arrang
+            var expectedResponse = new BaseResponseWithValue<CaseViewModel>
+            {
+                Success = success,
+            };
+            var value = _fixture.Cases.GenerateSingleViewModel();
+            if (!valueIsValid) value.Id = Guid.Empty;
+            if (valueIsNotNull) expectedResponse.Value = _fixture.Cases.GenerateSingleViewModel();
+
+            _getCaseDetails.RunAsync(Arg.Any<Guid>(),Arg.Any<CancellationToken>())
+                            .Returns(expectedResponse);
+
+            var sut = new CasesController(_logger, _officerUser, _getCasesByOfficerId, _createCase, _getCaseDetails);
+
+            //Act & Assert
+            if(success && valueIsNotNull && valueIsValid)
+            {
+                var response = sut.Details(Guid.Parse(id), CancellationToken.None).Result as ViewResult;
+                response?.Model.Should().Be(expectedResponse.Value);
+            }
+            else
+            {
+                var response = sut.Details(Guid.Parse(id), CancellationToken.None).Result as RedirectToActionResult;
+                response?.ActionName.Should().Be("Error");
+                response?.ControllerName.Should().Be("Home");
             }
         }
     }
