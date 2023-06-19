@@ -1,5 +1,5 @@
 ﻿using Bogus;
-using PoliceDepartment.EvidenceManager.Domain.Officer;
+using PoliceDepartment.EvidenceManager.SharedKernel.Officer;
 
 namespace PoliceDepartment.EvidenceManager.UnitTests.Fixtures.Api
 {

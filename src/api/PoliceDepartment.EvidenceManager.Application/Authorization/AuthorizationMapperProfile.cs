@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using PoliceDepartment.EvidenceManager.Domain.Authorization;
+using PoliceDepartment.EvidenceManager.SharedKernel.Authorization;
 using PoliceDepartment.EvidenceManager.SharedKernel.ViewModels;
 
 namespace PoliceDepartment.EvidenceManager.Application.Authorization

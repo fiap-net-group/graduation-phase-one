@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Bogus;
-using PoliceDepartment.EvidenceManager.Domain.Evidence;
+using PoliceDepartment.EvidenceManager.SharedKernel.Evidence;
 using PoliceDepartment.EvidenceManager.SharedKernel.ViewModels;
 
 namespace PoliceDepartment.EvidenceManager.UnitTests.Fixtures.Api

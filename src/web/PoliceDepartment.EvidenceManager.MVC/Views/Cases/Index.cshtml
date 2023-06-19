@@ -1,0 +1,43 @@
+﻿@model CasesPageModel
+
+@{
+    ViewData["Title"] = "Cases";
+}
+
+<h1>Cases</h1>
+
+<p>
+    <a class="btn btn-success" asp-action="Create">New case</a>
+</p>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Created At</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var viewModel in Model.Cases)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => viewModel.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => viewModel.Description)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => viewModel.CreatedAt)
+                </td>
+                <td>
+                    <a class="btn btn-secondary" asp-action="Details" asp-route-id="@viewModel.Id">Details</a>
+                    <a class="btn btn-primary">Edit</a>
+                    <a class="btn btn-danger">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

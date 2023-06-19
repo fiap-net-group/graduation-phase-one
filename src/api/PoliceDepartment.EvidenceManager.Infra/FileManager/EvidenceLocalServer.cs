@@ -1,4 +1,4 @@
-﻿using PoliceDepartment.EvidenceManager.Domain.Evidence;
+﻿using PoliceDepartment.EvidenceManager.SharedKernel.Evidence;
 
 namespace PoliceDepartment.EvidenceManager.Infra.FileManager
 {

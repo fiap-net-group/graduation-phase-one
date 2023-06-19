@@ -1,8 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
-using PoliceDepartment.EvidenceManager.Domain.Case;
-using PoliceDepartment.EvidenceManager.Domain.Evidence;
-using PoliceDepartment.EvidenceManager.Domain.Officer;
+using PoliceDepartment.EvidenceManager.SharedKernel.Case;
+using PoliceDepartment.EvidenceManager.SharedKernel.Evidence;
+using PoliceDepartment.EvidenceManager.SharedKernel.Officer;
 using PoliceDepartment.EvidenceManager.Infra.Database.Mappings;
 using PoliceDepartment.EvidenceManager.SharedKernel.Logger;
 using System.Diagnostics.CodeAnalysis;

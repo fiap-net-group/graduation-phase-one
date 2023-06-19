@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using PoliceDepartment.EvidenceManager.Domain.Case;
+using PoliceDepartment.EvidenceManager.SharedKernel.Case;
 
-namespace PoliceDepartment.EvidenceManager.Domain.Officer
+namespace PoliceDepartment.EvidenceManager.SharedKernel.Officer
 {
     public class OfficerEntity : IdentityUser
     {

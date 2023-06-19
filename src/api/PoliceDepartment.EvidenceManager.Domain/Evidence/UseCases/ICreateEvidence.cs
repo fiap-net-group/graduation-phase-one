@@ -1,4 +1,4 @@
-﻿namespace PoliceDepartment.EvidenceManager.Domain.Evidence.UseCases
+﻿namespace PoliceDepartment.EvidenceManager.SharedKernel.Evidence.UseCases
 {
     public interface ICreateEvidence<TViewModel, TResult>
     {

@@ -1,4 +1,4 @@
-﻿namespace PoliceDepartment.EvidenceManager.Domain.Case
+﻿namespace PoliceDepartment.EvidenceManager.SharedKernel.Case
 {
     public interface ICaseRepository : IDisposable
     {
@@ -7,5 +7,6 @@
         Task<CaseEntity> GetByIdAsync(Guid id, CancellationToken cancellationToken);
         Task DeleteAsync(CaseEntity entity, CancellationToken cancellationToken);
         Task AddAsync(CaseEntity entity, CancellationToken cancellationToken);
+        Task<CaseEntity> GetByNameAsync(string name, CancellationToken cancellationToken);
     }
 }

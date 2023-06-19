@@ -1,4 +1,4 @@
-﻿namespace PoliceDepartment.EvidenceManager.Domain.Authorization.UseCases
+﻿namespace PoliceDepartment.EvidenceManager.SharedKernel.Authorization.UseCases
 {
     public interface ILogin<TViewModel,TResult>
     {

@@ -10,6 +10,8 @@ namespace PoliceDepartment.EvidenceManager.MVC.Client
 
         public const string AuthorizationClientName = nameof(AuthorizationClientName);
 
+        public const string CasesClientName = nameof(CasesClientName);
+
         public static IServiceCollection AddClientConfiguration(this IServiceCollection services)
         {
             services.AddSingleton(new JsonSerializerOptions

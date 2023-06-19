@@ -1,0 +1,57 @@
+﻿@using PoliceDepartment.EvidenceManager.SharedKernel.ViewModels;
+@model IEnumerable<EvidenceViewModel>;
+
+<h4>Evidences</h4>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Image
+            </th>
+            <th>
+                Name
+            </th>
+            <th>
+                Description
+            </th>
+            <th>
+                Actions
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @{
+            if(!Model.Any())
+            {
+                <tr>
+                    <td>
+                        This case has no evidence
+                    </td>
+                </tr>
+            }
+            else
+            {
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>
+                            Image
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Name)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Description)
+                        </td>
+                        <td>
+                            <a class="btn btn-secondary">Details</a>
+                            <a class="btn btn-primary">Edit</a>
+                            <a class="btn btn-danger">Delete</a>
+                        </td>
+                    </tr>
+                }
+            }            
+        }
+    </tbody>
+</table>

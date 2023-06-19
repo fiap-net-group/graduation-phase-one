@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
-using PoliceDepartment.EvidenceManager.Domain.Exceptions;
-using PoliceDepartment.EvidenceManager.Domain.Officer;
+using PoliceDepartment.EvidenceManager.SharedKernel.Exceptions;
+using PoliceDepartment.EvidenceManager.SharedKernel.Officer;
 using PoliceDepartment.EvidenceManager.SharedKernel.Logger;
 using System.Diagnostics.CodeAnalysis;
 

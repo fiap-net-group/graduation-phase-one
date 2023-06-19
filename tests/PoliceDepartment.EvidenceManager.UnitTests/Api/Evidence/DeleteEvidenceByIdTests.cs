@@ -1,8 +1,8 @@
 using FluentAssertions;
 using NSubstitute;
 using PoliceDepartment.EvidenceManager.API.Application.Evidence.UseCases;
-using PoliceDepartment.EvidenceManager.Domain.Database;
-using PoliceDepartment.EvidenceManager.Domain.Evidence;
+using PoliceDepartment.EvidenceManager.SharedKernel.Database;
+using PoliceDepartment.EvidenceManager.SharedKernel.Evidence;
 using PoliceDepartment.EvidenceManager.SharedKernel.Logger;
 using PoliceDepartment.EvidenceManager.SharedKernel.Responses;
 using PoliceDepartment.EvidenceManager.UnitTests.Fixtures.Api;

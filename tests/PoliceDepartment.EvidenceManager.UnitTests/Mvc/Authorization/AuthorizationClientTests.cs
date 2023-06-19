@@ -58,7 +58,7 @@ namespace PoliceDepartment.EvidenceManager.UnitTests.Mvc.Authorization
         }
 
         [Fact]
-        public void SignInAsync_ServerIsOff_SholdReturnGenericError()
+        public void SignInAsync_ServerIsOff_ShouldReturnGenericError()
         {
             //Arrange
             var mockHttpRequest = new MockHttpMessageHandler();
@@ -80,7 +80,7 @@ namespace PoliceDepartment.EvidenceManager.UnitTests.Mvc.Authorization
 
 
         [Fact]
-        public void SignInAsync_InvalidRequest_SholdReturnBadRequest()
+        public void SignInAsync_InvalidRequest_ShouldReturnBadRequest()
         {
             //Arrange
             var expectedResponseBody = JsonSerializer.Serialize(new BaseResponseWithValue<AccessTokenViewModel>().AsError(ResponseMessage.InvalidCredentials), _serializeOptions);
@@ -102,7 +102,7 @@ namespace PoliceDepartment.EvidenceManager.UnitTests.Mvc.Authorization
         }
 
         [Fact]
-        public void SignInAsync_ValidRequest_SholdReturnSuccessAndValidToken()
+        public void SignInAsync_ValidRequest_ShouldReturnSuccessAndValidToken()
         {
             //Arrange
             var expectedResponseBody = JsonSerializer.Serialize(new BaseResponseWithValue<AccessTokenViewModel>().AsSuccess(_fixture.Authorization.GenerateViewModel(valid: true)), _serializeOptions);
@@ -123,7 +123,7 @@ namespace PoliceDepartment.EvidenceManager.UnitTests.Mvc.Authorization
         }
 
         [Fact]
-        public void SignOutAsync_ServerIsOff_SholdReturnGenericError()
+        public void SignOutAsync_ServerIsOff_ShouldReturnGenericError()
         {
             //Arrange
             var mockHttpRequest = new MockHttpMessageHandler();
@@ -145,7 +145,7 @@ namespace PoliceDepartment.EvidenceManager.UnitTests.Mvc.Authorization
 
 
         [Fact]
-        public void SignOutAsync_Unauthorized_SholdReturnUnauthorized()
+        public void SignOutAsync_Unauthorized_ShouldReturnUnauthorized()
         {
             //Arrange
             var expectedResponseBody = JsonSerializer.Serialize(new BaseResponseWithValue<AccessTokenViewModel>().AsError(ResponseMessage.UserIsNotAuthenticated), _serializeOptions);
@@ -167,7 +167,7 @@ namespace PoliceDepartment.EvidenceManager.UnitTests.Mvc.Authorization
         }
 
         [Fact]
-        public void SignOutAsync_ValidRequest_SholdReturnSuccessAndValidToken()
+        public void SignOutAsync_ValidRequest_ShouldReturnSuccessAndValidToken()
         {
             //Arrange
             var expectedResponseBody = JsonSerializer.Serialize(new BaseResponse().AsSuccess(), _serializeOptions);

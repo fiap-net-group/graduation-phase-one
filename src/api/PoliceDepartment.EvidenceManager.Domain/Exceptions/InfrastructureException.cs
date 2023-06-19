@@ -1,6 +1,6 @@
 ﻿using System.Runtime.Serialization;
 
-namespace PoliceDepartment.EvidenceManager.Domain.Exceptions
+namespace PoliceDepartment.EvidenceManager.SharedKernel.Exceptions
 {
     [Serializable]
     public class InfrastructureException : Exception

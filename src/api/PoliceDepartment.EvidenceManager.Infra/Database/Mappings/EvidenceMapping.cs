@@ -1,8 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore;
-using PoliceDepartment.EvidenceManager.Domain.Case;
+using PoliceDepartment.EvidenceManager.SharedKernel.Case;
 using System.Diagnostics.CodeAnalysis;
-using PoliceDepartment.EvidenceManager.Domain.Evidence;
+using PoliceDepartment.EvidenceManager.SharedKernel.Evidence;
 
 namespace PoliceDepartment.EvidenceManager.Infra.Database.Mappings
 {

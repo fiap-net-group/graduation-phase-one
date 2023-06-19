@@ -5,12 +5,12 @@ using FluentValidation.Results;
 using NSubstitute;
 using PoliceDepartment.EvidenceManager.API.Application.Evidence.UseCases;
 using PoliceDepartment.EvidenceManager.Application.Case.UseCases;
-using PoliceDepartment.EvidenceManager.Domain.Case;
-using PoliceDepartment.EvidenceManager.Domain.Database;
-using PoliceDepartment.EvidenceManager.Domain.Evidence;
-using PoliceDepartment.EvidenceManager.Domain.Evidence.UseCases;
-using PoliceDepartment.EvidenceManager.Domain.Exceptions;
-using PoliceDepartment.EvidenceManager.Domain.Logger;
+using PoliceDepartment.EvidenceManager.SharedKernel.Case;
+using PoliceDepartment.EvidenceManager.SharedKernel.Database;
+using PoliceDepartment.EvidenceManager.SharedKernel.Evidence;
+using PoliceDepartment.EvidenceManager.SharedKernel.Evidence.UseCases;
+using PoliceDepartment.EvidenceManager.SharedKernel.Exceptions;
+using PoliceDepartment.EvidenceManager.SharedKernel.Logger;
 using PoliceDepartment.EvidenceManager.SharedKernel.Extensions;
 using PoliceDepartment.EvidenceManager.SharedKernel.Responses;
 using PoliceDepartment.EvidenceManager.SharedKernel.ViewModels;
@@ -75,7 +75,7 @@ namespace PoliceDepartment.EvidenceManager.UnitTests.Api.Evidence
         public async Task RunAsync_InvalidRequest_ShouldReturnError(string name, string description, Guid imageId, Guid caseId, ResponseMessage expectedResponse)
         {
             // Arrange
-            CreateEvidenceViewModel viewModel = new CreateEvidenceViewModel { Name = name, Description = description, CaseId = caseId, ImageId = imageId };
+            CreateEvidenceViewModel viewModel = new() { Name = name, Description = description, CaseId = caseId, ImageId = imageId };
 
             var validationResult = new ValidationResult();
             validationResult.Errors.Add(new ValidationFailure("Name", "Name is required"));

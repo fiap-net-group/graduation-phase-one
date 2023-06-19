@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using PoliceDepartment.EvidenceManager.Domain.Case;
+using PoliceDepartment.EvidenceManager.SharedKernel.Case;
 using PoliceDepartment.EvidenceManager.Infra.Database.Mappings;
 using System.Diagnostics.CodeAnalysis;
 
@@ -30,6 +30,14 @@ namespace PoliceDepartment.EvidenceManager.Infra.Database.Repositories
             var entity = await _context.Cases.Where(c => c.Id == id)
                                              .Include(c => c.Officer)
                                              .Include(c => c.Evidences)
+                                             .FirstOrDefaultAsync(cancellationToken);
+
+            return entity ?? new CaseEntity();
+        }
+
+        public async Task<CaseEntity> GetByNameAsync(string name, CancellationToken cancellationToken)
+        {
+            var entity = await _context.Cases.Where(c => c.Name == name)
                                              .FirstOrDefaultAsync(cancellationToken);
 
             return entity ?? new CaseEntity();

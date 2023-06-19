@@ -47,7 +47,7 @@ namespace PoliceDepartment.EvidenceManager.MVC.Authorization
                 if(!IsAuthenticated)
                     return Guid.Empty;
 
-                var claim = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier);
+                var claim = HttpContext.User.FindFirst(JwtRegisteredClaimNames.Sub);
 
                 if(claim is not null)
                     return Guid.Parse(claim.Value);

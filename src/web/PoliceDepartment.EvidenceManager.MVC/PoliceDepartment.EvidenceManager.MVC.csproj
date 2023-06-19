@@ -10,6 +10,7 @@
 
   <ItemGroup>
     <None Include="Views\Authorization\Login.cshtml" />
+    <None Include="Views\Shared\Evidences\_ListEvidencesPartial.cshtml" />
   </ItemGroup>
 
   <ItemGroup>
