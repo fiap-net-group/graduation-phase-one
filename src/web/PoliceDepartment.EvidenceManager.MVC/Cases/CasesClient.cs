@@ -91,7 +91,7 @@ namespace PoliceDepartment.EvidenceManager.MVC.Cases
 
         public async Task<BaseResponse> EditAsync(Guid id, CaseViewModel caseViewModel, string accessToken, CancellationToken cancellationToken)
         {
-            var request = new HttpRequestMessage(HttpMethod.Patch, _createCaseUrl + $"/{id}")
+            var request = new HttpRequestMessage(HttpMethod.Patch, _editUrl + $"/{id}")
             {
                 Content = new StringContent(JsonSerializer.Serialize(caseViewModel, _serializeOptions),
                                             Encoding.UTF8,
