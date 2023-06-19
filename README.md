@@ -10,9 +10,6 @@ Follow these steps to run the project locally.
 # You have to be at docker folder to run the commands
 cd docker
 
-# development
-docker-compose -f docker-compose-development.yml up --build 
-
 # staging
 docker-compose -f docker-compose-staging.yml up --build 
 

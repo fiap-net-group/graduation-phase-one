@@ -4,6 +4,7 @@ using PoliceDepartment.EvidenceManager.MVC.Authorization.Interfaces;
 using PoliceDepartment.EvidenceManager.MVC.Cases.Interfaces;
 using PoliceDepartment.EvidenceManager.MVC.Models;
 using PoliceDepartment.EvidenceManager.SharedKernel.Logger;
+using PoliceDepartment.EvidenceManager.SharedKernel.ViewModels;
 
 namespace PoliceDepartment.EvidenceManager.MVC.Controllers
 {
@@ -112,6 +113,36 @@ namespace PoliceDepartment.EvidenceManager.MVC.Controllers
             Logger.LogDebug("MVC - Can't return case details because it doesn't exists", ("officerId", _officerUser.Id), ("caseId", id));
             
             return RedirectToAction("Error", "Home", 404);
+        }
+
+        [HttpGet]
+        [Route("edit/{id:guid}")]
+        public async Task<IActionResult> Edit(Guid id, CancellationToken cancellationToken)
+        {
+            Logger.LogDebug("MVC - Begin loading edit case page", ("officerId", _officerUser.Id), ("caseId", id));
+
+            if (id != Guid.Empty)
+            {
+                var details = await _getCaseDetails.RunAsync(id, cancellationToken);
+
+                if (details.Success && details.Value is not null && details.Value.Valid())
+                {
+                    Logger.LogDebug("MVC - Success loading edit case page", ("officerId", _officerUser.Id), ("caseId", id));
+
+                    return View(details.Value);
+                }
+            }
+
+            Logger.LogDebug("MVC - Can't edit case because it doesn't exists", ("officerId", _officerUser.Id), ("caseId", id));
+
+            return RedirectToAction("Error", "Home", 404);
+        }
+
+        [HttpPost]
+        [Route("edit/{id:guid}")]
+        public async Task<IActionResult> PostEdit(Guid id, CaseViewModel viewModel, CancellationToken cancellationToken)
+        {
+            return RedirectToAction("Index", "Home");
         }
     }
 }
