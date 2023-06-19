@@ -147,7 +147,10 @@ namespace PoliceDepartment.EvidenceManager.MVC.Controllers
         {
             Logger.LogDebug("MVC - Begin edit case", ("officerId", _officerUser.Id), ("caseId", id));
 
-            if (!ModelState.IsValid || id == Guid.Empty)
+            if (id == Guid.Empty)
+                ModelState.AddModelError(string.Empty, "Invalid id");
+
+            if (!ModelState.IsValid)
             {
                 Logger.LogDebug("MVC - Edit case - Invalid case", ("officerId", _officerUser.Id), ("caseId", id));
                 

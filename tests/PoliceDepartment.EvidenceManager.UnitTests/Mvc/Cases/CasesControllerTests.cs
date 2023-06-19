@@ -63,12 +63,12 @@ namespace PoliceDepartment.EvidenceManager.UnitTests.Mvc.Cases
         }
 
         [Theory]
-        [InlineData("","description fake", "Name is required")]
-        [InlineData(null,"description fake", "Name is required")]
-        [InlineData(" ","description fake", "Name is required")]
-        [InlineData("fake name","", "Description is required")]
-        [InlineData("fake name",null, "Description is required")]
-        [InlineData("fake name"," ", "Description is required")]
+        [InlineData("", "description fake", "Name is required")]
+        [InlineData(null, "description fake", "Name is required")]
+        [InlineData(" ", "description fake", "Name is required")]
+        [InlineData("fake name", "", "Description is required")]
+        [InlineData("fake name", null, "Description is required")]
+        [InlineData("fake name", " ", "Description is required")]
         [InlineData("", "", "Name is required", "Description is required")]
         [InlineData(null, "", "Name is required", "Description is required")]
         [InlineData(" ", "", "Name is required", "Description is required")]
@@ -146,13 +146,13 @@ namespace PoliceDepartment.EvidenceManager.UnitTests.Mvc.Cases
             if (!valueIsValid) value.Id = Guid.Empty;
             if (valueIsNotNull) expectedResponse.Value = _fixture.Cases.GenerateSingleViewModel();
 
-            _getCaseDetails.RunAsync(Arg.Any<Guid>(),Arg.Any<CancellationToken>())
+            _getCaseDetails.RunAsync(Arg.Any<Guid>(), Arg.Any<CancellationToken>())
                             .Returns(expectedResponse);
 
             var sut = new CasesController(_logger, _officerUser, _getCasesByOfficerId, _createCase, _getCaseDetails, _editCase);
 
             //Act & Assert
-            if(success && valueIsNotNull && valueIsValid)
+            if (success && valueIsNotNull && valueIsValid)
             {
                 var response = sut.Details(Guid.Parse(id), CancellationToken.None).Result as ViewResult;
                 response?.Model.Should().Be(expectedResponse.Value);
@@ -160,6 +160,75 @@ namespace PoliceDepartment.EvidenceManager.UnitTests.Mvc.Cases
             else
             {
                 var response = sut.Details(Guid.Parse(id), CancellationToken.None).Result as RedirectToActionResult;
+                response?.ActionName.Should().Be("Error");
+                response?.ControllerName.Should().Be("Home");
+            }
+        }
+
+        [Theory]
+        [InlineData("00000000-0000-0000-0000-000000000000", false)]
+        [InlineData("24553cbd-21fa-48e1-9531-7aea07a5788d", false)]
+        [InlineData("24553cbd-21fa-48e1-9531-7aea07a5788d", true)]
+        public void PostEdit_AllCases_ShouldReturnExpectedResponse(string id, bool success)
+        {
+            //Arrang
+            var expectedResponse = new BaseResponse();
+            _editCase.RunAsync(Arg.Any<Guid>(), Arg.Any<CaseViewModel>(), Arg.Any<CancellationToken>())
+                       .Returns(Task.FromResult(success ? expectedResponse.AsSuccess() : expectedResponse.AsError()));
+
+            var viewModel = new CaseViewModel
+            {
+                Name = "Fake name",
+                Description = "Fake description"
+            };
+
+            var sut = new CasesController(_logger, _officerUser, _getCasesByOfficerId, _createCase, _getCaseDetails, _editCase);
+
+            //Act & Assert
+            if (success)
+            {
+                var response = sut.PostEdit(Guid.Parse(id), viewModel, CancellationToken.None).Result as RedirectToActionResult;
+                response?.ActionName.Should().Be("Index");
+                response?.ControllerName.Should().Be("Home");
+            }
+            else
+            {
+                var response = sut.PostEdit(Guid.Parse(id), viewModel, CancellationToken.None).Result as ViewResult;
+                response?.ViewData.ModelState.Should().NotBeEmpty();
+            }
+        }
+
+        [Theory]
+        [InlineData("00000000-0000-0000-0000-000000000000", true, false, false)]
+        [InlineData("24553cbd-21fa-48e1-9531-7aea07a5788d", false, false, false)]
+        [InlineData("24553cbd-21fa-48e1-9531-7aea07a5788d", true, false, false)]
+        [InlineData("24553cbd-21fa-48e1-9531-7aea07a5788d", true, true, false)]
+        [InlineData("24553cbd-21fa-48e1-9531-7aea07a5788d", true, true, true)]
+        public void Edit_AllCases_ShouldReturnExpectedResponse(string id, bool success, bool valueIsNotNull, bool valueIsValid)
+        {
+            //Arrange
+            var expectedResponse = new BaseResponseWithValue<CaseViewModel>
+            {
+                Success = success,
+            };
+            var value = _fixture.Cases.GenerateSingleViewModel();
+            if (!valueIsValid) value.Id = Guid.Empty;
+            if (valueIsNotNull) expectedResponse.Value = _fixture.Cases.GenerateSingleViewModel();
+
+            _getCaseDetails.RunAsync(Arg.Any<Guid>(), Arg.Any<CancellationToken>())
+                            .Returns(expectedResponse);
+
+            var sut = new CasesController(_logger, _officerUser, _getCasesByOfficerId, _createCase, _getCaseDetails, _editCase);
+
+            //Act & Assert
+            if (success && valueIsNotNull && valueIsValid)
+            {
+                var response = sut.Edit(Guid.Parse(id), CancellationToken.None).Result as ViewResult;
+                response?.Model.Should().Be(expectedResponse.Value);
+            }
+            else
+            {
+                var response = sut.Edit(Guid.Parse(id), CancellationToken.None).Result as RedirectToActionResult;
                 response?.ActionName.Should().Be("Error");
                 response?.ControllerName.Should().Be("Home");
             }
