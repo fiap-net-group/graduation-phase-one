@@ -142,31 +142,31 @@ namespace PoliceDepartment.EvidenceManager.MVC.Controllers
         }
 
         [HttpPost]
-        [Route("edit/{id:guid}")]
-        public async Task<IActionResult> PostEdit(Guid id, CaseViewModel viewModel, CancellationToken cancellationToken)
+        [Route("edit")]
+        public async Task<IActionResult> PostEdit(CaseViewModel viewModel, CancellationToken cancellationToken)
         {
-            Logger.LogDebug("MVC - Begin edit case", ("officerId", _officerUser.Id), ("caseId", id));
+            Logger.LogDebug("MVC - Begin edit case", ("officerId", _officerUser.Id), ("caseId", viewModel.Id));
 
-            if (id == Guid.Empty)
+            if (viewModel.Id != null && viewModel.Id == Guid.Empty)
                 ModelState.AddModelError(string.Empty, "Invalid id");
 
             if (!ModelState.IsValid)
             {
-                Logger.LogDebug("MVC - Edit case - Invalid case", ("officerId", _officerUser.Id), ("caseId", id));
+                Logger.LogDebug("MVC - Edit case - Invalid case", ("officerId", _officerUser.Id), ("caseId", viewModel.Id));
                 
                 return View(nameof(Edit), viewModel);
             }
 
-            var editCaseResponse = await _editCase.RunAsync(id, viewModel, cancellationToken);
+            var editCaseResponse = await _editCase.RunAsync(viewModel.Id.Value, viewModel, cancellationToken);
 
             if (editCaseResponse.Success)
             {
-                Logger.LogDebug("MVC - Edit case - Success", ("officerId", _officerUser.Id), ("caseId", id));
+                Logger.LogDebug("MVC - Edit case - Success", ("officerId", _officerUser.Id), ("caseId", viewModel.Id));
 
                 return RedirectToAction("Index", "Home");
             }
 
-            Logger.LogDebug("MVC - Edit case - Error", ("officerId", _officerUser.Id), ("caseId", id), ("response", editCaseResponse));
+            Logger.LogDebug("MVC - Edit case - Error", ("officerId", _officerUser.Id), ("caseId", viewModel.Id), ("response", editCaseResponse));
 
             AddErrorsToModelState(editCaseResponse);
 
