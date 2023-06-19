@@ -16,22 +16,28 @@
             <th>Name</th>
             <th>Description</th>
             <th>Created At</th>
+            <th>Action</th>
         </tr>
     </thead>
-   <tbody>
-        @foreach (var @case in Model.Cases)
+    <tbody>
+        @foreach (var viewModel in Model.Cases)
         {
             <tr>
                 <td>
-                    @Html.DisplayFor(modelItem => @case.Name)
+                    @Html.DisplayFor(modelItem => viewModel.Name)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => @case.Description)
+                    @Html.DisplayFor(modelItem => viewModel.Description)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => @case.CreatedAt)
+                    @Html.DisplayFor(modelItem => viewModel.CreatedAt)
+                </td>
+                <td>
+                    <button class="btn btn-secondary">Details</button>
+                    <button class="btn btn-primary">Edit</button>
+                    <button class="btn btn-danger">Delete</button>
                 </td>
             </tr>
         }
-   </tbody>    
+    </tbody>
 </table>
