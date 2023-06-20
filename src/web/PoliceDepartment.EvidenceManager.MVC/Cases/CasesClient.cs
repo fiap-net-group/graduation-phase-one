@@ -116,9 +116,9 @@ namespace PoliceDepartment.EvidenceManager.MVC.Cases
 
             try
             {
-                await SendAuthenticatedAsync(request, accessToken, cancellationToken);
+                var success = await SendAuthenticatedAsync(request, accessToken, cancellationToken);
 
-                return new BaseResponse().AsSuccess();
+                return success ? new BaseResponse().AsSuccess() : new BaseResponse().AsError();
             }
             catch
             {

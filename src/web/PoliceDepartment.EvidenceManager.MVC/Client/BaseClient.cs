@@ -26,7 +26,7 @@ namespace PoliceDepartment.EvidenceManager.MVC.Client
             _logger = logger;
         }
 
-        protected async Task SendAuthenticatedAsync(HttpRequestMessage request, string accessToken, CancellationToken cancellationToken)
+        protected async Task<bool> SendAuthenticatedAsync(HttpRequestMessage request, string accessToken, CancellationToken cancellationToken)
         {
             try
             {
@@ -41,6 +41,8 @@ namespace PoliceDepartment.EvidenceManager.MVC.Client
                 cancellationToken);
 
                 _logger.LogDebug("API call", ("response", apiResponse));
+
+                return apiResponse.IsSuccessStatusCode;
             }
             catch (Exception ex)
             {
