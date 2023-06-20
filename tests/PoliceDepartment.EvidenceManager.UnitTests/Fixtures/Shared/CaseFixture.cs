@@ -13,6 +13,7 @@ namespace PoliceDepartment.EvidenceManager.UnitTests.Fixtures.Shared
         public string CreateCaseUrl => "http://localhost/api/fake/cases/";
         public string GetDetailsUrl => "http://localhost/api/fake/cases/*";
         public string EditUrl => "http://localhost/api/fake/cases/*";
+        public string DeleteUrl => "http://localhost/api/fake/cases/*";
 
         public CaseEntity GenerateSingleEntity(Guid officerId = default)
         {
