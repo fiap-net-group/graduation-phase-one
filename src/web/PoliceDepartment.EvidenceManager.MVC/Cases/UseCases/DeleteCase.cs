@@ -22,11 +22,18 @@ namespace PoliceDepartment.EvidenceManager.MVC.Cases.UseCases
         {
             _logger.LogDebug("MVC - Delete case logic", ("caseId", id), ("officerId", _officerUser.Id));
 
+            if(id == Guid.Empty)
+            {
+                _logger.LogInformation("MVC - Delete case logic - Invalid id", ("caseId", id), ("officerId", _officerUser.Id));
+
+                return new BaseResponse().AsError();
+            }
+
             var response = await _client.DeleteAsync(id, _officerUser.AccessToken, cancellationToken);
 
             if (!response.Success)
             {
-                _logger.LogWarning("MVC - Delete case logic - Error", ("officerId", _officerUser.Id), (nameof(response), response));
+                _logger.LogWarning("MVC - Delete case logic - Error", ("caseId", id), ("officerId", _officerUser.Id), (nameof(response), response));
 
                 return response;
             }

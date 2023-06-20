@@ -178,7 +178,7 @@ namespace PoliceDepartment.EvidenceManager.MVC.Controllers
 
         [HttpGet]
         [Route("delete/{id:guid}")]
-        public async Task<IActionResult> PostDelete(Guid id, CancellationToken cancellationToken)
+        public async Task<IActionResult> Delete(Guid id, CancellationToken cancellationToken)
         {
             Logger.LogDebug("MVC - Begin deleting case", ("officerId", _officerUser.Id), ("caseId", id));
 

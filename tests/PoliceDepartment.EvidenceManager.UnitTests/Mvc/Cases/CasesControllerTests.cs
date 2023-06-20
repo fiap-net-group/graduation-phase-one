@@ -236,6 +236,24 @@ namespace PoliceDepartment.EvidenceManager.UnitTests.Mvc.Cases
                 response?.ControllerName.Should().Be("Home");
             }
         }
+
+        [Theory]
+        [InlineData("00000000-0000-0000-0000-000000000000", false)]
+        [InlineData("24553cbd-21fa-48e1-9531-7aea07a5788d", false)]
+        [InlineData("24553cbd-21fa-48e1-9531-7aea07a5788d", true)]
+        public void Delete_AllCases_ShouldReturnExpectedResponse(string id, bool success)
+        {
+            //Arrange
+            var expectedResponse = success ? new BaseResponse().AsSuccess() : new BaseResponse().AsError();
+            _deleteCase.RunAsync(Arg.Any<Guid>(), Arg.Any<CancellationToken>()).Returns(expectedResponse);
+
+            var sut = new CasesController(_logger, _officerUser, _getCasesByOfficerId, _createCase, _getCaseDetails, _editCase, _deleteCase);
+
+            //Act
+            var response = sut.Delete(Guid.Parse(id), CancellationToken.None).Result as RedirectToActionResult;
+
+            //Assert
+            response?.ActionName.Should().Be("Index");
+        }
     }
 }
-    
