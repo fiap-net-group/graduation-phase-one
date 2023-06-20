@@ -35,9 +35,16 @@
                 <td>
                     <a class="btn btn-secondary" asp-action="Details" asp-route-id="@viewModel.Id">Details</a>
                     <a class="btn btn-primary" asp-action="Edit" asp-route-id="@viewModel.Id">Edit</a>
-                    <a class="btn btn-danger">Delete</a>
+                    <a class="btn btn-danger" asp-action="PostDelete" asp-route-id="@viewModel.Id">Delete</a>
                 </td>
             </tr>
         }
     </tbody>
 </table>
+
+@section Scripts
+    {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

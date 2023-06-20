@@ -176,7 +176,8 @@ namespace PoliceDepartment.EvidenceManager.MVC.Controllers
             return RedirectToAction("Index", "Home");
         }
 
-        [HttpPost]
+        [HttpGet]
+        [Route("delete/{id:guid}")]
         public async Task<IActionResult> PostDelete(Guid id, CancellationToken cancellationToken)
         {
             Logger.LogDebug("MVC - Begin deleting case", ("officerId", _officerUser.Id), ("caseId", id));
@@ -194,7 +195,7 @@ namespace PoliceDepartment.EvidenceManager.MVC.Controllers
 
             Logger.LogDebug("MVC - Error deleting case", ("officerId", _officerUser.Id), ("caseId", id));
 
-            return View(nameof(Index));
+            return RedirectToAction(nameof(Index));
         }
     }
 }

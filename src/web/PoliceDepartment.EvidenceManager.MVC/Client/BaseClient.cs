@@ -26,6 +26,30 @@ namespace PoliceDepartment.EvidenceManager.MVC.Client
             _logger = logger;
         }
 
+        protected async Task SendAuthenticatedAsync(HttpRequestMessage request, string accessToken, CancellationToken cancellationToken)
+        {
+            try
+            {
+                request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+
+                var apiResponse = await _retryPolicy.ExecuteAsync(async action =>
+                {
+                    request.Headers.Add(ClientExtensions.ApiKeyHeader, _apiKey);
+
+                    return await _client.SendAsync(request, cancellationToken);
+                },
+                cancellationToken);
+
+                _logger.LogDebug("API call", ("response", apiResponse));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogCritical("Error on API Access", ex);
+
+                throw;
+            }
+        }
+
         protected async Task<TResponse> SendAuthenticatedAsync<TResponse>(HttpRequestMessage request, string accessToken, CancellationToken cancellationToken)
         {
             try
@@ -39,6 +63,8 @@ namespace PoliceDepartment.EvidenceManager.MVC.Client
                     return await _client.SendAsync(request, cancellationToken);
                 }, 
                 cancellationToken);
+
+                _logger.LogDebug("API call with response", ("response", apiResponse));
 
                 return await apiResponse.Content.ReadFromJsonAsync<TResponse>(_serializeOptions, cancellationToken);
             }
@@ -61,6 +87,8 @@ namespace PoliceDepartment.EvidenceManager.MVC.Client
                     return await _client.SendAsync(request, cancellationToken);
                 }, 
                 cancellationToken);
+
+                _logger.LogDebug("API call with response", ("response", apiResponse));
 
                 return await apiResponse.Content.ReadFromJsonAsync<TResponse>(_serializeOptions, cancellationToken);
             }

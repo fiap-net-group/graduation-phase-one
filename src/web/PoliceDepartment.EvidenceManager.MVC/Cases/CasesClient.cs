@@ -110,17 +110,19 @@ namespace PoliceDepartment.EvidenceManager.MVC.Cases
             }
         }
 
-        public async Task<BaseResponseWithValue<CaseViewModel>> DeleteAsync(Guid id, string accessToken, CancellationToken cancellationToken)
+        public async Task<BaseResponse> DeleteAsync(Guid id, string accessToken, CancellationToken cancellationToken)
         {
             var request = new HttpRequestMessage(HttpMethod.Delete, _deleteUrl + $"/{id}");
 
             try
             {
-                return await SendAuthenticatedAsync<BaseResponseWithValue<CaseViewModel>>(request, accessToken, cancellationToken);
+                await SendAuthenticatedAsync(request, accessToken, cancellationToken);
+
+                return new BaseResponse().AsSuccess();
             }
             catch
             {
-                return new BaseResponseWithValue<CaseViewModel>().AsError(ResponseMessage.GenericError);
+                return new BaseResponse().AsError(ResponseMessage.GenericError);
             }
         }
     }
