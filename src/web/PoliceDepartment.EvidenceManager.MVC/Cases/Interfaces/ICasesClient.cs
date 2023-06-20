@@ -8,5 +8,6 @@ namespace PoliceDepartment.EvidenceManager.MVC.Cases.Interfaces
         Task<BaseResponseWithValue<IEnumerable<CaseViewModel>>> GetByOfficerIdAsync(Guid officerId, string accessToken, CancellationToken cancellationToken);
         Task<BaseResponse> CreateCaseAsync(CreateCaseViewModel caseViewModel, string accessToken, CancellationToken cancellationToken);
         Task<BaseResponseWithValue<CaseViewModel>> GetDetailsAsync(Guid id, string accessToken, CancellationToken cancellationToken);
+        Task<BaseResponse> EditAsync(Guid id, CaseViewModel caseViewModel, string accessToken, CancellationToken cancellationToken);
     }
 }

@@ -4,6 +4,7 @@ using PoliceDepartment.EvidenceManager.MVC.Authorization.Interfaces;
 using PoliceDepartment.EvidenceManager.MVC.Cases.Interfaces;
 using PoliceDepartment.EvidenceManager.MVC.Models;
 using PoliceDepartment.EvidenceManager.SharedKernel.Logger;
+using PoliceDepartment.EvidenceManager.SharedKernel.ViewModels;
 
 namespace PoliceDepartment.EvidenceManager.MVC.Controllers
 {
@@ -16,6 +17,7 @@ namespace PoliceDepartment.EvidenceManager.MVC.Controllers
         private readonly IGetCasesByOfficerId _getCasesByOfficerId;
         private readonly ICreateCase _createCase;
         private readonly IGetCaseDetails _getCaseDetails;
+        private readonly IEditCase _editCase;
 
         private readonly CasesPageModel _pageModel;
 
@@ -23,12 +25,14 @@ namespace PoliceDepartment.EvidenceManager.MVC.Controllers
                                IOfficerUser officerUser,
                                IGetCasesByOfficerId getCasesByOfficerId,
                                ICreateCase createCase,
-                               IGetCaseDetails getCaseDetails) : base(logger)
+                               IGetCaseDetails getCaseDetails,
+                               IEditCase editCase) : base(logger)
         {
             _officerUser = officerUser;
             _getCasesByOfficerId = getCasesByOfficerId;
             _createCase = createCase;
             _getCaseDetails = getCaseDetails;
+            _editCase = editCase;
 
             _pageModel = new();
         }
@@ -70,7 +74,7 @@ namespace PoliceDepartment.EvidenceManager.MVC.Controllers
 
             if (!ModelState.IsValid)
             {
-                Logger.LogDebug("MVC - Create case - Error", ("officerId", _officerUser.Id));
+                Logger.LogDebug("MVC - Create case - Invalid case", ("officerId", _officerUser.Id));
 
                 return View(nameof(Create), viewModel);
             }
@@ -112,6 +116,61 @@ namespace PoliceDepartment.EvidenceManager.MVC.Controllers
             Logger.LogDebug("MVC - Can't return case details because it doesn't exists", ("officerId", _officerUser.Id), ("caseId", id));
             
             return RedirectToAction("Error", "Home", 404);
+        }
+
+        [HttpGet]
+        [Route("edit/{id:guid}")]
+        public async Task<IActionResult> Edit(Guid id, CancellationToken cancellationToken)
+        {
+            Logger.LogDebug("MVC - Begin loading edit case page", ("officerId", _officerUser.Id), ("caseId", id));
+
+            if (id != Guid.Empty)
+            {
+                var details = await _getCaseDetails.RunAsync(id, cancellationToken);
+
+                if (details.Success && details.Value is not null && details.Value.Valid())
+                {
+                    Logger.LogDebug("MVC - Success loading edit case page", ("officerId", _officerUser.Id), ("caseId", id));
+
+                    return View(details.Value);
+                }
+            }
+
+            Logger.LogDebug("MVC - Can't edit case because it doesn't exists", ("officerId", _officerUser.Id), ("caseId", id));
+
+            return RedirectToAction("Error", "Home", 404);
+        }
+
+        [HttpPost]
+        [Route("edit")]
+        public async Task<IActionResult> PostEdit(CaseViewModel viewModel, CancellationToken cancellationToken)
+        {
+            Logger.LogDebug("MVC - Begin edit case", ("officerId", _officerUser.Id), ("caseId", viewModel.Id));
+
+            if (viewModel.Id != null && viewModel.Id == Guid.Empty)
+                ModelState.AddModelError(string.Empty, "Invalid id");
+
+            if (!ModelState.IsValid)
+            {
+                Logger.LogDebug("MVC - Edit case - Invalid case", ("officerId", _officerUser.Id), ("caseId", viewModel.Id));
+                
+                return View(nameof(Edit), viewModel);
+            }
+
+            var editCaseResponse = await _editCase.RunAsync(viewModel.Id.Value, viewModel, cancellationToken);
+
+            if (editCaseResponse.Success)
+            {
+                Logger.LogDebug("MVC - Edit case - Success", ("officerId", _officerUser.Id), ("caseId", viewModel.Id));
+
+                return RedirectToAction("Index", "Home");
+            }
+
+            Logger.LogDebug("MVC - Edit case - Error", ("officerId", _officerUser.Id), ("caseId", viewModel.Id), ("response", editCaseResponse));
+
+            AddErrorsToModelState(editCaseResponse);
+
+            return RedirectToAction("Index", "Home");
         }
     }
 }
