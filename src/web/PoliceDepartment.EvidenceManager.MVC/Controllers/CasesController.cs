@@ -18,6 +18,7 @@ namespace PoliceDepartment.EvidenceManager.MVC.Controllers
         private readonly ICreateCase _createCase;
         private readonly IGetCaseDetails _getCaseDetails;
         private readonly IEditCase _editCase;
+        private readonly IDeleteCase _deleteCase;
 
         private readonly CasesPageModel _pageModel;
 
@@ -26,13 +27,15 @@ namespace PoliceDepartment.EvidenceManager.MVC.Controllers
                                IGetCasesByOfficerId getCasesByOfficerId,
                                ICreateCase createCase,
                                IGetCaseDetails getCaseDetails,
-                               IEditCase editCase) : base(logger)
+                               IEditCase editCase,
+                               IDeleteCase deleteCase) : base(logger)
         {
             _officerUser = officerUser;
             _getCasesByOfficerId = getCasesByOfficerId;
             _createCase = createCase;
             _getCaseDetails = getCaseDetails;
             _editCase = editCase;
+            _deleteCase = deleteCase;
 
             _pageModel = new();
         }
@@ -171,6 +174,27 @@ namespace PoliceDepartment.EvidenceManager.MVC.Controllers
             AddErrorsToModelState(editCaseResponse);
 
             return RedirectToAction("Index", "Home");
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> PostDelete(Guid id, CancellationToken cancellationToken)
+        {
+            Logger.LogDebug("MVC - Begin deleting case", ("officerId", _officerUser.Id), ("caseId", id));
+
+            var response = await _deleteCase.RunAsync(id, cancellationToken);
+
+            if(response.Success)
+            {
+                Logger.LogDebug("MVC - Success deleting case", ("officerId", _officerUser.Id), ("caseId", id));
+
+                return RedirectToAction(nameof(Index));
+            }
+
+            AddErrorsToModelState(response);
+
+            Logger.LogDebug("MVC - Error deleting case", ("officerId", _officerUser.Id), ("caseId", id));
+
+            return View(nameof(Index));
         }
     }
 }

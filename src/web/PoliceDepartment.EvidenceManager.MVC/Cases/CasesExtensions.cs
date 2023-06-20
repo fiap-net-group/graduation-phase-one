@@ -18,6 +18,7 @@ namespace PoliceDepartment.EvidenceManager.MVC.Cases
             services.AddScoped<IGetCaseDetails, GetCaseDetails>();
             services.AddScoped<ICreateCase, CreateCase>();
             services.AddScoped<IEditCase, EditCase>();
+            services.AddScoped<IDeleteCase, DeleteCase>();
 
             return services;
         }
