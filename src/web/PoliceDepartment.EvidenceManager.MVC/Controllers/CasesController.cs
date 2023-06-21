@@ -109,6 +109,8 @@ namespace PoliceDepartment.EvidenceManager.MVC.Controllers
                 {
                     Logger.LogDebug("MVC - Success getting case details", ("officerId", _officerUser.Id), ("caseId", id));
 
+                    ViewBag.ReturnUrl = Url.Action("Details", "Cases", new { id });
+
                     return View(details.Value);
                 }
             }
