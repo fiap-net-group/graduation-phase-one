@@ -25,6 +25,7 @@ namespace PoliceDepartment.EvidenceManager.UnitTests.Mvc.Cases
         private readonly ICreateCase _createCase;
         private readonly IGetCaseDetails _getCaseDetails;
         private readonly IEditCase _editCase;
+        private readonly IDeleteCase _deleteCase;
 
         public CasesControllerTests(MvcFixture fixture)
         {
@@ -36,6 +37,7 @@ namespace PoliceDepartment.EvidenceManager.UnitTests.Mvc.Cases
             _createCase = Substitute.For<ICreateCase>();
             _getCaseDetails = Substitute.For<IGetCaseDetails>();
             _editCase = Substitute.For<IEditCase>();
+            _deleteCase = Substitute.For<IDeleteCase>();
         }
 
         [Theory]
@@ -50,7 +52,7 @@ namespace PoliceDepartment.EvidenceManager.UnitTests.Mvc.Cases
                                 .Returns(success ? expectedResponse.AsSuccess(_fixture.Cases.GenerateViewModelCollection(caseQuantity)) : expectedResponse.AsError());
             _officerUser.Id.Returns(Guid.Empty);
 
-            var sut = new CasesController(_logger, _officerUser, _getCasesByOfficerId, _createCase, _getCaseDetails, _editCase);
+            var sut = new CasesController(_logger, _officerUser, _getCasesByOfficerId, _createCase, _getCaseDetails, _editCase, _deleteCase);
 
             //Act
             var response = sut.Index(CancellationToken.None).Result as ViewResult;
@@ -113,7 +115,7 @@ namespace PoliceDepartment.EvidenceManager.UnitTests.Mvc.Cases
                 Name = "Fake name",
                 Description = "Fake description"
             };
-            var sut = new CasesController(_logger, _officerUser, _getCasesByOfficerId, _createCase, _getCaseDetails, _editCase);
+            var sut = new CasesController(_logger, _officerUser, _getCasesByOfficerId, _createCase, _getCaseDetails, _editCase, _deleteCase);
 
             //Act & Assert
             if (success)
@@ -149,7 +151,7 @@ namespace PoliceDepartment.EvidenceManager.UnitTests.Mvc.Cases
             _getCaseDetails.RunAsync(Arg.Any<Guid>(), Arg.Any<CancellationToken>())
                             .Returns(expectedResponse);
 
-            var sut = new CasesController(_logger, _officerUser, _getCasesByOfficerId, _createCase, _getCaseDetails, _editCase);
+            var sut = new CasesController(_logger, _officerUser, _getCasesByOfficerId, _createCase, _getCaseDetails, _editCase, _deleteCase);
 
             //Act & Assert
             if (success && valueIsNotNull && valueIsValid)
@@ -183,7 +185,7 @@ namespace PoliceDepartment.EvidenceManager.UnitTests.Mvc.Cases
                 Description = "Fake description"
             };
 
-            var sut = new CasesController(_logger, _officerUser, _getCasesByOfficerId, _createCase, _getCaseDetails, _editCase);
+            var sut = new CasesController(_logger, _officerUser, _getCasesByOfficerId, _createCase, _getCaseDetails, _editCase, _deleteCase);
 
             //Act & Assert
             if (success)
@@ -219,7 +221,7 @@ namespace PoliceDepartment.EvidenceManager.UnitTests.Mvc.Cases
             _getCaseDetails.RunAsync(Arg.Any<Guid>(), Arg.Any<CancellationToken>())
                             .Returns(expectedResponse);
 
-            var sut = new CasesController(_logger, _officerUser, _getCasesByOfficerId, _createCase, _getCaseDetails, _editCase);
+            var sut = new CasesController(_logger, _officerUser, _getCasesByOfficerId, _createCase, _getCaseDetails, _editCase, _deleteCase);
 
             //Act & Assert
             if (success && valueIsNotNull && valueIsValid)
@@ -234,6 +236,24 @@ namespace PoliceDepartment.EvidenceManager.UnitTests.Mvc.Cases
                 response?.ControllerName.Should().Be("Home");
             }
         }
+
+        [Theory]
+        [InlineData("00000000-0000-0000-0000-000000000000", false)]
+        [InlineData("24553cbd-21fa-48e1-9531-7aea07a5788d", false)]
+        [InlineData("24553cbd-21fa-48e1-9531-7aea07a5788d", true)]
+        public void Delete_AllCases_ShouldReturnExpectedResponse(string id, bool success)
+        {
+            //Arrange
+            var expectedResponse = success ? new BaseResponse().AsSuccess() : new BaseResponse().AsError();
+            _deleteCase.RunAsync(Arg.Any<Guid>(), Arg.Any<CancellationToken>()).Returns(expectedResponse);
+
+            var sut = new CasesController(_logger, _officerUser, _getCasesByOfficerId, _createCase, _getCaseDetails, _editCase, _deleteCase);
+
+            //Act
+            var response = sut.Delete(Guid.Parse(id), CancellationToken.None).Result as RedirectToActionResult;
+
+            //Assert
+            response?.ActionName.Should().Be("Index");
+        }
     }
 }
-    

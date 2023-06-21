@@ -58,6 +58,7 @@ namespace PoliceDepartment.EvidenceManager.UnitTests.Mvc.Cases
             _configuration["Api:Cases:Endpoints:CreateCase"].Returns(_fixture.Cases.CreateCaseUrl);
             _configuration["Api:Cases:Endpoints:GetDetails"].Returns(_fixture.Cases.GetDetailsUrl);
             _configuration["Api:Cases:Endpoints:Edit"].Returns(_fixture.Cases.EditUrl);
+            _configuration["Api:Cases:Endpoints:Delete"].Returns(_fixture.Cases.DeleteUrl);
             _logger = Substitute.For<ILoggerManager>();
         }
 
@@ -183,6 +184,36 @@ namespace PoliceDepartment.EvidenceManager.UnitTests.Mvc.Cases
             response.Should().NotBeNull();
             response.Success.Should().Be(responseModel.Success);
             response.ResponseDetails.Message.Should().Be(responseModel.ResponseDetails.Message);
+        }
+
+        [Theory]
+        [InlineData(HttpStatusCode.InternalServerError)]
+        [InlineData(HttpStatusCode.Forbidden)]
+        [InlineData(HttpStatusCode.Unauthorized)]
+        [InlineData(HttpStatusCode.NotFound)]
+        [InlineData(HttpStatusCode.BadRequest)]
+        [InlineData(HttpStatusCode.NoContent)]
+        public void DeleteAsync_AllCases_ShouldReturnExpectedResponse(HttpStatusCode code)
+        {
+            //Arrange
+            var expectedResponseBody = JsonSerializer.Serialize(new HttpResponseMessage(code), _serializeOptions);
+            var mockHttpRequest = new MockHttpMessageHandler();
+            mockHttpRequest.When(_fixture.Cases.DeleteUrl)
+                           .Respond(code, "application/json", expectedResponseBody);
+            var mockClient = mockHttpRequest.ToHttpClient();
+            _clientFactory.CreateClient(ClientExtensions.CasesClientName).Returns(mockClient);
+
+            var sut = new CasesClient(_retryPolicy, _serializeOptions, _clientFactory, _configuration, _logger);
+
+            //Act
+            var response = sut.DeleteAsync(Guid.NewGuid(), _fixture.Authorization.GenerateFakeJwtToken(), CancellationToken.None).Result;
+
+            //Assert
+            response.Should().NotBeNull();
+            if(code == HttpStatusCode.NoContent)
+                response.Success.Should().BeTrue();
+            else
+                response.Success.Should().BeFalse();
         }
     }
 }

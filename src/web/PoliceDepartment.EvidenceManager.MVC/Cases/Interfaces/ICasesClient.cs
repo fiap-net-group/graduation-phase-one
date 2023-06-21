@@ -9,5 +9,6 @@ namespace PoliceDepartment.EvidenceManager.MVC.Cases.Interfaces
         Task<BaseResponse> CreateCaseAsync(CreateCaseViewModel caseViewModel, string accessToken, CancellationToken cancellationToken);
         Task<BaseResponseWithValue<CaseViewModel>> GetDetailsAsync(Guid id, string accessToken, CancellationToken cancellationToken);
         Task<BaseResponse> EditAsync(Guid id, CaseViewModel caseViewModel, string accessToken, CancellationToken cancellationToken);
+        Task<BaseResponse> DeleteAsync(Guid id, string accessToken, CancellationToken cancellationToken);
     }
 }

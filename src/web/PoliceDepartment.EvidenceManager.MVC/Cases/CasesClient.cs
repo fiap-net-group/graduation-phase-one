@@ -4,7 +4,6 @@ using PoliceDepartment.EvidenceManager.SharedKernel.Logger;
 using PoliceDepartment.EvidenceManager.SharedKernel.Responses;
 using PoliceDepartment.EvidenceManager.SharedKernel.ViewModels;
 using Polly.Retry;
-using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.Json;
 
@@ -18,6 +17,7 @@ namespace PoliceDepartment.EvidenceManager.MVC.Cases
         private readonly string _createCaseUrl;
         private readonly string _getDetailsUrl;
         private readonly string _editUrl;
+        private readonly string _deleteUrl;
 
         public CasesClient(AsyncRetryPolicy<HttpResponseMessage> retryPolicy,
                            JsonSerializerOptions serializeOptions,
@@ -35,11 +35,13 @@ namespace PoliceDepartment.EvidenceManager.MVC.Cases
             _createCaseUrl = configuration["Api:Cases:Endpoints:CreateCase"];
             _getDetailsUrl = configuration["Api:Cases:Endpoints:GetDetails"];
             _editUrl = configuration["Api:Cases:Endpoints:Edit"];
+            _deleteUrl = configuration["Api:Cases:Endpoints:Delete"];
 
             ArgumentException.ThrowIfNullOrEmpty(_getCasesByOfficerIdUrl);
             ArgumentException.ThrowIfNullOrEmpty(_createCaseUrl);
             ArgumentException.ThrowIfNullOrEmpty(_getDetailsUrl);
             ArgumentException.ThrowIfNullOrEmpty(_editUrl);
+            ArgumentException.ThrowIfNullOrEmpty(_deleteUrl);
         }
 
         public async Task<BaseResponseWithValue<IEnumerable<CaseViewModel>>> GetByOfficerIdAsync(Guid officerId, string accessToken, CancellationToken cancellationToken)
@@ -101,6 +103,22 @@ namespace PoliceDepartment.EvidenceManager.MVC.Cases
             try
             {
                 return await SendAuthenticatedAsync<BaseResponse>(request, accessToken, cancellationToken);
+            }
+            catch
+            {
+                return new BaseResponse().AsError(ResponseMessage.GenericError);
+            }
+        }
+
+        public async Task<BaseResponse> DeleteAsync(Guid id, string accessToken, CancellationToken cancellationToken)
+        {
+            var request = new HttpRequestMessage(HttpMethod.Delete, _deleteUrl + $"/{id}");
+
+            try
+            {
+                var success = await SendAuthenticatedAsync(request, accessToken, cancellationToken);
+
+                return success ? new BaseResponse().AsSuccess() : new BaseResponse().AsError();
             }
             catch
             {
