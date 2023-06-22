@@ -7,5 +7,10 @@
         public string Description { get; set; }
         public string ImageId { get; set; }
         public string CaseId { get; set; }
+
+        public bool Valid()
+        {
+            return Id != Guid.Empty;
+        }
     }
 }

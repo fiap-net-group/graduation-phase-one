@@ -1,7 +1,11 @@
 ﻿@using PoliceDepartment.EvidenceManager.SharedKernel.ViewModels;
-@model IEnumerable<EvidenceViewModel>;
+@model CaseViewModel;
 
 <h4>Evidences</h4>
+
+<p>
+    <a class="btn btn-success" asp-controller="Evidences" asp-action="Create" asp-route-id="@Model?.Id" asp-route-returnUrl="@ViewBag.ReturnUrl">New Evidence</a>
+</p>
 
 <table class="table">
     <thead>
@@ -22,7 +26,7 @@
     </thead>
     <tbody>
         @{
-            if(!Model.Any())
+            if(!Model.Evidences.Any())
             {
                 <tr>
                     <td>
@@ -32,7 +36,7 @@
             }
             else
             {
-                @foreach (var item in Model)
+                @foreach (var item in Model.Evidences)
                 {
                     <tr>
                         <td>
@@ -45,7 +49,7 @@
                             @Html.DisplayFor(modelItem => item.Description)
                         </td>
                         <td>
-                            <a class="btn btn-secondary">Details</a>
+                            <a class="btn btn-secondary" asp-controller="Evidences" asp-route-returnUrl="@ViewBag.ReturnUrl" asp-action="Details" asp-route-id="@item.Id">Details</a>
                             <a class="btn btn-primary">Edit</a>
                             <a class="btn btn-danger">Delete</a>
                         </td>

@@ -13,10 +13,15 @@ namespace PoliceDepartment.EvidenceManager.MVC.Controllers
     {
         private readonly IOfficerUser _officerUser;
         private readonly ICreateEvidence _createEvidence;
-        public EvidencesController(ILoggerManager logger, IOfficerUser officerUser, ICreateEvidence createEvidence) : base(logger)
+        private readonly IGetEvidenceDetails _getEvidenceDetails;
+        public EvidencesController(ILoggerManager logger, 
+                                   IOfficerUser officerUser, 
+                                   ICreateEvidence createEvidence, 
+                                   IGetEvidenceDetails getEvidenceDetails) : base(logger)
         {
             _officerUser = officerUser;
             _createEvidence = createEvidence;
+            _getEvidenceDetails = getEvidenceDetails;
         }
 
         [HttpGet]
@@ -56,6 +61,29 @@ namespace PoliceDepartment.EvidenceManager.MVC.Controllers
             AddErrorsToModelState(createEvidenceResponse);
 
             return View(nameof(Create), model);
+        }
+
+        [HttpGet]
+        [Route("details/{id:guid}")]
+        public async Task<IActionResult> Detais(Guid id, CancellationToken cancellationToken)
+        {
+            Logger.LogDebug("MVC - Begin get evidence details", ("officerId", _officerUser.Id), ("evidenceId", id));
+
+            if (id == Guid.Empty)
+            {
+                var details = await _getEvidenceDetails.RunAsync(id, cancellationToken);
+
+                if (details.Success && details.Value is not null && details.Value.Valid())
+                {
+                    Logger.LogDebug("MVC - Success getting evidenceId details", ("officerId", _officerUser.Id), ("evidenceId", id));
+
+                    return View(details.Value);
+                }
+            }
+
+            Logger.LogDebug("MVC - Can't return case details because it doesn't exists", ("officerId", _officerUser.Id), ("evidenceId", id));
+
+            return RedirectToAction("Error", "Home", 404);
         }
     }
 }

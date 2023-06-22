@@ -137,6 +137,8 @@ namespace PoliceDepartment.EvidenceManager.MVC.Controllers
                 {
                     Logger.LogDebug("MVC - Success loading edit case page", ("officerId", _officerUser.Id), ("caseId", id));
 
+                    ViewBag.ReturnUrl = Url.Action(nameof(Edit), "Cases", new { id });
+
                     return View(details.Value);
                 }
             }
