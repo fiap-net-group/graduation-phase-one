@@ -13,31 +13,30 @@ namespace PoliceDepartment.EvidenceManager.Infra.FileManager
             _blobServiceClient = blobServiceClient;
         }
 
-        public async Task<string> GetEvidenceAsync(string name, string containerName)
+        public async Task<string> GetEvidenceAsync(string evidenceImageId, string containerName)
         {
             var containerClient = _blobServiceClient.GetBlobContainerClient(containerName);
-            var blobClient = containerClient.GetBlobClient(name);
+            var blobClient = containerClient.GetBlobClient(evidenceImageId);
 
             return await Task.Run(() => blobClient.Uri.AbsoluteUri);
         }
 
-        public async Task<BlobDownloadInfo> GetEvidenceBytesAsync(string name, string containerName)
+        public async Task<Guid> UploadEvidenceAsync(string fileExtension, IFormFile file, string containerName)
         {
-            var containerClient = _blobServiceClient.GetBlobContainerClient(containerName);
-            var blobClient = containerClient.GetBlobClient(name);
-            var blobDownloadInfo = await blobClient.DownloadAsync();
-
-            return blobDownloadInfo.Value;
-        }
-
-        public async Task<bool> UploadEvidenceAsync(string fileExtension, IFormFile file, string containerName)
-        {
-            var fileName = $"{Guid.NewGuid()}_{fileExtension}";
+            var fileId = Guid.NewGuid();
+            var fileName = $"{fileId}_{fileExtension}";
             var containerClient = _blobServiceClient.GetBlobContainerClient(containerName);
             var blobClient = containerClient.GetBlobClient(fileName);
 
+            bool exists = await blobClient.ExistsAsync();
+
+            if (exists)
+            {
+                return Guid.Empty;
+            }
+
             var res = await blobClient.UploadAsync(file.OpenReadStream(), new BlobHttpHeaders { ContentType = file.ContentType });
-            return res != null;
+            return res.GetRawResponse().Status == StatusCodes.Status201Created ? fileId : Guid.Empty;
         }
 
         public async Task<bool> DeleteEvidenceAsync(string name, string containerName)
@@ -46,6 +45,5 @@ namespace PoliceDepartment.EvidenceManager.Infra.FileManager
             var blobClient = containerClient.GetBlobClient(name);
             return await blobClient.DeleteIfExistsAsync();
         }
-
     }
 }

@@ -10,7 +10,6 @@ using PoliceDepartment.EvidenceManager.Infra.FileManager;
 using System.Data.SqlClient;
 using System.Diagnostics.CodeAnalysis;
 using Azure.Storage.Blobs;
-using Azure.Storage.Blobs.Models;
 
 
 namespace PoliceDepartment.EvidenceManager.API.DependencyInjection.BusinessRules
@@ -30,7 +29,7 @@ namespace PoliceDepartment.EvidenceManager.API.DependencyInjection.BusinessRules
             services.AddDbContext<SqlServerContext>(options => options.UseSqlServer(configuration.GetConnectionString("SqlServerConnection")));
             services.AddLogging();
 
-            services.AddScoped<IEvidenceFileServer>(_ => new EvidenceFileServer(new BlobServiceClient(configuration.GetConnectionString("AzureBlobStorage"))));
+            services.AddScoped<IEvidenceFileServer>(_ => new EvidenceFileServer(new BlobServiceClient(configuration.GetConnectionString("AzureStorageAccount"))));
 
 
             return services;

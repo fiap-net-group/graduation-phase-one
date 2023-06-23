@@ -5,9 +5,8 @@ namespace PoliceDepartment.EvidenceManager.Infra.FileManager
 {
     public interface IEvidenceFileServer
     {
-        Task<string> GetEvidenceAsync(string name, string containerName);
-        Task<BlobDownloadInfo> GetEvidenceBytesAsync(string name, string containerName);
-        Task<bool> UploadEvidenceAsync(string fileExtension, IFormFile file, string containerName);
-        Task<bool> DeleteEvidenceAsync(string name, string containerName);
+        Task<string> GetEvidenceAsync(string evidenceImageId, string containerName);
+        Task<Guid> UploadEvidenceAsync(string fileExtension, IFormFile file, string containerName);
+        Task<bool> DeleteEvidenceAsync(string evidenceImageId, string containerName);
     }
 }
