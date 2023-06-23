@@ -29,23 +29,21 @@ namespace PoliceDepartment.EvidenceManager.API.Features.V1.Controllers
         /// <response code="200">Successful upload</response>
         /// <response code="400">Unsuccessful upload</response>
         [HttpPost("upload")]
-        [Authorize(AuthorizationPolicies.IsPoliceOfficer)]
+        //[Authorize(AuthorizationPolicies.IsPoliceOfficer)]
         [ProducesResponseType(StatusCodes.Status200OK, StatusCode = StatusCodes.Status200OK, Type = typeof(Guid))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, StatusCode = StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status409Conflict, StatusCode = StatusCodes.Status409Conflict)]
         public async Task<IActionResult> UploadAsync(IFormFile formFile)
         {
-            if (formFile == null || formFile.Length == 0)
-            {
-                return BadRequest("No file uploaded.");
-            }
+            if (formFile is null)
+                return BadRequest("The file is null");
 
             var extension = Path.GetExtension(formFile.FileName);
             await using var stream = formFile.OpenReadStream();
             var result = await _evidenceFileServer.UploadEvidenceAsync(extension, formFile, _containerName);
 
-            if (result == Guid.Empty)
-                return Conflict("The evidence already exists");
+            if (result.AsError().Success)
+                return BadRequest(result);
 
             return Ok(result);
         }
@@ -57,11 +55,22 @@ namespace PoliceDepartment.EvidenceManager.API.Features.V1.Controllers
         /// <response code="200">Successful download</response>
         /// <response code="400">Unsuccessful download</response>
         [HttpGet("download")]
-        [Authorize(AuthorizationPolicies.IsPoliceOfficer)]
+        //[Authorize(AuthorizationPolicies.IsPoliceOfficer)]
         [ProducesResponseType(StatusCodes.Status200OK, StatusCode = StatusCodes.Status200OK, Type = typeof(string))]
-        public async Task<IActionResult> DownloadAsync([FromQuery] string evidenceImageId)
+        public async Task<IActionResult> DownloadAsync(Guid evidenceImageId)
         {
-            var result = await _evidenceFileServer.GetEvidenceAsync(evidenceImageId, _containerName);
+            var result = await _evidenceFileServer.GetEvidenceAsync(Convert.ToString(evidenceImageId), _containerName);
+
+            if (result.AsError().Success)
+                return BadRequest(result);
+
+            return Ok(result);
+        }
+
+        [HttpDelete("delete")]
+        public async Task<IActionResult> DeleteAsync(Guid evidenceImageId)
+        {
+            var result = await _evidenceFileServer.DeleteEvidenceAsync(Convert.ToString(evidenceImageId), _containerName);
 
             return Ok(result);
         }
