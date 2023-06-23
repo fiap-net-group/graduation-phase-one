@@ -29,7 +29,7 @@ namespace PoliceDepartment.EvidenceManager.API.Features.V1.Controllers
         /// <response code="200">Successful upload</response>
         /// <response code="400">Unsuccessful upload</response>
         [HttpPost("upload")]
-        //[Authorize(AuthorizationPolicies.IsPoliceOfficer)]
+        [Authorize(AuthorizationPolicies.IsPoliceOfficer)]
         [ProducesResponseType(StatusCodes.Status200OK, StatusCode = StatusCodes.Status200OK, Type = typeof(Guid))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, StatusCode = StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status409Conflict, StatusCode = StatusCodes.Status409Conflict)]
@@ -55,7 +55,7 @@ namespace PoliceDepartment.EvidenceManager.API.Features.V1.Controllers
         /// <response code="200">Successful download</response>
         /// <response code="400">Unsuccessful download</response>
         [HttpGet("download")]
-        //[Authorize(AuthorizationPolicies.IsPoliceOfficer)]
+        [Authorize(AuthorizationPolicies.IsPoliceOfficer)]
         [ProducesResponseType(StatusCodes.Status200OK, StatusCode = StatusCodes.Status200OK, Type = typeof(string))]
         public async Task<IActionResult> DownloadAsync(Guid evidenceImageId)
         {
