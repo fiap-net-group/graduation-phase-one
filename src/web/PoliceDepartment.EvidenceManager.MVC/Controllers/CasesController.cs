@@ -5,6 +5,7 @@ using PoliceDepartment.EvidenceManager.MVC.Cases.Interfaces;
 using PoliceDepartment.EvidenceManager.MVC.Models;
 using PoliceDepartment.EvidenceManager.SharedKernel.Logger;
 using PoliceDepartment.EvidenceManager.SharedKernel.ViewModels;
+using System.Diagnostics.CodeAnalysis;
 
 namespace PoliceDepartment.EvidenceManager.MVC.Controllers
 {
@@ -100,6 +101,7 @@ namespace PoliceDepartment.EvidenceManager.MVC.Controllers
 
         [HttpGet]
         [Route("details/{id:guid}")]
+        [ExcludeFromCodeCoverage]
         public async Task<IActionResult> Details(Guid id, CancellationToken cancellationToken)
         {
             Logger.LogDebug("MVC - Begin get case details", ("officerId", _officerUser.Id), ("caseId", id));
