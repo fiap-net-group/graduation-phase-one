@@ -112,14 +112,14 @@ namespace PoliceDepartment.EvidenceManager.MVC.Controllers
                 {
                     Logger.LogDebug("MVC - Success getting case details", ("officerId", _officerUser.Id), ("caseId", id));
 
-                    ViewBag.ReturnUrl = Url.Action("Details", "Cases", new { id });
+                    ViewBag.ReturnUrl = Url.Action(nameof(Details), "Cases", new { id });
 
                     return View(details.Value);
                 }
             }
 
             Logger.LogDebug("MVC - Can't return case details because it doesn't exists", ("officerId", _officerUser.Id), ("caseId", id));
-            
+
             return RedirectToAction("Error", "Home", 404);
         }
 
@@ -160,7 +160,7 @@ namespace PoliceDepartment.EvidenceManager.MVC.Controllers
             if (!ModelState.IsValid)
             {
                 Logger.LogDebug("MVC - Edit case - Invalid case", ("officerId", _officerUser.Id), ("caseId", viewModel.Id));
-                
+
                 return View(nameof(Edit), viewModel);
             }
 
@@ -188,7 +188,7 @@ namespace PoliceDepartment.EvidenceManager.MVC.Controllers
 
             var response = await _deleteCase.RunAsync(id, cancellationToken);
 
-            if(response.Success)
+            if (response.Success)
             {
                 Logger.LogDebug("MVC - Success deleting case", ("officerId", _officerUser.Id), ("caseId", id));
 

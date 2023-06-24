@@ -11,6 +11,11 @@ using PoliceDepartment.EvidenceManager.SharedKernel.ViewModels;
 using PoliceDepartment.EvidenceManager.UnitTests.Fixtures.Mvc;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel;
+using Microsoft.AspNetCore.Mvc.Routing;
+using Microsoft.AspNetCore.Routing;
+using System;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc.Abstractions;
 
 namespace PoliceDepartment.EvidenceManager.UnitTests.Mvc.Cases
 {
@@ -27,6 +32,8 @@ namespace PoliceDepartment.EvidenceManager.UnitTests.Mvc.Cases
         private readonly IEditCase _editCase;
         private readonly IDeleteCase _deleteCase;
 
+        private readonly UrlHelper _url;
+
         public CasesControllerTests(MvcFixture fixture)
         {
             _fixture = fixture;
@@ -38,6 +45,10 @@ namespace PoliceDepartment.EvidenceManager.UnitTests.Mvc.Cases
             _getCaseDetails = Substitute.For<IGetCaseDetails>();
             _editCase = Substitute.For<IEditCase>();
             _deleteCase = Substitute.For<IDeleteCase>();
+
+            var httpContext = Substitute.For<HttpContext>();
+            var actionContext = new ActionContext(httpContext, new RouteData(), new ActionDescriptor());
+            _url = new UrlHelper(actionContext);
         }
 
         [Theory]
@@ -151,7 +162,10 @@ namespace PoliceDepartment.EvidenceManager.UnitTests.Mvc.Cases
             _getCaseDetails.RunAsync(Arg.Any<Guid>(), Arg.Any<CancellationToken>())
                             .Returns(expectedResponse);
 
-            var sut = new CasesController(_logger, _officerUser, _getCasesByOfficerId, _createCase, _getCaseDetails, _editCase, _deleteCase);
+            var sut = new CasesController(_logger, _officerUser, _getCasesByOfficerId, _createCase, _getCaseDetails, _editCase, _deleteCase)
+            {
+                Url = _url
+            };
 
             //Act & Assert
             if (success && valueIsNotNull && valueIsValid)
