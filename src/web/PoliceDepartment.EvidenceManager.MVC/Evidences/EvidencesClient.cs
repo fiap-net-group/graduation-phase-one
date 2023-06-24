@@ -15,6 +15,7 @@ namespace PoliceDepartment.EvidenceManager.MVC.Evidences
 
         private readonly string _createEvidenceImageUrl;
         private readonly string _createEvidenceUrl;
+        private readonly string _deleteEvidenceImageUrl;
         public EvidencesClient(AsyncRetryPolicy<HttpResponseMessage> retryPolicy,
                            JsonSerializerOptions serializeOptions,
                            IHttpClientFactory clientFactory,
@@ -24,11 +25,12 @@ namespace PoliceDepartment.EvidenceManager.MVC.Evidences
             _serializeOptions = serializeOptions;
             _createEvidenceImageUrl = configuration["Api:Evidences:Endpoints:CreateEvidenceImage"];
             _createEvidenceUrl = configuration["Api:Evidences:Endpoints:CreateEvidence"];
+            _deleteEvidenceImageUrl = configuration["Api:Evidences:Endpoints:DeleteEvidenceImage"];
 
             ArgumentException.ThrowIfNullOrEmpty(_createEvidenceUrl);
         }
 
-        public async Task<BaseResponseWithValue<Guid>> CreateEvidenceImage(IFormFile image, string accessToken, CancellationToken cancellationToken)
+        public async Task<BaseResponseWithValue<string>> CreateEvidenceImage(IFormFile image, string accessToken, CancellationToken cancellationToken)
         {
             var request = new HttpRequestMessage(HttpMethod.Post, _createEvidenceImageUrl)
             {
@@ -40,11 +42,25 @@ namespace PoliceDepartment.EvidenceManager.MVC.Evidences
 
             try
             {
-                return await SendAuthenticatedAsync<BaseResponseWithValue<Guid>>(request, accessToken, cancellationToken);
+                return await SendAuthenticatedAsync<BaseResponseWithValue<string>>(request, accessToken, cancellationToken);
             }
             catch (Exception)
             {
-                return new BaseResponseWithValue<Guid>().AsError(ResponseMessage.GenericError);
+                return new BaseResponseWithValue<string>().AsError(ResponseMessage.GenericError);
+            }
+        }
+
+        public async Task<BaseResponseWithValue<string>> DeleteEvidenceImage(string imageId, string accessToken, CancellationToken cancellationToken)
+        {
+            var request = new HttpRequestMessage(HttpMethod.Delete, _deleteEvidenceImageUrl + $"/{imageId}");            
+
+            try
+            {
+                return await SendAuthenticatedAsync<BaseResponseWithValue<string>>(request, accessToken, cancellationToken);
+            }
+            catch (Exception)
+            {
+                return new BaseResponseWithValue<string>().AsError(ResponseMessage.GenericError);
             }
         }
 
