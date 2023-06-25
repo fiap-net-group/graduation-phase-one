@@ -99,7 +99,7 @@ namespace PoliceDepartment.EvidenceManager.MVC.Evidences
             }
         }
 
-        public async Task<BaseResponseWithValue<string>> GetEvidenceImageAsync(Guid imageId, string accessToken, CancellationToken cancellationToken)
+        public async Task<BaseResponseWithValue<string>> GetEvidenceImageAsync(string imageId, string accessToken, CancellationToken cancellationToken)
         {
             var request = new HttpRequestMessage(HttpMethod.Get, _getEvidenceImageUrl + $"/{imageId}");
 
