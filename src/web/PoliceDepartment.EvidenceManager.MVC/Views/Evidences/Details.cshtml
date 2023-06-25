@@ -1,5 +1,5 @@
 ﻿@using PoliceDepartment.EvidenceManager.SharedKernel.ViewModels;
-@model EvidenceViewModel;
+@model EvidenceDetailViewModel;
 
 @{
     ViewData["Title"] = "Evidence Details";
@@ -10,6 +10,7 @@
 <div>
     <h4>Evidence @Html.DisplayFor(model => model.Name)</h4>
     <hr />
+    <img src="@Model.ImageUrl" alt="@Model.Name" />
     <dl class="row">
         <dt class="col-sm-2">
             Description
