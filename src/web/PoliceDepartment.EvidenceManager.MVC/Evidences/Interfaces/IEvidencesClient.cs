@@ -8,5 +8,7 @@ namespace PoliceDepartment.EvidenceManager.MVC.Evidences.Interfaces
         Task<BaseResponseWithValue<string>> CreateEvidenceImage(IFormFile image, string accessToken, CancellationToken cancellationToken);
         Task<BaseResponseWithValue<string>> DeleteEvidenceImage(string imageId, string accessToken, CancellationToken cancellationToken);
         Task<BaseResponse> CreateEvidenceAsync(CreateEvidenceViewModel evidenceViewModel, string accessToken, CancellationToken cancellationToken);
+        Task<BaseResponseWithValue<EvidenceViewModel>> GetEvidenceByIdAsync(Guid id, string accessToken, CancellationToken cancellationToken);
+        Task<BaseResponseWithValue<string>> GetEvidenceImageAsync(Guid imageId, string accessToken, CancellationToken cancellationToken);
     }
 }
