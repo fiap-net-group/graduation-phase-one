@@ -34,7 +34,7 @@ namespace PoliceDepartment.EvidenceManager.MVC.Evidences
             ArgumentException.ThrowIfNullOrEmpty(_createEvidenceUrl);
         }
 
-        public async Task<BaseResponseWithValue<string>> CreateEvidenceImage(IFormFile image, string accessToken, CancellationToken cancellationToken)
+        public async Task<BaseResponseWithValue<string>> CreateEvidenceImageAsync(IFormFile image, string accessToken, CancellationToken cancellationToken)
         {
             var request = new HttpRequestMessage(HttpMethod.Post, _createEvidenceImageUrl)
             {
@@ -54,7 +54,7 @@ namespace PoliceDepartment.EvidenceManager.MVC.Evidences
             }
         }
 
-        public async Task<BaseResponseWithValue<string>> DeleteEvidenceImage(string imageId, string accessToken, CancellationToken cancellationToken)
+        public async Task<BaseResponseWithValue<string>> DeleteEvidenceImageAsync(string imageId, string accessToken, CancellationToken cancellationToken)
         {
             var request = new HttpRequestMessage(HttpMethod.Delete, _deleteEvidenceImageUrl + $"/{imageId}");            
 

@@ -9,11 +9,13 @@ namespace PoliceDepartment.EvidenceManager.UnitTests.Fixtures.Mvc
     {
         public AuthorizationFixture Authorization { get; set; }
         public CaseFixture Cases { get; set; }
+        public EvidenceFixture Evidences { get; set; }
 
         public MvcFixture()
         {
             Authorization = new();
             Cases = new();
+            Evidences = new();
         }
     }
 }

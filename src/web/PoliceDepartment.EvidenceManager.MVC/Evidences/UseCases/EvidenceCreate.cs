@@ -23,7 +23,7 @@ namespace PoliceDepartment.EvidenceManager.MVC.Evidences.UseCases
         {
             _logger.LogDebug("MVC - Create evidence logic", ("CaseId", viewModel.CaseId));
 
-            var createImageResponse = await _client.CreateEvidenceImage(viewModel.Image, _officerUser.AccessToken, cancellationToken);
+            var createImageResponse = await _client.CreateEvidenceImageAsync(viewModel.Image, _officerUser.AccessToken, cancellationToken);
 
             if (!createImageResponse.Success)
             {
@@ -47,7 +47,7 @@ namespace PoliceDepartment.EvidenceManager.MVC.Evidences.UseCases
             {
                 _logger.LogWarning("MVC - Create evidence logic - Error creating evidence", ("CaseId", viewModel.CaseId), (nameof(response), response));
 
-                await _client.DeleteEvidenceImage(createImageResponse.Value, _officerUser.AccessToken, cancellationToken);
+                await _client.DeleteEvidenceImageAsync(createImageResponse.Value, _officerUser.AccessToken, cancellationToken);
 
                 return response;
             }
