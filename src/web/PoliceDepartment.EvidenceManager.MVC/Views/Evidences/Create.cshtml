@@ -30,7 +30,7 @@
                 <hr />
                 <div class="form-group">
                     <input type="submit" value="Create" class="btn btn-primary" />
-                    <a class="btn btn-secondary" asp-controller="Cases" asp-action="Details" asp-route-id="@ViewBag.CaseId">Cancel</a>
+                    <a class="btn btn-secondary" href="@Context.Request.Query["returnUrl"].ToString()">Cancel</a>
                 </div>
             </form>
         </section>

@@ -22,6 +22,11 @@ namespace PoliceDepartment.EvidenceManager.SharedKernel.Responses
             return this;
         }
 
+        public ResponseMessage GetMessage()
+        {
+            return _responseMessage; 
+        }
+
         public BaseResponse AsSuccess()
         {
             Success = true;

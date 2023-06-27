@@ -15,6 +15,7 @@ namespace PoliceDepartment.EvidenceManager.MVC.Evidences
 
             services.AddScoped<IEvidencesClient, EvidencesClient>();
             services.AddScoped<ICreateEvidence, EvidenceCreate>();
+            services.AddScoped<IGetEvidenceDetails, GetEvidenceDetails>();
 
             return services;
         }

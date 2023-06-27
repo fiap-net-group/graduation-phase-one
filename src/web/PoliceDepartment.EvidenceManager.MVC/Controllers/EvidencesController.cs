@@ -13,12 +13,16 @@ namespace PoliceDepartment.EvidenceManager.MVC.Controllers
     {
         private readonly IOfficerUser _officerUser;
         private readonly ICreateEvidence _createEvidence;
-        private readonly string _serverPath;
-        public EvidencesController(ILoggerManager logger, IOfficerUser officerUser, ICreateEvidence createEvidence, IWebHostEnvironment webHostEnvironment) : base(logger)
+        private readonly IGetEvidenceDetails _getEvidenceDetails;
+
+        public EvidencesController(ILoggerManager logger,
+                                   IOfficerUser officerUser,
+                                   ICreateEvidence createEvidence,
+                                   IGetEvidenceDetails getEvidenceDetails) : base(logger)
         {
             _officerUser = officerUser;
             _createEvidence = createEvidence;
-            _serverPath = webHostEnvironment.WebRootPath;
+            _getEvidenceDetails = getEvidenceDetails;
         }
 
         [HttpGet]
@@ -39,41 +43,39 @@ namespace PoliceDepartment.EvidenceManager.MVC.Controllers
                 return View("Create", model);
             }
 
-            await UploadImageToLocal(model, cancellationToken);         
-
             var createEvidenceResponse = await _createEvidence.RunAsync(model, cancellationToken);
-
-            var returnUrl = Request.Query["returnUrl"].ToString();
 
             if (createEvidenceResponse.Success)
             {
-                if (!String.IsNullOrEmpty(returnUrl))
-                {
-                    return Redirect(returnUrl.ToString());
-                }
-                else
-                {
-                    return View(nameof(Create), model);
-                }
-            };
+                RedirectToReturnUrlIfSpecfied(View(nameof(Create), model));
+            }
 
             AddErrorsToModelState(createEvidenceResponse);
 
             return View(nameof(Create), model);
         }
 
-        private async Task UploadImageToLocal(CreateEvidencePageViewModel model, CancellationToken cancellationToken)
+        [HttpGet]
+        [Route("details/{id:guid}")]
+        public async Task<IActionResult> Detais(Guid id, CancellationToken cancellationToken)
         {
-            string fullPath = _serverPath + "/evidences/";
-            string fullName = model.ImageId.ToString() + Path.GetExtension(model.Image.FileName); 
+            Logger.LogDebug("MVC - Begin get evidence details", ("officerId", _officerUser.Id), ("evidenceId", id));
 
-            if (!Directory.Exists(fullPath))
-                Directory.CreateDirectory(fullPath);
-
-            using (var stream = System.IO.File.Create(fullPath + fullName))
+            if (id == Guid.Empty)
             {
-                await model.Image.CopyToAsync(stream, cancellationToken);
+                var details = await _getEvidenceDetails.RunAsync(id, cancellationToken);
+
+                if (details.Success && details.Value is not null && details.Value.Valid())
+                {
+                    Logger.LogDebug("MVC - Success getting evidenceId details", ("officerId", _officerUser.Id), ("evidenceId", id));
+
+                    return View(details.Value);
+                }
             }
+
+            Logger.LogDebug("MVC - Can't return case details because it doesn't exists", ("officerId", _officerUser.Id), ("evidenceId", id));
+
+            return RedirectToAction("Error", "Home", 404);
         }
     }
 }

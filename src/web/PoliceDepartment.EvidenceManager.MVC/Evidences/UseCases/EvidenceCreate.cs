@@ -23,12 +23,21 @@ namespace PoliceDepartment.EvidenceManager.MVC.Evidences.UseCases
         {
             _logger.LogDebug("MVC - Create evidence logic", ("CaseId", viewModel.CaseId));
 
+            var createImageResponse = await _client.CreateEvidenceImageAsync(viewModel.Image, _officerUser.AccessToken, cancellationToken);
+
+            if (!createImageResponse.Success)
+            {
+                _logger.LogWarning("MVC - Create evidence logic - Error creating image", ("CaseId", viewModel.CaseId), (nameof(createImageResponse), createImageResponse));
+
+                return createImageResponse;
+            }
+
             var request = new CreateEvidenceViewModel
             {
                 Name = viewModel.Name,
                 Description = viewModel.Description,
                 CaseId = viewModel.CaseId,
-                ImageId = Guid.NewGuid(),
+                ImageId = Guid.Parse(createImageResponse.Value),
                 OfficerId = viewModel.OfficerId
             };
 
@@ -36,7 +45,9 @@ namespace PoliceDepartment.EvidenceManager.MVC.Evidences.UseCases
 
             if (!response.Success)
             {
-                _logger.LogWarning("MVC - Create evidence logic - Error", ("CaseId", viewModel.CaseId), (nameof(response), response));
+                _logger.LogWarning("MVC - Create evidence logic - Error creating evidence", ("CaseId", viewModel.CaseId), (nameof(response), response));
+
+                await _client.DeleteEvidenceImageAsync(createImageResponse.Value, _officerUser.AccessToken, cancellationToken);
 
                 return response;
             }
@@ -44,7 +55,6 @@ namespace PoliceDepartment.EvidenceManager.MVC.Evidences.UseCases
             _logger.LogDebug("MVC - Create evidence logic - Success", ("CaseId", viewModel.CaseId));
 
             return response;
-
         }
     }
 }

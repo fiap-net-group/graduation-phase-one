@@ -54,7 +54,7 @@ namespace PoliceDepartment.EvidenceManager.API.Features.V1.Controllers
         /// <param name="evidenceImageId">Evidence image GUID</param>
         /// <response code="200">Successful download</response>
         /// <response code="400">Unsuccessful download</response>
-        [HttpGet("download")]
+        [HttpGet("download/{evidenceImageId:guid}")]
         [Authorize(AuthorizationPolicies.IsPoliceOfficer)]
         [ProducesResponseType(StatusCodes.Status200OK, StatusCode = StatusCodes.Status200OK, Type = typeof(string))]
         public async Task<IActionResult> DownloadAsync(Guid evidenceImageId)
@@ -67,7 +67,7 @@ namespace PoliceDepartment.EvidenceManager.API.Features.V1.Controllers
             return Ok(result);
         }
 
-        [HttpDelete("delete")]
+        [HttpDelete("delete/{evidenceImageId:guid}")]
         public async Task<IActionResult> DeleteAsync(Guid evidenceImageId)
         {
             var result = await _evidenceFileServer.DeleteEvidenceAsync(Convert.ToString(evidenceImageId), _containerName);
