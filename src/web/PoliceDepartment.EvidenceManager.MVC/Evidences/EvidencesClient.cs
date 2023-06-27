@@ -14,6 +14,7 @@ namespace PoliceDepartment.EvidenceManager.MVC.Evidences
         private readonly JsonSerializerOptions _serializeOptions;
 
         private readonly string _createEvidenceUrl;
+        private readonly string _deleteEvidenceUrl;
         public EvidencesClient(AsyncRetryPolicy<HttpResponseMessage> retryPolicy,
                            JsonSerializerOptions serializeOptions,
                            IHttpClientFactory clientFactory,
@@ -22,6 +23,7 @@ namespace PoliceDepartment.EvidenceManager.MVC.Evidences
         {
             _serializeOptions = serializeOptions;
             _createEvidenceUrl = configuration["Api:Evidences:Endpoints:CreateEvidence"];
+            _deleteEvidenceUrl = configuration["Api:Evidences:Endpoints:Delete"];
 
             ArgumentException.ThrowIfNullOrEmpty(_createEvidenceUrl);
         }
@@ -38,6 +40,22 @@ namespace PoliceDepartment.EvidenceManager.MVC.Evidences
                 return await SendAuthenticatedAsync<BaseResponse>(request, accessToken, cancellationToken);
             }
             catch (Exception)
+            {
+                return new BaseResponse().AsError(ResponseMessage.GenericError);
+            }
+        }
+
+        public async Task<BaseResponse> DeleteAsync(Guid id, string accessToken, CancellationToken cancellationToken)
+        {
+            var request = new HttpRequestMessage(HttpMethod.Delete, _deleteEvidenceUrl + $"/{id}");
+
+            try
+            {
+                var response = await SendAuthenticatedAsync(request, accessToken, cancellationToken);
+
+                return response ? new BaseResponse().AsSuccess() : new BaseResponse().AsError();
+            }
+            catch
             {
                 return new BaseResponse().AsError(ResponseMessage.GenericError);
             }

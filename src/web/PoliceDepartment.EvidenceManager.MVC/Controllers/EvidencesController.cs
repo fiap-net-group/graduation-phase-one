@@ -13,12 +13,14 @@ namespace PoliceDepartment.EvidenceManager.MVC.Controllers
     {
         private readonly IOfficerUser _officerUser;
         private readonly ICreateEvidence _createEvidence;
+        private readonly IDeleteEvidence _deleteEvidence;
         private readonly string _serverPath;
-        public EvidencesController(ILoggerManager logger, IOfficerUser officerUser, ICreateEvidence createEvidence, IWebHostEnvironment webHostEnvironment) : base(logger)
+        public EvidencesController(ILoggerManager logger, IOfficerUser officerUser, ICreateEvidence createEvidence, IWebHostEnvironment webHostEnvironment, IDeleteEvidence deleteEvidence) : base(logger)
         {
             _officerUser = officerUser;
             _createEvidence = createEvidence;
             _serverPath = webHostEnvironment.WebRootPath;
+            _deleteEvidence = deleteEvidence;
         }
 
         [HttpGet]
@@ -74,6 +76,33 @@ namespace PoliceDepartment.EvidenceManager.MVC.Controllers
             {
                 await model.Image.CopyToAsync(stream, cancellationToken);
             }
+        }
+
+        [HttpGet]
+        [Route("delete/{id:guid}")]
+        public async Task<IActionResult> Delete(Guid id,CancellationToken cancellationToken)
+        {
+            Logger.LogDebug("MVC - Begin deleting evidence", ("officerId", _officerUser.Id), ("evidenceId", id));
+
+            var deleteEvidenceResponse = await _deleteEvidence.RunAsync(id, cancellationToken);
+
+            var returnUrl = Request.Query["returnUrl"].ToString();
+
+            if(string.IsNullOrEmpty(returnUrl))
+                returnUrl = Url.Action("Index", "Cases");
+
+            if (deleteEvidenceResponse.Success)
+            {
+                Logger.LogDebug("MVC - Delete evidence - Success", ("officerId", _officerUser.Id), ("evidenceId", id));
+
+                return Redirect(returnUrl);
+            }
+
+            AddErrorsToModelState(deleteEvidenceResponse);
+
+            Logger.LogWarning("MVC - Delete evidence - Error", ("officerId", _officerUser.Id), ("evidenceId", id));
+
+            return Redirect(returnUrl);
         }
     }
 }

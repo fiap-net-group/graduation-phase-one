@@ -6,5 +6,7 @@ namespace PoliceDepartment.EvidenceManager.MVC.Evidences.Interfaces
     public interface IEvidencesClient
     {
         Task<BaseResponse> CreateEvidenceAsync(CreateEvidenceViewModel evidenceViewModel, string accessToken, CancellationToken cancellationToken);
+
+        Task<BaseResponse> DeleteAsync(Guid id, string accessToken, CancellationToken cancellationToken);
     }
 }
