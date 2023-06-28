@@ -152,6 +152,7 @@ namespace PoliceDepartment.EvidenceManager.UnitTests.Mvc.Cases
                             .Returns(expectedResponse);
 
             var sut = new CasesController(_logger, _officerUser, _getCasesByOfficerId, _createCase, _getCaseDetails, _editCase, _deleteCase);
+            sut.Url = Substitute.For<IUrlHelper>();
 
             //Act & Assert
             if (success && valueIsNotNull && valueIsValid)
