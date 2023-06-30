@@ -49,5 +49,12 @@ namespace PoliceDepartment.EvidenceManager.MVC.Controllers
 
             return Redirect(returnUrl.ToString());
         }
+
+        protected IActionResult RedirectToReturnUrl()
+        {
+            var returnUrl = Request.Query["returnUrl"].ToString();
+
+            return Redirect(returnUrl.ToString());
+        }
     }
 }

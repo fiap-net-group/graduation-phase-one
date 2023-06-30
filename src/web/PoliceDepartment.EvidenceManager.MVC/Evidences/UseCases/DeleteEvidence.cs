@@ -19,29 +19,38 @@ namespace PoliceDepartment.EvidenceManager.MVC.Evidences.UseCases
             _officerUser = officerUser;
         }
 
-        public async Task<BaseResponse> RunAsync(Guid id, Guid imageId, CancellationToken cancellationToken)
+        public async Task<BaseResponse> RunAsync(Guid id, CancellationToken cancellationToken)
         {
-            _logger.LogDebug("MVC - Delete case logic", ("evidenceId", id), ("imageId", imageId), ("officerId", _officerUser.Id));
+            _logger.LogDebug("MVC - Delete evidence logic", ("evidenceId", id), ("officerId", _officerUser.Id));
 
-            if (id == Guid.Empty || imageId == Guid.Empty)
+            if (id == Guid.Empty)
             {
-                _logger.LogInformation("MVC - Delete case logic - Invalid", ("evidenceId", id), ("imageId", imageId), ("officerId", _officerUser.Id));
+                _logger.LogInformation("MVC - Delete evidence logic - Invalid", ("evidenceId", id), ("officerId", _officerUser.Id));
 
                 return new BaseResponse().AsError();
+            }
+
+            var evidenceResponse = await _client.GetEvidenceByIdAsync(id, _officerUser.AccessToken, cancellationToken);
+
+            if(!evidenceResponse.Success)
+            {
+                _logger.LogWarning("MVC - Delete evidence logic - Evidence doesn't exists", ("evidenceId", id), ("officerId", _officerUser.Id), (nameof(evidenceResponse), evidenceResponse));
+
+                return evidenceResponse;
             }
 
             var response = await _client.DeleteEvidenceAsync(id, _officerUser.AccessToken, cancellationToken);
 
             if (!response.Success)
             {
-                _logger.LogWarning("MVC - Delete case logic - Error", ("evidenceId", id), ("imageId", imageId), ("officerId", _officerUser.Id), (nameof(response), response));
+                _logger.LogWarning("MVC - Delete evidence logic - Error", ("evidenceId", id), ("officerId", _officerUser.Id), (nameof(response), response));
 
                 return response;
             }
 
-            await _client.DeleteEvidenceImageAsync(imageId.ToString(), _officerUser.AccessToken, cancellationToken);
+            await _client.DeleteEvidenceImageAsync(evidenceResponse.Value.ImageId.ToString(), _officerUser.AccessToken, cancellationToken);
 
-            _logger.LogDebug("MVC - Delete case logic - Success", ("evidenceId", id), ("imageId", imageId), ("officerId", _officerUser.Id));
+            _logger.LogDebug("MVC - Delete evidence logic - Success", ("evidenceId", id), ("officerId", _officerUser.Id));
 
             return response;
         }

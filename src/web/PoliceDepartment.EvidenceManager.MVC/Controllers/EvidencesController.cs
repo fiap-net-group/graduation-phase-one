@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PoliceDepartment.EvidenceManager.MVC.Authorization.Interfaces;
+using PoliceDepartment.EvidenceManager.MVC.Cases.Interfaces;
 using PoliceDepartment.EvidenceManager.MVC.Evidences.Interfaces;
 using PoliceDepartment.EvidenceManager.MVC.Models;
 using PoliceDepartment.EvidenceManager.SharedKernel.Logger;
@@ -14,15 +15,18 @@ namespace PoliceDepartment.EvidenceManager.MVC.Controllers
         private readonly IOfficerUser _officerUser;
         private readonly ICreateEvidence _createEvidence;
         private readonly IGetEvidenceDetails _getEvidenceDetails;
+        private readonly IDeleteEvidence _deleteEvidence;
 
         public EvidencesController(ILoggerManager logger,
                                    IOfficerUser officerUser,
                                    ICreateEvidence createEvidence,
-                                   IGetEvidenceDetails getEvidenceDetails) : base(logger)
+                                   IGetEvidenceDetails getEvidenceDetails,
+                                   IDeleteEvidence deleteEvidence) : base(logger)
         {
             _officerUser = officerUser;
             _createEvidence = createEvidence;
             _getEvidenceDetails = getEvidenceDetails;
+            _deleteEvidence = deleteEvidence;
         }
 
         [HttpGet]
@@ -76,6 +80,28 @@ namespace PoliceDepartment.EvidenceManager.MVC.Controllers
             Logger.LogDebug("MVC - Can't return case details because it doesn't exists", ("officerId", _officerUser.Id), ("evidenceId", id));
 
             return RedirectToAction("Error", "Home", 404);
+        }
+
+        [HttpGet]
+        [Route("delete/{id:guid}")]
+        public async Task<IActionResult> Delete(Guid id, CancellationToken cancellationToken)
+        {
+            Logger.LogDebug("MVC - Begin deleting evidence", ("officerId", _officerUser.Id), ("caseId", id));
+
+            var response = await _deleteEvidence.RunAsync(id, cancellationToken);
+
+            if (response.Success)
+            {
+                Logger.LogDebug("MVC - Success deleting evidence", ("officerId", _officerUser.Id), ("caseId", id));
+
+                return RedirectToReturnUrl();
+            }
+
+            AddErrorsToModelState(response);
+
+            Logger.LogDebug("MVC - Error deleting evidence", ("officerId", _officerUser.Id), ("caseId", id));
+
+            return RedirectToReturnUrl();
         }
     }
 }

@@ -45,7 +45,7 @@
                         <td>
                             <a class="btn btn-secondary" asp-controller="Evidences" asp-action="Details" asp-route-id="@item.Id" asp-route-returnUrl="@ViewBag.ReturnUrl">Details</a>
                             <a class="btn btn-primary">Edit</a>
-                            <a class="btn btn-danger">Delete</a>
+                            <a class="btn btn-danger" asp-controller="Evidences" asp-action="Delete" asp-route-id="@item.Id" asp-route-returnUrl="@ViewBag.ReturnUrl">Delete</a>
                         </td>
                     </tr>
                 }
