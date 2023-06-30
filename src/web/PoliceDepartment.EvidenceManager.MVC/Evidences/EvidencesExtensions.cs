@@ -1,4 +1,5 @@
-﻿using PoliceDepartment.EvidenceManager.MVC.Client;
+﻿using PoliceDepartment.EvidenceManager.MVC.Cases.Interfaces;
+using PoliceDepartment.EvidenceManager.MVC.Client;
 using PoliceDepartment.EvidenceManager.MVC.Evidences.Interfaces;
 using PoliceDepartment.EvidenceManager.MVC.Evidences.UseCases;
 
@@ -14,8 +15,9 @@ namespace PoliceDepartment.EvidenceManager.MVC.Evidences
             });
 
             services.AddScoped<IEvidencesClient, EvidencesClient>();
-            services.AddScoped<ICreateEvidence, EvidenceCreate>();
+            services.AddScoped<ICreateEvidence, CreateEvidence>();
             services.AddScoped<IGetEvidenceDetails, GetEvidenceDetails>();
+            services.AddScoped<IDeleteEvidence, DeleteEvidence>();
 
             return services;
         }

@@ -7,13 +7,13 @@ using PoliceDepartment.EvidenceManager.SharedKernel.ViewModels;
 
 namespace PoliceDepartment.EvidenceManager.MVC.Evidences.UseCases
 {
-    public class EvidenceCreate : ICreateEvidence
+    public class CreateEvidence : ICreateEvidence
     {
         private readonly ILoggerManager _logger;
         private readonly IEvidencesClient _client;
         private readonly IOfficerUser _officerUser;
 
-        public EvidenceCreate(ILoggerManager logger, IOfficerUser officerUser, IEvidencesClient client)
+        public CreateEvidence(ILoggerManager logger, IOfficerUser officerUser, IEvidencesClient client)
         {
             _logger = logger;
             _officerUser = officerUser;
