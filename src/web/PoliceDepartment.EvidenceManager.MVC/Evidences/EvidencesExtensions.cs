@@ -18,6 +18,7 @@ namespace PoliceDepartment.EvidenceManager.MVC.Evidences
             services.AddScoped<ICreateEvidence, CreateEvidence>();
             services.AddScoped<IGetEvidenceDetails, GetEvidenceDetails>();
             services.AddScoped<IDeleteEvidence, DeleteEvidence>();
+            services.AddScoped<IEditEvidence, EditEvidence>();
 
             return services;
         }
