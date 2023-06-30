@@ -1,11 +1,15 @@
-﻿using PoliceDepartment.EvidenceManager.MVC.Client;
+﻿using Microsoft.AspNetCore.Http;
+using PoliceDepartment.EvidenceManager.MVC.Client;
 using PoliceDepartment.EvidenceManager.MVC.Evidences.Interfaces;
 using PoliceDepartment.EvidenceManager.SharedKernel.Logger;
 using PoliceDepartment.EvidenceManager.SharedKernel.Responses;
 using PoliceDepartment.EvidenceManager.SharedKernel.ViewModels;
 using Polly.Retry;
+using System.IO;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
+using System.Xml.Linq;
 
 namespace PoliceDepartment.EvidenceManager.MVC.Evidences
 {
@@ -28,7 +32,7 @@ namespace PoliceDepartment.EvidenceManager.MVC.Evidences
             _createEvidenceImageUrl = configuration["Api:Evidences:Endpoints:CreateEvidenceImage"];
             _createEvidenceUrl = configuration["Api:Evidences:Endpoints:CreateEvidence"];
             _deleteEvidenceImageUrl = configuration["Api:Evidences:Endpoints:DeleteEvidenceImage"];
-            _getEvidenceByIdUrl = configuration["Api:Evidences:Endpoints:GetEvidenceById"];
+            _getEvidenceByIdUrl = configuration["Api:Evidences:Endpoints:GetDetails"];
             _getEvidenceImageUrl = configuration["Api:Evidences:Endpoints:GetEvidenceImage"];
 
             ArgumentException.ThrowIfNullOrEmpty(_createEvidenceUrl);
@@ -36,12 +40,20 @@ namespace PoliceDepartment.EvidenceManager.MVC.Evidences
 
         public async Task<BaseResponseWithValue<string>> CreateEvidenceImageAsync(IFormFile image, string accessToken, CancellationToken cancellationToken)
         {
-            var request = new HttpRequestMessage(HttpMethod.Post, _createEvidenceImageUrl)
+            await using var imageStream = image.OpenReadStream();
+            using var bynaryReader = new BinaryReader(imageStream);
+            var data = bynaryReader.ReadBytes((int)imageStream.Length);
+
+            var evidenceImage = JsonSerializer.Serialize(new EvidenceFileViewModel
             {
-                Content = new MultipartFormDataContent
-                {
-                    { new StreamContent(image.OpenReadStream()), "csvFile", "filename" }
-                }
+                FileExtension = Path.GetExtension(image.FileName),
+                ImageByte = data
+            }, 
+            _serializeOptions);
+
+            using var request = new HttpRequestMessage(HttpMethod.Post, _createEvidenceImageUrl)
+            {
+                Content = new StringContent(evidenceImage, Encoding.UTF8, "application/json")
             };
 
             try
@@ -56,7 +68,7 @@ namespace PoliceDepartment.EvidenceManager.MVC.Evidences
 
         public async Task<BaseResponseWithValue<string>> DeleteEvidenceImageAsync(string imageId, string accessToken, CancellationToken cancellationToken)
         {
-            var request = new HttpRequestMessage(HttpMethod.Delete, _deleteEvidenceImageUrl + $"/{imageId}");            
+            var request = new HttpRequestMessage(HttpMethod.Delete, _deleteEvidenceImageUrl + $"/{imageId}");
 
             try
             {

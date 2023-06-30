@@ -9,8 +9,8 @@
     <div class="col-md-4">
         <section>
             <form asp-action="PostCreate" method="post" enctype="multipart/form-data" asp-route-returnUrl="@Context.Request.Query["returnUrl"].ToString()">
-                <input asp-for="CaseId" type="hidden" value="@ViewBag.CaseId" />
-                <input asp-for="OfficerId" type="hidden" value="@ViewBag.OfficerId" />
+                <input asp-for="CaseId" type="hidden" value="@(ViewBag.CaseId != Guid.Empty ? ViewBag.CaseId : Model.CaseId)" />
+                <input asp-for="OfficerId" type="hidden" value="@(ViewBag.OfficerId != Guid.Empty ? ViewBag.OfficerId : Model.CaseId)" />
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                 <div class="form-group">
                     <label asp-for="Name" class="form-label">Name</label>

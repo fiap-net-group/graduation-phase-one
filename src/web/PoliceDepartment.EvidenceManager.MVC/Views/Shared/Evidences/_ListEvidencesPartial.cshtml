@@ -43,7 +43,7 @@
                             @Html.DisplayFor(modelItem => item.Description)
                         </td>
                         <td>
-                            <a class="btn btn-secondary" asp-controller="Evidences" asp-route-returnUrl="@ViewBag.ReturnUrl" asp-action="Details" asp-route-id="@item.Id">Details</a>
+                            <a class="btn btn-secondary" asp-controller="Evidences" asp-action="Details" asp-route-id="@item.Id" asp-route-returnUrl="@ViewBag.ReturnUrl">Details</a>
                             <a class="btn btn-primary">Edit</a>
                             <a class="btn btn-danger">Delete</a>
                         </td>

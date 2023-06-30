@@ -27,19 +27,19 @@ namespace PoliceDepartment.EvidenceManager.MVC.Controllers
 
         [HttpGet]
         [Route("create/{id:guid}")]
-        public IActionResult Create(Guid id)
+        public IActionResult Create(Guid id, CreateEvidencePageViewModel model)
         {
             ViewBag.CaseId = id;
             ViewBag.OfficerId = _officerUser.Id;
 
-            return View();
+            return View(model);
         }
 
         [HttpPost]
         public async Task<IActionResult> PostCreate(CreateEvidencePageViewModel model, CancellationToken cancellationToken)
         {
             if (!ModelState.IsValid)
-            {
+            {                    
                 return View("Create", model);
             }
 
@@ -47,7 +47,7 @@ namespace PoliceDepartment.EvidenceManager.MVC.Controllers
 
             if (createEvidenceResponse.Success)
             {
-                RedirectToReturnUrlIfSpecfied(View(nameof(Create), model));
+                return RedirectToReturnUrlIfSpecfied(View(nameof(Create), model));
             }
 
             AddErrorsToModelState(createEvidenceResponse);
@@ -57,11 +57,11 @@ namespace PoliceDepartment.EvidenceManager.MVC.Controllers
 
         [HttpGet]
         [Route("details/{id:guid}")]
-        public async Task<IActionResult> Detais(Guid id, CancellationToken cancellationToken)
+        public async Task<IActionResult> Details(Guid id, CancellationToken cancellationToken)
         {
             Logger.LogDebug("MVC - Begin get evidence details", ("officerId", _officerUser.Id), ("evidenceId", id));
 
-            if (id == Guid.Empty)
+            if (id != Guid.Empty)
             {
                 var details = await _getEvidenceDetails.RunAsync(id, cancellationToken);
 

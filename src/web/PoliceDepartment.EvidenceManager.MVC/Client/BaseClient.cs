@@ -7,9 +7,10 @@ namespace PoliceDepartment.EvidenceManager.MVC.Client
 {
     public class BaseClient
     {
+        protected HttpClient Client { get; }
+
         private readonly AsyncRetryPolicy<HttpResponseMessage> _retryPolicy;
         private readonly JsonSerializerOptions _serializeOptions;
-        private readonly HttpClient _client;
         private readonly string _apiKey;
         private readonly ILoggerManager _logger;
 
@@ -21,7 +22,7 @@ namespace PoliceDepartment.EvidenceManager.MVC.Client
         {
             _retryPolicy = retryPolicy;
             _serializeOptions = serializeOptions;
-            _client = client;
+            Client = client;
             _apiKey = configuration["Api:ApiKey"];
             _logger = logger;
         }
@@ -36,7 +37,7 @@ namespace PoliceDepartment.EvidenceManager.MVC.Client
                 {
                     request.Headers.Add(ClientExtensions.ApiKeyHeader, _apiKey);
 
-                    return await _client.SendAsync(request, cancellationToken);
+                    return await Client.SendAsync(request, cancellationToken);
                 },
                 cancellationToken);
 
@@ -62,8 +63,8 @@ namespace PoliceDepartment.EvidenceManager.MVC.Client
                 {
                     request.Headers.Add(ClientExtensions.ApiKeyHeader, _apiKey);
 
-                    return await _client.SendAsync(request, cancellationToken);
-                }, 
+                    return await Client.SendAsync(request, cancellationToken);
+                },
                 cancellationToken);
 
                 _logger.LogDebug("API call with response", ("response", apiResponse));
@@ -86,8 +87,8 @@ namespace PoliceDepartment.EvidenceManager.MVC.Client
                 {
                     request.Headers.Add(ClientExtensions.ApiKeyHeader, _apiKey);
 
-                    return await _client.SendAsync(request, cancellationToken);
-                }, 
+                    return await Client.SendAsync(request, cancellationToken);
+                },
                 cancellationToken);
 
                 _logger.LogDebug("API call with response", ("response", apiResponse));
