@@ -8,6 +8,8 @@ namespace PoliceDepartment.EvidenceManager.UnitTests.Fixtures.Shared
     {
         public string CreateEvidenceUrl => "http://localhost/api/fake/evidences/";
         public string CreateEvidenceImageUrl => "http://localhost/api/fake/evidencesFiles/upload/";
+        public string UpdateEvidenceUrl => "http://localhost/api/fake/evidences/*";
+        public string DeleteEvidenceUrl => "http://localhost/api/fake/evidences/*";
         public string DeleteEvidenceImageUrl => "http://localhost/api/fake/evidencesFiles/*";
         public string GetEvidenceByIdUrl => "http://localhost/api/fake/evidences/*";
         public string GetEvidenceImageUrl => "http://localhost/api/fake/evidencesFiles/download/*";
