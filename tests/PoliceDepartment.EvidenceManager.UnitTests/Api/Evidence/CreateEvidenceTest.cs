@@ -40,7 +40,7 @@ namespace PoliceDepartment.EvidenceManager.UnitTests.Api.Evidence
         public async Task RunAsync_ValidRequest_ShoudlReturnSuccess()
         {
             // Arrange
-            CreateEvidenceViewModel evidenceViewModel = _fixture.Evidence.GenerateViewModel();
+            CreateEvidenceViewModel evidenceViewModel = _fixture.Evidence.GenerateSingleCreateEvidenceViewModel();
             var validationResult = new ValidationResult();
             _validator.ValidateAsync(evidenceViewModel, CancellationToken.None).Returns(validationResult);
 
@@ -98,7 +98,7 @@ namespace PoliceDepartment.EvidenceManager.UnitTests.Api.Evidence
         public async Task RunAsync_DatabaseError_ShouldThrow()
         {
             // Arrange
-            CreateEvidenceViewModel evidenceViewModel = _fixture.Evidence.GenerateViewModel();
+            CreateEvidenceViewModel evidenceViewModel = _fixture.Evidence.GenerateSingleCreateEvidenceViewModel();
             var validationResult = new ValidationResult();
             _validator.ValidateAsync(evidenceViewModel, CancellationToken.None).Returns(validationResult);
 

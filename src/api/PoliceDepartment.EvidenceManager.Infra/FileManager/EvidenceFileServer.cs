@@ -32,6 +32,31 @@ namespace PoliceDepartment.EvidenceManager.Infra.FileManager
             return _response.AsSuccess(await Task.Run(() => blobClient.Uri.AbsoluteUri));
         }
 
+        public async Task<BaseResponseWithValue<string>> UploadEvidenceAsync(byte[] imageArray, string fileExtension, string containerName, CancellationToken cancellationToken)
+        {
+            if (fileExtension != _fileExtension)            
+                return _response.AsError("The file extension is not valid");
+            
+            var stream = new MemoryStream(imageArray);
+            var fileId = Guid.NewGuid().ToString();
+            var fileName = $"{fileId}{fileExtension}";
+            
+            IFormFile file = new FormFile(stream, 0, imageArray.Length, fileId, fileName);
+
+            var containerClient = _blobServiceClient.GetBlobContainerClient(containerName);
+            var blobClient = containerClient.GetBlobClient(fileName);
+
+            bool exists = await blobClient.ExistsAsync(cancellationToken);
+
+            if (exists)
+            {
+                return _response.AsError("The evidence already exists");
+            }
+
+            var res = await blobClient.UploadAsync(file.OpenReadStream(), new BlobHttpHeaders { ContentType = $"image{fileExtension.Replace('.', '/')}" }, cancellationToken: cancellationToken);
+
+            return _response.AsSuccess(Convert.ToString(res.GetRawResponse().Status == StatusCodes.Status201Created ? fileId : Guid.Empty));
+        }
 
         public async Task<BaseResponseWithValue<string>> UploadEvidenceAsync(string fileExtension, IFormFile file, string containerName)
         {

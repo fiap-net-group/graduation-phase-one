@@ -1,0 +1,47 @@
+﻿@using PoliceDepartment.EvidenceManager.SharedKernel.ViewModels;
+@model EditEvidencePageViewModel
+
+@{
+    ViewData["Title"] = "Edit evidence";
+}
+
+<h1>Edit evidence</h1>
+
+<hr />
+
+<div class="row">
+    <div class="col-md-4">
+        <section>
+            <form asp-action="PostEdit" method="post" enctype="multipart/form-data" asp-route-returnUrl="@Context.Request.Query["returnUrl"].ToString()">
+                <input asp-for="Id" type="hidden" />
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="form-group">
+                    <label asp-for="Name" class="control-label">Name</label>
+                    <input asp-for="Name" class="form-control" />
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Description" class="control-label">Description</label>
+                    <textarea asp-for="Description" class="form-control"></textarea>
+                    <span asp-validation-for="Description" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Image">Image</label>
+                    <input asp-for="Image" type="file" accept="image/png" class="form-control" aria-required="true" />
+                    <span asp-validation-for="Image" class="text-danger"></span>
+                </div>
+                <hr />
+                <div class="form-group">
+                    <input type="submit" value="Save changes" class="btn btn-primary" />
+                    <a class="btn btn-secondary" href="@Context.Request.Query["returnUrl"].ToString()">Go back to list</a>
+                </div>
+            </form>
+        </section>
+    </div>
+</div>
+@section Scripts
+    {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
