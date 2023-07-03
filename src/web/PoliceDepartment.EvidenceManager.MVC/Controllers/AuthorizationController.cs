@@ -47,7 +47,7 @@ namespace PoliceDepartment.EvidenceManager.MVC.Controllers
             {
                 Logger.LogWarning("MVC - Invalid login properties", (nameof(ModelState), ModelState));
 
-                return View(viewModel);
+                return View(nameof(Login), viewModel);
             }
 
             var loginResponse = await _login.RunAsync(viewModel.Username, viewModel.Password, cancellationToken);
@@ -58,7 +58,7 @@ namespace PoliceDepartment.EvidenceManager.MVC.Controllers
 
                 AddErrorsToModelState(loginResponse);
 
-                return View(viewModel);
+                return View(nameof(Login), viewModel);
             }
 
             Logger.LogDebug("MVC - Success Login", ("username", viewModel.Username));

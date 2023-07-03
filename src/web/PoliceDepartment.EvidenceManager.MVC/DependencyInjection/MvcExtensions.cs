@@ -22,7 +22,7 @@
 
             app.MapControllerRoute(
                 name: "default",
-                pattern: "{controller=Authorization}/{action=Login}/");
+                pattern: "{controller=Home}/{action=Index}/");
 
             return app;
         }
