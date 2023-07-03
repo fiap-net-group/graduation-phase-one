@@ -49,7 +49,7 @@ namespace PoliceDepartment.EvidenceManager.MVC.Authorization
             {
                 return await SendAsync<BaseResponseWithValue<AccessTokenViewModel>>(request, cancellationToken);
             }
-            catch(Exception ex)
+            catch
             {
                 return new BaseResponseWithValue<AccessTokenViewModel>().AsError(ResponseMessage.GenericError);
             }
