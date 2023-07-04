@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PoliceDepartment.EvidenceManager.Application.Authorization;
-using PoliceDepartment.EvidenceManager.Domain.Authorization;
-using PoliceDepartment.EvidenceManager.Domain.Evidence.UseCases;
+using PoliceDepartment.EvidenceManager.SharedKernel.Authorization;
+using PoliceDepartment.EvidenceManager.SharedKernel.Evidence.UseCases;
 using PoliceDepartment.EvidenceManager.SharedKernel.Responses;
 using PoliceDepartment.EvidenceManager.SharedKernel.ViewModels;
 
@@ -108,7 +108,7 @@ namespace PoliceDepartment.EvidenceManager.API.Features.V1.Controllers
         /// <response code="200">The evidences</response>
         /// <response code="401">Invalid access code or API-TOKEN</response>
         [HttpGet("case/{caseId:guid}")]
-        [Authorize(AuthorizationPolicies.IsPoliceOfficer)]
+        //[Authorize(AuthorizationPolicies.IsPoliceOfficer)]
         [ProducesResponseType(StatusCodes.Status200OK, StatusCode = StatusCodes.Status200OK, Type = typeof(IEnumerable<EvidenceViewModel>))]
         [ProducesResponseType(StatusCodes.Status404NotFound, StatusCode = StatusCodes.Status404NotFound, Type = typeof(BaseResponse))]
         [ProducesResponseType(StatusCodes.Status401Unauthorized, StatusCode = StatusCodes.Status401Unauthorized, Type = typeof(BaseResponse))]
@@ -133,7 +133,7 @@ namespace PoliceDepartment.EvidenceManager.API.Features.V1.Controllers
         /// <response code="200">The evidence was deleted</response>
         /// <response code="401">Invalid access code or API-TOKEN</response>
         [HttpDelete("{id:guid}")]
-        [Authorize(AuthorizationPolicies.IsPoliceOfficer)]
+        //[Authorize(AuthorizationPolicies.IsPoliceOfficer)]
         [ProducesResponseType(StatusCodes.Status200OK, StatusCode = StatusCodes.Status200OK, Type = typeof(BaseResponse))]
         [ProducesResponseType(StatusCodes.Status404NotFound, StatusCode = StatusCodes.Status404NotFound, Type = typeof(BaseResponse))]
         [ProducesResponseType(StatusCodes.Status401Unauthorized, StatusCode = StatusCodes.Status401Unauthorized, Type = typeof(BaseResponse))]

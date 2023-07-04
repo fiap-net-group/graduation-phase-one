@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
-using PoliceDepartment.EvidenceManager.Domain.Database;
-using PoliceDepartment.EvidenceManager.Domain.Evidence.UseCases;
-using PoliceDepartment.EvidenceManager.Domain.Logger;
+using PoliceDepartment.EvidenceManager.SharedKernel.Database;
+using PoliceDepartment.EvidenceManager.SharedKernel.Evidence.UseCases;
+using PoliceDepartment.EvidenceManager.SharedKernel.Logger;
 using PoliceDepartment.EvidenceManager.SharedKernel.Responses;
 using PoliceDepartment.EvidenceManager.SharedKernel.ViewModels;
 

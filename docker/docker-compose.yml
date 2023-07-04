@@ -1,19 +1,6 @@
 version: '3.3'
 name: graduation-phase-one
 services:
-  sqlserver:
-    image: mcr.microsoft.com/mssql/server:2019-latest
-    networks:
-      - backend
-    container_name: sqlserver
-    environment:
-      ACCEPT_EULA: 'Y'
-      SA_PASSWORD: "AvS#a1s45s"
-      MSSQL_PID: Express
-    volumes:
-      - c:\data\volumes\mssql:/var/opt/mssql3
-    ports:
-      - '1433:1433'    
   api:
     image: ${DOCKER_REGISTRY-}api
     networks:
@@ -22,8 +9,6 @@ services:
       context: ../
       dockerfile: ./src/api/PoliceDepartment.EvidenceManager.API/Dockerfile
     container_name: api
-    depends_on:
-      - sqlserver
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
       - ASPNETCORE_URLS=http://+:80

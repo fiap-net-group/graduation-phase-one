@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PoliceDepartment.EvidenceManager.Domain.Evidence
+namespace PoliceDepartment.EvidenceManager.SharedKernel.Evidence
 {
     public class EvidenceImage
     {

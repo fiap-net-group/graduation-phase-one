@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using PoliceDepartment.EvidenceManager.Application.Authorization.UseCases;
-using PoliceDepartment.EvidenceManager.Domain.Authorization;
+using PoliceDepartment.EvidenceManager.SharedKernel.Authorization;
 using PoliceDepartment.EvidenceManager.Infra.Database.Mappings;
 using PoliceDepartment.EvidenceManager.Infra.Identity;
 using PoliceDepartment.EvidenceManager.SharedKernel.Extensions;
@@ -32,11 +32,6 @@ namespace PoliceDepartment.EvidenceManager.API.DependencyInjection.BusinessRules
             ).AddEntityFrameworkStores<IdentityContext>()
              .AddDefaultTokenProviders();
 
-            services.AddAuthorization(options =>
-            {
-                options.AddPolicys();
-            });
-
             services.AddAuthentication(x =>
             {
                 x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -47,7 +42,7 @@ namespace PoliceDepartment.EvidenceManager.API.DependencyInjection.BusinessRules
                 {
                     ValidateAudience = true,
                     ValidateIssuer = true,
-                    ValidateLifetime = true,
+                    ValidateLifetime = false,
                     ValidateIssuerSigningKey = true,
                     ClockSkew = TimeSpan.Zero,
                     ValidIssuer = configuration["Jwt:Issuer"],
@@ -55,7 +50,11 @@ namespace PoliceDepartment.EvidenceManager.API.DependencyInjection.BusinessRules
                     IssuerSigningKey = new SymmetricSecurityKey(
                         Encoding.UTF8.GetBytes(configuration["Jwt:Key"]))
                 };
-                options.MapInboundClaims = false;
+            });
+
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicys();
             });
 
             return services;

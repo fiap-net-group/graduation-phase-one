@@ -10,6 +10,7 @@
 
   <ItemGroup>
     <None Include="Views\Authorization\Login.cshtml" />
+    <None Include="Views\Shared\Evidences\_ListEvidencesPartial.cshtml" />
   </ItemGroup>
 
   <ItemGroup>
@@ -22,6 +23,13 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\shared-kernel\PoliceDepartment.EvidenceManager.SharedKernel\PoliceDepartment.EvidenceManager.SharedKernel.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Update="Views\Evidences\Create.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
   </ItemGroup>
 
 </Project>

@@ -9,7 +9,7 @@ namespace PoliceDepartment.EvidenceManager.MVC.Authorization
     {
         public const string AccessTokenClaimName = "AccessToken";
 
-        public static void AddAuthorizationConfiguration(this IServiceCollection services, IConfiguration configuration)
+        public static IServiceCollection AddAuthorizationConfiguration(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                 .AddCookie(options =>
@@ -28,12 +28,16 @@ namespace PoliceDepartment.EvidenceManager.MVC.Authorization
             services.AddScoped<IOfficerUser, OfficerUser>();
             services.AddScoped<ILogin, Login>();
             services.AddScoped<ILogout, Logout>();
+
+            return services;
         }
 
-        public static void UseAuthorizationConfiguration(this IApplicationBuilder app)
+        public static IApplicationBuilder UseAuthorizationConfiguration(this IApplicationBuilder app)
         {
             app.UseAuthentication();
             app.UseAuthorization();
+
+            return app;
         }
     }
 }

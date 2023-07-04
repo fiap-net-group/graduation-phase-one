@@ -1,8 +1,8 @@
-﻿using PoliceDepartment.EvidenceManager.Domain.Case;
-using PoliceDepartment.EvidenceManager.Domain.Evidence;
-using PoliceDepartment.EvidenceManager.Domain.Officer;
+﻿using PoliceDepartment.EvidenceManager.SharedKernel.Case;
+using PoliceDepartment.EvidenceManager.SharedKernel.Evidence;
+using PoliceDepartment.EvidenceManager.SharedKernel.Officer;
 
-namespace PoliceDepartment.EvidenceManager.Domain.Database
+namespace PoliceDepartment.EvidenceManager.SharedKernel.Database
 {
     public interface IUnitOfWork : IDisposable
     {

@@ -1,15 +1,16 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using PoliceDepartment.EvidenceManager.Domain.Case;
-using PoliceDepartment.EvidenceManager.Domain.Database;
-using PoliceDepartment.EvidenceManager.Domain.Evidence;
-using PoliceDepartment.EvidenceManager.Domain.Officer;
+using PoliceDepartment.EvidenceManager.SharedKernel.Case;
+using PoliceDepartment.EvidenceManager.SharedKernel.Database;
+using PoliceDepartment.EvidenceManager.SharedKernel.Evidence;
+using PoliceDepartment.EvidenceManager.SharedKernel.Officer;
 using PoliceDepartment.EvidenceManager.Infra.Database;
 using PoliceDepartment.EvidenceManager.Infra.Database.Mappings;
 using PoliceDepartment.EvidenceManager.Infra.Database.Repositories;
 using PoliceDepartment.EvidenceManager.Infra.FileManager;
-using PoliceDepartment.EvidenceManager.Infra.Identity;
 using System.Data.SqlClient;
 using System.Diagnostics.CodeAnalysis;
+using Azure.Storage.Blobs;
+
 
 namespace PoliceDepartment.EvidenceManager.API.DependencyInjection.BusinessRules
 {
@@ -28,14 +29,7 @@ namespace PoliceDepartment.EvidenceManager.API.DependencyInjection.BusinessRules
             services.AddDbContext<SqlServerContext>(options => options.UseSqlServer(configuration.GetConnectionString("SqlServerConnection")));
             services.AddLogging();
 
-            if (isDevelopment)
-            {
-                services.AddScoped<IEvidenceFileServer, EvidenceLocalServer>();
-            }
-            else
-            {
-                services.AddScoped<IEvidenceFileServer, EvidenceLocalServer>();
-            }
+            services.AddScoped<IEvidenceFileServer>(_ => new EvidenceFileServer(new BlobServiceClient(configuration.GetConnectionString("AzureStorageAccount"))));
 
 
             return services;

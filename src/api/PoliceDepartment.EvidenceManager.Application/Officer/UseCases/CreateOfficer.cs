@@ -1,9 +1,9 @@
 using AutoMapper;
 using FluentValidation;
-using PoliceDepartment.EvidenceManager.Domain.Authorization;
+using PoliceDepartment.EvidenceManager.SharedKernel.Authorization;
 using PoliceDepartment.EvidenceManager.SharedKernel.Logger;
-using PoliceDepartment.EvidenceManager.Domain.Officer;
-using PoliceDepartment.EvidenceManager.Domain.Officer.UseCases;
+using PoliceDepartment.EvidenceManager.SharedKernel.Officer;
+using PoliceDepartment.EvidenceManager.SharedKernel.Officer.UseCases;
 using PoliceDepartment.EvidenceManager.SharedKernel.Responses;
 using PoliceDepartment.EvidenceManager.SharedKernel.ViewModels;
 

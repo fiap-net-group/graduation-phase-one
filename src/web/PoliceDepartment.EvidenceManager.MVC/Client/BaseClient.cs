@@ -1,14 +1,16 @@
 ﻿using PoliceDepartment.EvidenceManager.SharedKernel.Logger;
 using Polly.Retry;
+using System.Net.Http.Headers;
 using System.Text.Json;
 
 namespace PoliceDepartment.EvidenceManager.MVC.Client
 {
     public class BaseClient
     {
+        protected HttpClient Client { get; }
+
         private readonly AsyncRetryPolicy<HttpResponseMessage> _retryPolicy;
         private readonly JsonSerializerOptions _serializeOptions;
-        private readonly HttpClient _client;
         private readonly string _apiKey;
         private readonly ILoggerManager _logger;
 
@@ -20,9 +22,61 @@ namespace PoliceDepartment.EvidenceManager.MVC.Client
         {
             _retryPolicy = retryPolicy;
             _serializeOptions = serializeOptions;
-            _client = client;
+            Client = client;
             _apiKey = configuration["Api:ApiKey"];
             _logger = logger;
+        }
+
+        protected async Task<bool> SendAuthenticatedAsync(HttpRequestMessage request, string accessToken, CancellationToken cancellationToken)
+        {
+            try
+            {
+                request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+
+                var apiResponse = await _retryPolicy.ExecuteAsync(async action =>
+                {
+                    request.Headers.Add(ClientExtensions.ApiKeyHeader, _apiKey);
+
+                    return await Client.SendAsync(request, cancellationToken);
+                },
+                cancellationToken);
+
+                _logger.LogDebug("API call", ("response", apiResponse));
+
+                return apiResponse.IsSuccessStatusCode;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogCritical("Error on API Access", ex);
+
+                throw;
+            }
+        }
+
+        protected async Task<TResponse> SendAuthenticatedAsync<TResponse>(HttpRequestMessage request, string accessToken, CancellationToken cancellationToken)
+        {
+            try
+            {
+                request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+
+                var apiResponse = await _retryPolicy.ExecuteAsync(async action =>
+                {
+                    request.Headers.Add(ClientExtensions.ApiKeyHeader, _apiKey);
+
+                    return await Client.SendAsync(request, cancellationToken);
+                },
+                cancellationToken);
+
+                _logger.LogDebug("API call with response", ("response", apiResponse));
+
+                return await apiResponse.Content.ReadFromJsonAsync<TResponse>(_serializeOptions, cancellationToken);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogCritical("Error on API Access", ex);
+
+                throw;
+            }
         }
 
         protected async Task<TResponse> SendAsync<TResponse>(HttpRequestMessage request, CancellationToken cancellationToken)
@@ -33,8 +87,11 @@ namespace PoliceDepartment.EvidenceManager.MVC.Client
                 {
                     request.Headers.Add(ClientExtensions.ApiKeyHeader, _apiKey);
 
-                    return await _client.SendAsync(request, cancellationToken);
-                }, cancellationToken);
+                    return await Client.SendAsync(request, cancellationToken);
+                },
+                cancellationToken);
+
+                _logger.LogDebug("API call with response", ("response", apiResponse));
 
                 return await apiResponse.Content.ReadFromJsonAsync<TResponse>(_serializeOptions, cancellationToken);
             }

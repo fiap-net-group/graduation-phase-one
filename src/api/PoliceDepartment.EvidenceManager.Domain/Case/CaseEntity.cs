@@ -1,7 +1,7 @@
-﻿using PoliceDepartment.EvidenceManager.Domain.Evidence;
-using PoliceDepartment.EvidenceManager.Domain.Officer;
+﻿using PoliceDepartment.EvidenceManager.SharedKernel.Evidence;
+using PoliceDepartment.EvidenceManager.SharedKernel.Officer;
 
-namespace PoliceDepartment.EvidenceManager.Domain.Case
+namespace PoliceDepartment.EvidenceManager.SharedKernel.Case
 {
     public class CaseEntity
     {

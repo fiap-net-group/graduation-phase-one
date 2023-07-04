@@ -22,5 +22,7 @@ namespace PoliceDepartment.EvidenceManager.SharedKernel.Responses
         UserIsNotAuthenticated = 7,
         [Description("Invalid evidence")]
         InvalidEvidence = 8,
+        [Description("A case with this name already exists")]
+        CaseAlreadyExists = 9,
     }
 }

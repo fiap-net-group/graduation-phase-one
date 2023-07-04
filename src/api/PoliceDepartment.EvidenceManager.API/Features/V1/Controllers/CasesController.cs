@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PoliceDepartment.EvidenceManager.Application.Authorization;
-using PoliceDepartment.EvidenceManager.Domain.Authorization;
-using PoliceDepartment.EvidenceManager.Domain.Case.UseCases;
+using PoliceDepartment.EvidenceManager.SharedKernel.Authorization;
+using PoliceDepartment.EvidenceManager.SharedKernel.Case.UseCases;
 using PoliceDepartment.EvidenceManager.SharedKernel.Responses;
 using PoliceDepartment.EvidenceManager.SharedKernel.ViewModels;
 

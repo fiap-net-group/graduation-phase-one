@@ -1,6 +1,6 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Identity;
-using PoliceDepartment.EvidenceManager.Domain.Officer;
+using PoliceDepartment.EvidenceManager.SharedKernel.Officer;
 using PoliceDepartment.EvidenceManager.SharedKernel.ViewModels;
 
 namespace PoliceDepartment.EvidenceManager.Application.Officer

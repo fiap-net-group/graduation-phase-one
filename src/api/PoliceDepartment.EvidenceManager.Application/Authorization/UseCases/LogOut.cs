@@ -1,5 +1,5 @@
-using PoliceDepartment.EvidenceManager.Domain.Authorization;
-using PoliceDepartment.EvidenceManager.Domain.Authorization.UseCases;
+using PoliceDepartment.EvidenceManager.SharedKernel.Authorization;
+using PoliceDepartment.EvidenceManager.SharedKernel.Authorization.UseCases;
 using PoliceDepartment.EvidenceManager.SharedKernel.Responses;
 
 namespace PoliceDepartment.EvidenceManager.Application.Authorization.UseCases

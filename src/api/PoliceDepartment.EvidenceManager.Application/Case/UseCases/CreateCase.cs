@@ -1,9 +1,9 @@
 ﻿using AutoMapper;
 using FluentValidation;
-using PoliceDepartment.EvidenceManager.Domain.Case;
-using PoliceDepartment.EvidenceManager.Domain.Case.UseCases;
-using PoliceDepartment.EvidenceManager.Domain.Database;
-using PoliceDepartment.EvidenceManager.Domain.Exceptions;
+using PoliceDepartment.EvidenceManager.SharedKernel.Case;
+using PoliceDepartment.EvidenceManager.SharedKernel.Case.UseCases;
+using PoliceDepartment.EvidenceManager.SharedKernel.Database;
+using PoliceDepartment.EvidenceManager.SharedKernel.Exceptions;
 using PoliceDepartment.EvidenceManager.SharedKernel.Logger;
 using PoliceDepartment.EvidenceManager.SharedKernel.Responses;
 using PoliceDepartment.EvidenceManager.SharedKernel.ViewModels;
@@ -40,6 +40,15 @@ namespace PoliceDepartment.EvidenceManager.Application.Case.UseCases
                 var errorMessages = string.Join(", ", validationResult.Errors.Select(e => e.ErrorMessage));
 
                 return _response.AsError(ResponseMessage.InvalidCase, errorMessages);
+            }
+
+            var existingCase = await _uow.Case.GetByNameAsync(@case.Name, cancellationToken);
+
+            if(existingCase.Exists())
+            {
+                _logger.LogWarning("Attempt creating case with name that is already used", ("case",@case));
+
+                return _response.AsError(ResponseMessage.CaseAlreadyExists);
             }
 
             _logger.LogDebug("Begin Create case");

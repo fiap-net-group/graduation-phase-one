@@ -6,9 +6,9 @@ using AutoMapper;
 using FluentAssertions;
 using NSubstitute;
 using PoliceDepartment.EvidenceManager.Application.Evidence.UseCases;
-using PoliceDepartment.EvidenceManager.Domain.Database;
-using PoliceDepartment.EvidenceManager.Domain.Evidence;
-using PoliceDepartment.EvidenceManager.Domain.Logger;
+using PoliceDepartment.EvidenceManager.SharedKernel.Database;
+using PoliceDepartment.EvidenceManager.SharedKernel.Evidence;
+using PoliceDepartment.EvidenceManager.SharedKernel.Logger;
 using PoliceDepartment.EvidenceManager.SharedKernel.ViewModels;
 using PoliceDepartment.EvidenceManager.UnitTests.Fixtures.Api;
 
@@ -36,7 +36,7 @@ namespace PoliceDepartment.EvidenceManager.UnitTests.Api.Evidence
             var mapper = Substitute.For<IMapper>();
 
             var caseId = Guid.NewGuid();
-            var entities = quantity > 0 ? _fixture.Evidence.GenerateEntityCollection(quantity,caseId) : Enumerable.Empty<EvidenceEntity>();
+            var entities = quantity > 0 ? _fixture.Evidence.GenerateEntityCollection(quantity,caseId: caseId) : Enumerable.Empty<EvidenceEntity>();
             var viewModels = quantity > 0 ? _fixture.Evidence.GenerateViewModelCollectionByEntityCollection(entities) : Enumerable.Empty<EvidenceViewModel>();
 
             uow.Evidence.GetByCaseIdAsync(Arg.Any<Guid>(), Arg.Any<CancellationToken>()).Returns(Task.FromResult(entities));
@@ -51,7 +51,7 @@ namespace PoliceDepartment.EvidenceManager.UnitTests.Api.Evidence
             response.Success.Should().BeTrue();
             response.Value.Count().Should().Be(quantity);
             if (quantity > 0)
-                response.Value.Select(c => c.CaseId).First().Should().Be(caseId.ToString());
+                response.Value.Any(c => c.CaseId == caseId.ToString()).Should().BeTrue();
         }
     }
 }

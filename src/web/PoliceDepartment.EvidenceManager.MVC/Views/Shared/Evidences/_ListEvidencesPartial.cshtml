@@ -1,0 +1,55 @@
+﻿@using PoliceDepartment.EvidenceManager.SharedKernel.ViewModels;
+@model CaseViewModel;
+
+<h4>Evidences</h4>
+
+<p>
+    <a class="btn btn-success" asp-controller="Evidences" asp-action="Create" asp-route-id="@Model?.Id" asp-route-returnUrl="@ViewBag.ReturnUrl">New Evidence</a>
+</p>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Name
+            </th>
+            <th>
+                Description
+            </th>
+            <th>
+                Actions
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @{
+            if(!Model.Evidences.Any())
+            {
+                <tr>
+                    <td>
+                        This case has no evidence
+                    </td>
+                </tr>
+            }
+            else
+            {
+                @foreach (var item in Model.Evidences)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Name)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Description)
+                        </td>
+                        <td>
+                            <a class="btn btn-secondary" asp-controller="Evidences" asp-action="Details" asp-route-id="@item.Id" asp-route-returnUrl="@ViewBag.ReturnUrl">Details</a>
+                            <a class="btn btn-primary" asp-controller="Evidences" asp-action="Edit" asp-route-id="@item.Id" asp-route-returnUrl="@ViewBag.ReturnUrl">Edit</a>
+                            <a class="btn btn-danger" asp-controller="Evidences" asp-action="Delete" asp-route-id="@item.Id" asp-route-returnUrl="@ViewBag.ReturnUrl">Delete</a>
+                        </td>
+                    </tr>
+                }
+            }            
+        }
+    </tbody>
+</table>

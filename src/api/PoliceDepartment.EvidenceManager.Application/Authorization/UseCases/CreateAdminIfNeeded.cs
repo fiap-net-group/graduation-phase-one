@@ -1,5 +1,5 @@
 ﻿using Microsoft.Extensions.Configuration;
-using PoliceDepartment.EvidenceManager.Domain.Authorization;
+using PoliceDepartment.EvidenceManager.SharedKernel.Authorization;
 using PoliceDepartment.EvidenceManager.SharedKernel.Logger;
 using PoliceDepartment.EvidenceManager.SharedKernel.Extensions;
 

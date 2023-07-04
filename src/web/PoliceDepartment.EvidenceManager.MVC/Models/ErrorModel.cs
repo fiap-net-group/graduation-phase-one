@@ -1,5 +1,3 @@
-using Microsoft.AspNetCore.Mvc.ModelBinding;
-
 namespace PoliceDepartment.EvidenceManager.MVC.Models
 {
     public sealed class ErrorModel
@@ -12,8 +10,8 @@ namespace PoliceDepartment.EvidenceManager.MVC.Models
         {
             if (errorCode == 404)
             {
-                Message = "The page you are looking for doesn't exists! <br />If you need help, contact our suport";
-                Title = "Page not found.";
+                Message = "The page you are looking for doesn't exists! <br />If you need help, contact our support";
+                Title = "Page not found";
                 ErrorCode = errorCode;
                 return;
             }

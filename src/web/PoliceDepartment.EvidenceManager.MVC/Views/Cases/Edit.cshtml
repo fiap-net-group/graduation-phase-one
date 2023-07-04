@@ -1,0 +1,42 @@
+﻿@using PoliceDepartment.EvidenceManager.SharedKernel.ViewModels;
+@model CaseViewModel
+
+@{
+    ViewData["Title"] = "Edit case";
+}
+
+<h1>Edit case</h1>
+
+<hr />
+<div class="row">
+    <form asp-action="PostEdit">
+        <div class="col-md-4">
+
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Id" />
+            <div class="form-group">
+                <label asp-for="Name" class="control-label">Name</label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Description" class="control-label">Description</label>
+                <textarea asp-for="Description" class="form-control"></textarea>
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+        </div>
+        <hr />
+        <partial name="../Shared/Evidences/_ListEvidencesPartial.cshtml" model="Model" />
+        <hr />
+        <div class="form-group">
+            <input type="submit" value="Save changes" class="btn btn-primary" />
+            <a class="btn btn-secondary" asp-action="Index">Go back to list</a>
+        </div>
+    </form>
+</div>
+@section Scripts
+    {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

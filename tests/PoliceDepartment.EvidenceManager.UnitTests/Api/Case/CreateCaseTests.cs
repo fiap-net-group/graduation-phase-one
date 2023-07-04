@@ -4,9 +4,9 @@ using FluentValidation;
 using FluentValidation.Results;
 using NSubstitute;
 using PoliceDepartment.EvidenceManager.Application.Case.UseCases;
-using PoliceDepartment.EvidenceManager.Domain.Case;
-using PoliceDepartment.EvidenceManager.Domain.Database;
-using PoliceDepartment.EvidenceManager.Domain.Exceptions;
+using PoliceDepartment.EvidenceManager.SharedKernel.Case;
+using PoliceDepartment.EvidenceManager.SharedKernel.Database;
+using PoliceDepartment.EvidenceManager.SharedKernel.Exceptions;
 using PoliceDepartment.EvidenceManager.SharedKernel.Logger;
 using PoliceDepartment.EvidenceManager.SharedKernel.Responses;
 using PoliceDepartment.EvidenceManager.SharedKernel.ViewModels;
@@ -38,14 +38,14 @@ namespace PoliceDepartment.EvidenceManager.UnitTests.Api.Case
         public async Task RunAsync_ValidRequest_ShoudlReturnSuccess()
         {
             // Arrange
-            CreateCaseViewModel caseViewModel = _fixture.Case.GenerateViewModel();
+            CreateCaseViewModel caseViewModel = _fixture.Case.GenerateSingleCreateCaseViewModel();
             var validationResult = new ValidationResult();
             _validator.ValidateAsync(caseViewModel, CancellationToken.None).Returns(validationResult);
 
             var caseEntity = _fixture.Case.GenerateSingleEntity();
             _mapper.Map<CaseEntity>(caseViewModel).Returns(caseEntity);
 
-            var _uow = Substitute.For<IUnitOfWork>();
+            _uow.Case.GetByNameAsync(Arg.Any<string>(), Arg.Any<CancellationToken>()).Returns(Task.FromResult(new CaseEntity()));
             _uow.Case.AddAsync(caseEntity, CancellationToken.None).Returns(Task.CompletedTask);
             _uow.SaveChangesAsync(Arg.Any<CancellationToken>()).Returns(true);
 
@@ -89,19 +89,43 @@ namespace PoliceDepartment.EvidenceManager.UnitTests.Api.Case
             await _validator.Received(1).ValidateAsync(viewModel, CancellationToken.None);
         }
 
-
         [Fact]
-        public async Task RunAsync_DatabaseError_ShouldThrow()
+        public async Task RunAsync_ValidRequestButCaseAlreadyExists_ShoudlReturnError()
         {
             // Arrange
-            CreateCaseViewModel caseViewModel = _fixture.Case.GenerateViewModel();
+            CreateCaseViewModel caseViewModel = _fixture.Case.GenerateSingleCreateCaseViewModel();
             var validationResult = new ValidationResult();
             _validator.ValidateAsync(caseViewModel, CancellationToken.None).Returns(validationResult);
 
             var caseEntity = _fixture.Case.GenerateSingleEntity();
             _mapper.Map<CaseEntity>(caseViewModel).Returns(caseEntity);
 
-            var _uow = Substitute.For<IUnitOfWork>();
+            _uow.Case.GetByNameAsync(Arg.Any<string>(), Arg.Any<CancellationToken>()).Returns(Task.FromResult(_fixture.Case.GenerateSingleEntity()));
+            _uow.Case.AddAsync(caseEntity, CancellationToken.None).Returns(Task.CompletedTask);
+            _uow.SaveChangesAsync(Arg.Any<CancellationToken>()).Returns(true);
+
+            var sut = new CreateCase(_logger, _uow, _mapper, _validator);
+
+            // Act
+            var response = await sut.RunAsync(caseViewModel, CancellationToken.None);
+
+            // Assert
+            response.Success.Should().BeFalse();
+            response.ResponseMessageEqual(ResponseMessage.CaseAlreadyExists);
+        }
+
+        [Fact]
+        public async Task RunAsync_DatabaseError_ShouldThrow()
+        {
+            // Arrange
+            CreateCaseViewModel caseViewModel = _fixture.Case.GenerateSingleCreateCaseViewModel();
+            var validationResult = new ValidationResult();
+            _validator.ValidateAsync(caseViewModel, CancellationToken.None).Returns(validationResult);
+
+            var caseEntity = _fixture.Case.GenerateSingleEntity();
+            _mapper.Map<CaseEntity>(caseViewModel).Returns(caseEntity);
+
+            _uow.Case.GetByNameAsync(Arg.Any<string>(), Arg.Any<CancellationToken>()).Returns(Task.FromResult(new CaseEntity()));
             _uow.Case.AddAsync(caseEntity, CancellationToken.None).Returns(Task.CompletedTask);
             _uow.SaveChangesAsync(Arg.Any<CancellationToken>()).Returns(false);
 
